@@ -2,6 +2,7 @@ import { Plus, X } from "lucide-react";
 import React from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import type { FormSection } from "../../types/index.js";
+import { cn } from "../../utils/cn.js";
 import { FieldRenderer } from "./FieldRenderer.js";
 
 interface RepeatableSectionProps {
@@ -25,6 +26,9 @@ export const RepeatableSection: React.FC<RepeatableSectionProps> = ({
     removeButtonText = "Remove",
     minItems = 0,
     maxItems,
+    itemClassName,
+    addButtonClassName,
+    removeButtonClassName,
   } = config;
 
   const canAdd = !maxItems || fields.length < maxItems;
@@ -52,9 +56,9 @@ export const RepeatableSection: React.FC<RepeatableSectionProps> = ({
   };
 
   return (
-    <div className={`mb-8 ${section.className || ""}`}>
+    <div className={cn("mb-8", section.className)}>
       {section.title && (
-        <div className="border-b-2 border-blue-100 pb-3 mb-6">
+        <div className={cn("border-b-2 border-blue-100 pb-3 mb-6", section.headerClassName)}>
           <h3 className="text-xl font-bold text-gray-900">{section.title}</h3>
           {section.description && (
             <p className="text-sm text-gray-600 mt-2">{section.description}</p>
@@ -63,11 +67,14 @@ export const RepeatableSection: React.FC<RepeatableSectionProps> = ({
       )}
 
       {/* Repeatable Items */}
-      <div className="space-y-6">
+      <div className={cn("space-y-6", section.fieldsClassName)}>
         {fields.map((item, index) => (
           <div
             key={item.id}
-            className="p-6 border-2 border-gray-200 rounded-lg bg-gray-50 hover:border-gray-300 transition-colors"
+            className={cn(
+              "p-6 border-2 border-gray-200 rounded-lg bg-gray-50 hover:border-gray-300 transition-colors",
+              itemClassName
+            )}
           >
             {/* Item Header with Remove Button */}
             <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-300">
@@ -78,7 +85,10 @@ export const RepeatableSection: React.FC<RepeatableSectionProps> = ({
                 <button
                   type="button"
                   onClick={() => handleRemove(index)}
-                  className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-red-600 hover:text-white hover:bg-red-600 border border-red-600 rounded transition-colors"
+                  className={cn(
+                    "flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-red-600 hover:text-white hover:bg-red-600 border border-red-600 rounded transition-colors",
+                    removeButtonClassName
+                  )}
                   title={removeButtonText}
                 >
                   <X size={16} />
@@ -100,18 +110,14 @@ export const RepeatableSection: React.FC<RepeatableSectionProps> = ({
                 return (
                   <div
                     key={arrayFieldName}
-                    className={`
-                      ${
-                        field.cols === 12 || field.cols === 2
-                          ? "md:col-span-2"
-                          : "md:col-span-1"
-                      }
-                      ${
-                        field.cols === 6 || field.cols === 1
-                          ? "md:col-span-1"
-                          : ""
-                      }
-                    `}
+                    className={cn(
+                      field.cols === 12 || field.cols === 2
+                        ? "md:col-span-2"
+                        : "md:col-span-1",
+                      field.cols === 6 || field.cols === 1
+                        ? "md:col-span-1"
+                        : ""
+                    )}
                   >
                     <FieldRenderer field={arrayField} />
                   </div>
@@ -127,7 +133,10 @@ export const RepeatableSection: React.FC<RepeatableSectionProps> = ({
         <button
           type="button"
           onClick={handleAdd}
-          className="mt-6 flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 hover:text-white hover:bg-blue-600 border-2 border-blue-600 rounded transition-colors"
+          className={cn(
+            "mt-6 flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 hover:text-white hover:bg-blue-600 border-2 border-blue-600 rounded transition-colors",
+            addButtonClassName
+          )}
         >
           <Plus size={18} />
           <span>{addButtonText}</span>

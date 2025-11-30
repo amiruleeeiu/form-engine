@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { useFormContext } from "react-hook-form";
 import type { RadioFieldConfig } from "../../types/index.js";
+import { cn } from "../../utils/cn.js";
 import {
   getWatchedFields,
   shouldEnableField,
@@ -11,7 +12,10 @@ export const RadioField: React.FC<RadioFieldConfig> = ({
   name,
   label,
   cols = 12,
-  className = "",
+  className,
+  labelClassName,
+  inputClassName,
+  errorClassName,
   options,
   showWhen,
   hideWhen,
@@ -71,8 +75,8 @@ export const RadioField: React.FC<RadioFieldConfig> = ({
   const error = errors[name];
   const colSpan = `col-span-${cols}`;
   return (
-    <div className={`${colSpan} ${className}`}>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+    <div className={cn(colSpan, className)}>
+      <label className={cn("block text-sm font-medium text-gray-700 mb-2", labelClassName)}>
         {label}
       </label>
       <div className="space-y-2">
@@ -86,14 +90,14 @@ export const RadioField: React.FC<RadioFieldConfig> = ({
               value={option.value}
               disabled={!isEnabled}
               {...register(name)}
-              className="w-4 h-4 text-blue-600 border-gray-300 disabled:cursor-not-allowed"
+              className={cn("w-4 h-4 text-blue-600 border-gray-300 disabled:cursor-not-allowed", inputClassName)}
             />
             <span className="text-sm text-gray-900">{option.label}</span>
           </label>
         ))}
       </div>
       {error && (
-        <p className="mt-1.5 text-xs text-red-600">{error.message as string}</p>
+        <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>{error.message as string}</p>
       )}
     </div>
   );

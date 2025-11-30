@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import type { DateFieldConfig } from "../../types/index.js";
+import { cn } from "../../utils/cn.js";
 import {
   getWatchedFields,
   shouldEnableField,
@@ -12,7 +13,10 @@ export const DateField: React.FC<DateFieldConfig> = ({
   label,
   placeholder,
   cols = 12,
-  className = "",
+  className,
+  labelClassName,
+  inputClassName,
+  errorClassName,
   min,
   max,
   showWhen,
@@ -73,10 +77,10 @@ export const DateField: React.FC<DateFieldConfig> = ({
   const error = errors[name];
   const colSpan = `col-span-${cols}`;
   return (
-    <div className={`${colSpan} ${className}`}>
+    <div className={cn(colSpan, className)}>
       <label
         htmlFor={name}
-        className="block text-sm font-medium text-gray-700 mb-1.5"
+        className={cn("block text-sm font-medium text-gray-700 mb-1.5", labelClassName)}
       >
         {label}
       </label>
@@ -92,19 +96,18 @@ export const DateField: React.FC<DateFieldConfig> = ({
             disabled={!isEnabled}
             min={min}
             max={max}
-            className={`w-full px-4 py-2.5 text-sm border rounded-md bg-white text-gray-900 
-              transition-colors duration-200
-              ${
-                error
-                  ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
-                  : "border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-              }
-              focus:outline-none disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed`}
+            className={cn(
+              "w-full px-4 py-2.5 text-sm border rounded-md bg-white text-gray-900 transition-colors duration-200 focus:outline-none disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed",
+              error
+                ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+                : "border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200",
+              inputClassName
+            )}
           />
         )}
       />
       {error && (
-        <p className="mt-1.5 text-xs text-red-600">{error.message as string}</p>
+        <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>{error.message as string}</p>
       )}
     </div>
   );

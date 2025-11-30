@@ -67,7 +67,10 @@ export interface BaseFieldConfig {
   type: FieldType;
   placeholder?: string;
   cols?: number; // Column span: 1 (half row), 2 or 12 (full row). Default: 1. Mobile is always full width.
-  className?: string;
+  className?: string; // Custom class for the field container
+  labelClassName?: string; // Custom class for the label
+  inputClassName?: string; // Custom class for the input element
+  errorClassName?: string; // Custom class for the error message
   defaultValue?: any;
 
   // Field-level validation (optional, can be used with or without Zod schema)
@@ -143,7 +146,9 @@ export interface FormSection {
   description?: string;
   fields: FieldConfig[];
   cols?: number; // Grid columns for the section
-  className?: string;
+  className?: string; // Custom class for the section container
+  headerClassName?: string; // Custom class for the section header
+  fieldsClassName?: string; // Custom class for the fields grid container
   // Repeatable section (Field Array)
   repeatable?: boolean; // Can this section be repeated?
   repeatableConfig?: {
@@ -153,6 +158,9 @@ export interface FormSection {
     minItems?: number; // Minimum items required (cannot remove below this)
     maxItems?: number; // Maximum items allowed
     defaultItem?: Record<string, any>; // Default values for new item
+    itemClassName?: string; // Custom class for each repeatable item container
+    addButtonClassName?: string; // Custom class for the add button
+    removeButtonClassName?: string; // Custom class for the remove button
   };
 
   // Conditional logic for sections
@@ -165,6 +173,9 @@ export interface FormStep {
   description?: string;
   sections?: FormSection[];
   fields?: FieldConfig[];
+  className?: string; // Custom class for the step container
+  headerClassName?: string; // Custom class for the step header
+  contentClassName?: string; // Custom class for the step content area
 
   // Conditional logic for steps
   showWhen?: Condition;
@@ -184,7 +195,12 @@ export interface FormSchema {
 export interface FormEngineProps {
   schema: FormSchema;
   onSubmit: (data: any) => void | Promise<void>;
-  className?: string;
+  className?: string; // Custom class for the form element
+  stepperClassName?: string; // Custom class for the stepper navigation
+  contentClassName?: string; // Custom class for the form content area
+  navigationClassName?: string; // Custom class for the navigation buttons container
+  submitButtonClassName?: string; // Custom class for the submit button
+  prevButtonClassName?: string; // Custom class for the previous button
   submitButtonText?: string;
   showStepNavigation?: boolean;
 }

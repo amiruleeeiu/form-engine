@@ -18,6 +18,7 @@ export const simpleFormSchema: FormSchema = {
       title: "Personal Information",
       description: "Please provide your basic information",
       cols: 12,
+      className: "bg-blue-50 p-4 rounded-md",
       fields: [
         {
           name: "firstName",

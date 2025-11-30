@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import type { FormEngineProps } from "../../types/index.js";
+import { cn } from "../../utils/cn.js";
 import {
   getWatchedFields,
   shouldShowField,
@@ -13,7 +14,12 @@ import { FormSection } from "./FormSection.js";
 export const FormEngine: React.FC<FormEngineProps> = ({
   schema,
   onSubmit,
-  className = "",
+  className,
+  stepperClassName,
+  contentClassName,
+  navigationClassName,
+  submitButtonClassName,
+  prevButtonClassName,
   submitButtonText = "Submit",
   showStepNavigation = true,
 }) => {
@@ -100,45 +106,48 @@ export const FormEngine: React.FC<FormEngineProps> = ({
     <FormProvider {...methods}>
       <form
         onSubmit={handleSubmit(onFormSubmit)}
-        className={`space-y-6 ${className}`}
+        className={cn("space-y-6", className)}
       >
         {" "}
         {/* Stepper Header */}
         {hasSteps && showStepNavigation && visibleSteps.length > 1 && (
-          <div className="flex items-center justify-between mb-10 px-4">
+          <div className={cn("flex items-center justify-between mb-10 px-4", stepperClassName)}>
             {visibleSteps.map((step, index) => (
               <React.Fragment key={index}>
                 <div className="flex flex-col items-center flex-1">
                   <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-lg transition-all duration-300 ${
+                    className={cn(
+                      "w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-lg transition-all duration-300",
                       index === currentStep
                         ? "bg-gradient-to-br from-blue-600 to-blue-700 text-white ring-4 ring-blue-200 scale-110"
                         : index < currentStep
                         ? "bg-gradient-to-br from-green-500 to-green-600 text-white"
                         : "bg-gray-200 text-gray-500"
-                    }`}
+                    )}
                   >
                     {index < currentStep ? "✓" : index + 1}
                   </div>
                   <span
-                    className={`text-xs mt-3 font-semibold text-center transition-colors duration-300 ${
+                    className={cn(
+                      "text-xs mt-3 font-semibold text-center transition-colors duration-300",
                       index === currentStep
                         ? "text-blue-700"
                         : index < currentStep
                         ? "text-green-700"
                         : "text-gray-500"
-                    }`}
+                    )}
                   >
                     {step.title}
                   </span>
                 </div>
                 {index < visibleSteps.length - 1 && (
                   <div
-                    className={`h-1.5 flex-1 mx-3 rounded-full transition-all duration-500 ${
+                    className={cn(
+                      "h-1.5 flex-1 mx-3 rounded-full transition-all duration-500",
                       index < currentStep
                         ? "bg-gradient-to-r from-green-500 to-green-600"
                         : "bg-gray-200"
-                    }`}
+                    )}
                   />
                 )}
               </React.Fragment>
@@ -147,11 +156,11 @@ export const FormEngine: React.FC<FormEngineProps> = ({
         )}
         {/* Step/Form Content */}
         {hasSteps ? (
-          <div className="space-y-6">
+          <div className={cn("space-y-6", contentClassName)}>
             {currentStepData && (
-              <>
+              <div className={currentStepData.className}>
                 {" "}
-                <div className="mb-6">
+                <div className={cn("mb-6", currentStepData.headerClassName)}>
                   <h2 className="text-3xl font-bold text-gray-900 mb-2">
                     {currentStepData.title}
                   </h2>
@@ -162,45 +171,43 @@ export const FormEngine: React.FC<FormEngineProps> = ({
                   )}
                 </div>{" "}
                 {/* Sections within step */}
-                {currentStepData.sections && currentStepData.sections.length > 0
-                  ? currentStepData.sections.map((section, idx) => (
-                      <FormSection
-                        key={idx}
-                        section={section}
-                        sectionIndex={idx}
-                      />
-                    ))
-                  : null}{" "}
-                {/* Fields directly in step */}
-                {currentStepData.fields &&
-                  currentStepData.fields.length > 0 && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {currentStepData.fields.map((field) => (
-                        <div
-                          key={field.name}
-                          className={`
-                          ${
-                            field.cols === 12 || field.cols === 2
-                              ? "md:col-span-2"
-                              : "md:col-span-1"
-                          }
-                          ${
-                            field.cols === 6 || field.cols === 1
-                              ? "md:col-span-1"
-                              : ""
-                          }
-                        `}
-                        >
-                          <FieldRenderer field={field} />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-              </>
+                <div className={currentStepData.contentClassName}>
+                  {currentStepData.sections && currentStepData.sections.length > 0
+                    ? currentStepData.sections.map((section, idx) => (
+                        <FormSection
+                          key={idx}
+                          section={section}
+                          sectionIndex={idx}
+                        />
+                      ))
+                    : null}{" "}
+                  {/* Fields directly in step */}
+                  {currentStepData.fields &&
+                    currentStepData.fields.length > 0 && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {currentStepData.fields.map((field) => (
+                          <div
+                            key={field.name}
+                            className={cn(
+                              field.cols === 12 || field.cols === 2
+                                ? "md:col-span-2"
+                                : "md:col-span-1",
+                              field.cols === 6 || field.cols === 1
+                                ? "md:col-span-1"
+                                : ""
+                            )}
+                          >
+                            <FieldRenderer field={field} />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                </div>
+              </div>
             )}
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className={cn("space-y-6", contentClassName)}>
             {" "}
             {/* Sections */}
             {schema.sections && schema.sections.length > 0
@@ -214,18 +221,14 @@ export const FormEngine: React.FC<FormEngineProps> = ({
                 {schema.fields.map((field) => (
                   <div
                     key={field.name}
-                    className={`
-                      ${
-                        field.cols === 12 || field.cols === 2
-                          ? "md:col-span-2"
-                          : "md:col-span-1"
-                      }
-                      ${
-                        field.cols === 6 || field.cols === 1
-                          ? "md:col-span-1"
-                          : ""
-                      }
-                    `}
+                    className={cn(
+                      field.cols === 12 || field.cols === 2
+                        ? "md:col-span-2"
+                        : "md:col-span-1",
+                      field.cols === 6 || field.cols === 1
+                        ? "md:col-span-1"
+                        : ""
+                    )}
                   >
                     <FieldRenderer field={field} />
                   </div>
@@ -235,12 +238,15 @@ export const FormEngine: React.FC<FormEngineProps> = ({
           </div>
         )}
         {/* Navigation Buttons */}
-        <div className="flex justify-between items-center pt-8 mt-8 border-t-2 border-gray-100">
+        <div className={cn("flex justify-between items-center pt-8 mt-8 border-t-2 border-gray-100", navigationClassName)}>
           {hasSteps && !isFirstStep ? (
             <button
               type="button"
               onClick={handlePrevious}
-              className="px-8 py-3 border-2 border-gray-300 rounded-lg shadow-sm text-base font-semibold text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-200 transition-all duration-200"
+              className={cn(
+                "px-8 py-3 border-2 border-gray-300 rounded-lg shadow-sm text-base font-semibold text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-200 transition-all duration-200",
+                prevButtonClassName
+              )}
             >
               ← Previous
             </button>
@@ -250,7 +256,10 @@ export const FormEngine: React.FC<FormEngineProps> = ({
 
           <button
             type="submit"
-            className="px-8 py-3 border-2 border-transparent rounded-lg shadow-lg text-base font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200"
+            className={cn(
+              "px-8 py-3 border-2 border-transparent rounded-lg shadow-lg text-base font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200",
+              submitButtonClassName
+            )}
           >
             {hasSteps && !isLastStep ? "Next →" : submitButtonText}
           </button>

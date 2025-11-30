@@ -2,6 +2,7 @@
 import React, { useMemo } from "react";
 import { useFormContext } from "react-hook-form";
 import type { CheckboxFieldConfig } from "../../types/index.js";
+import { cn } from "../../utils/cn.js";
 import {
   getWatchedFields,
   shouldEnableField,
@@ -13,7 +14,10 @@ export const CheckboxField: React.FC<CheckboxFieldConfig> = ({
   label,
   checkboxLabel,
   cols = 12,
-  className = "",
+  className,
+  labelClassName,
+  inputClassName,
+  errorClassName,
   showWhen,
   hideWhen,
   enableWhen,
@@ -72,8 +76,8 @@ export const CheckboxField: React.FC<CheckboxFieldConfig> = ({
   const error = errors[name];
   const colSpan = `col-span-${cols}`;
   return (
-    <div className={`${colSpan} ${className}`}>
-      <label className="block text-sm font-semibold text-gray-800 mb-3">
+    <div className={cn(colSpan, className)}>
+      <label className={cn("block text-sm font-semibold text-gray-800 mb-3", labelClassName)}>
         {label}
       </label>
       <label className="flex items-center space-x-3 cursor-pointer p-4 transition-all duration-200">
@@ -81,14 +85,14 @@ export const CheckboxField: React.FC<CheckboxFieldConfig> = ({
           type="checkbox"
           disabled={!isEnabled}
           {...register(name)}
-          className="w-5 h-5 text-blue-600 border-2 disabled:cursor-not-allowed"
+          className={cn("w-5 h-5 text-blue-600 border-2 disabled:cursor-not-allowed", inputClassName)}
         />
         <span className="text-sm font-medium text-gray-800">
           {checkboxLabel || label}
         </span>
       </label>
       {error && (
-        <p className="mt-2 text-sm font-medium text-red-600 flex items-center">
+        <p className={cn("mt-2 text-sm font-medium text-red-600 flex items-center", errorClassName)}>
           <span className="mr-1">⚠</span>
           {error.message as string}
         </p>

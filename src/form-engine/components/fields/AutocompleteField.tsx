@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import Select from "react-select";
 import type { AutocompleteFieldConfig } from "../../types/index.js";
+import { cn } from "../../utils/cn.js";
 import {
   getWatchedFields,
   shouldEnableField,
@@ -14,7 +15,9 @@ export const AutocompleteField: React.FC<AutocompleteFieldConfig> = ({
   label,
   placeholder,
   cols = 12,
-  className = "",
+  className,
+  labelClassName,
+  errorClassName,
   options: staticOptions = [],
   dynamicOptions,
   isMulti = false,
@@ -79,10 +82,10 @@ export const AutocompleteField: React.FC<AutocompleteFieldConfig> = ({
   const colSpan = `col-span-${cols}`;
 
   return (
-    <div className={`${colSpan} ${className}`}>
+    <div className={cn(colSpan, className)}>
       <label
         htmlFor={name}
-        className="block text-sm font-medium text-gray-700 mb-1"
+        className={cn("block text-sm font-medium text-gray-700 mb-1", labelClassName)}
       >
         {label}
       </label>
@@ -136,7 +139,7 @@ export const AutocompleteField: React.FC<AutocompleteFieldConfig> = ({
         )}
       />{" "}
       {error && (
-        <p className="mt-1.5 text-xs text-red-600">{error.message as string}</p>
+        <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>{error.message as string}</p>
       )}
     </div>
   );

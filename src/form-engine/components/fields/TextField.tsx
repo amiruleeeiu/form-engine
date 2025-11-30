@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { useFormContext } from "react-hook-form";
 import type { TextFieldConfig } from "../../types/index.js";
+import { cn } from "../../utils/cn.js";
 import {
   getWatchedFields,
   shouldEnableField,
@@ -13,7 +14,10 @@ export const TextField: React.FC<TextFieldConfig> = ({
   label,
   placeholder,
   cols = 12,
-  className = "",
+  className,
+  labelClassName,
+  inputClassName,
+  errorClassName,
   validation,
   showWhen,
   hideWhen,
@@ -83,11 +87,11 @@ export const TextField: React.FC<TextFieldConfig> = ({
   const error = errors[name];
   const colSpan = `col-span-${cols}`;
   return (
-    <div className={`${colSpan} ${className}`}>
+    <div className={cn(colSpan, className)}>
       {" "}
       <label
         htmlFor={name}
-        className="block text-sm font-medium text-gray-700 mb-1.5"
+        className={cn("block text-sm font-medium text-gray-700 mb-1.5", labelClassName)}
       >
         {label}
       </label>{" "}
@@ -97,18 +101,17 @@ export const TextField: React.FC<TextFieldConfig> = ({
         placeholder={placeholder}
         disabled={!isEnabled}
         {...register(name, validationRules)}
-        className={`w-full px-4 py-2.5 text-sm border rounded-md bg-white text-gray-900 placeholder-gray-400 
-          transition-colors duration-200
-          ${
-            error
-              ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
-              : "border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-          }
-          ${isEnabled ? "" : "bg-gray-50 text-gray-500 cursor-not-allowed"}
-          focus:outline-none`}
+        className={cn(
+          "w-full px-4 py-2.5 text-sm border rounded-md bg-white text-gray-900 placeholder-gray-400 transition-colors duration-200 focus:outline-none",
+          error
+            ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+            : "border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200",
+          !isEnabled && "bg-gray-50 text-gray-500 cursor-not-allowed",
+          inputClassName
+        )}
       />{" "}
       {error && (
-        <p className="mt-1.5 text-xs text-red-600">{error.message as string}</p>
+        <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>{error.message as string}</p>
       )}
     </div>
   );
