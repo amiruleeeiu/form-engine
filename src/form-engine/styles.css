@@ -1,0 +1,132 @@
+/* React Form Engine Styles */
+
+/* React Select Component Styles */
+.react-select__control {
+  min-height: 44px;
+  border-radius: 0.5rem;
+  border: 1.5px solid #e2e8f0;
+  transition: all 0.2s;
+}
+
+.react-select__control:hover {
+  border-color: #cbd5e1;
+}
+
+.react-select__control--is-focused {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+.react-select__menu {
+  z-index: 999;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+.react-select__option {
+  cursor: pointer;
+}
+
+.react-select__option--is-focused {
+  background-color: #eff6ff;
+}
+
+.react-select__option--is-selected {
+  background-color: #3b82f6;
+}
+
+/* Form Engine Base Styles */
+.form-engine {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+}
+
+/* Form Field Styles */
+.form-engine input[type="text"],
+.form-engine input[type="number"],
+.form-engine input[type="date"],
+.form-engine input[type="email"],
+.form-engine input[type="password"],
+.form-engine select,
+.form-engine textarea {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: #1f2937;
+  background-color: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 0.5rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-engine input:focus,
+.form-engine select:focus,
+.form-engine textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-engine input:disabled,
+.form-engine select:disabled,
+.form-engine textarea:disabled {
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Error state */
+.form-engine input.error,
+.form-engine select.error,
+.form-engine textarea.error {
+  border-color: #ef4444;
+}
+
+.form-engine input.error:focus,
+.form-engine select.error:focus,
+.form-engine textarea.error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* Label Styles */
+.form-engine label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.375rem;
+}
+
+/* Error Message Styles */
+.form-engine .error-message {
+  font-size: 0.8125rem;
+  color: #ef4444;
+  margin-top: 0.375rem;
+}
+
+/* Button Styles */
+.form-engine button[type="submit"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #3b82f6;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.form-engine button[type="submit"]:hover {
+  background-color: #2563eb;
+}
+
+.form-engine button[type="submit"]:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+}

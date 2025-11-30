@@ -1,0 +1,37 @@
+# Source files
+src/
+public/
+
+# Config files
+*.config.js
+*.config.ts
+tsconfig*.json
+eslint.config.js
+postcss.config.js
+
+# Development files
+.git/
+.gitignore
+.vscode/
+node_modules/
+
+# Documentation (keep README.md)
+BEFORE_AFTER_COMPARISON.txt
+DESIGN_UPDATE_SUMMARY.md
+FEATURES.md
+FIELD_VALIDATION_GUIDE.md
+FORM_STRUCTURE_GUIDE.md
+QUICK_REFERENCE.txt
+QUICKSTART.md
+REPEATABLE_SECTIONS_CONFIG_GUIDE.md
+REPEATABLE_SECTIONS_GUIDE.md
+SIMPLE_FORM_VALIDATION.md
+STRUCTURE_FLEXIBILITY.md
+UPDATE_SUMMARY.md
+
+# Demo files
+index.html
+
+# Build artifacts (except dist)
+*.log
+*.tsbuildinfo

@@ -1,20 +1,62 @@
 {
-  "name": "form-engine",
-  "private": true,
-  "version": "0.0.0",
+  "name": "@amiruleeeiu/react-form-engine",
+  "version": "1.0.0",
   "type": "module",
+  "description": "A powerful and flexible React form engine with dynamic fields, validation, and conditional logic",
+  "author": "amiruleeeiu",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amiruleeeiu/form-engine.git"
+  },
+  "keywords": [
+    "react",
+    "form",
+    "form-engine",
+    "react-hook-form",
+    "dynamic-forms",
+    "validation",
+    "zod",
+    "typescript"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:lib": "vite build --config vite.lib.config.ts",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepublishOnly": "npm run build:lib"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
-    "@monaco-editor/react": "^4.7.0",
     "lucide-react": "^0.555.0",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
     "react-hook-form": "^7.67.0",
     "react-select": "^5.10.2",
     "tailwind-merge": "^3.4.0",
@@ -22,11 +64,13 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@monaco-editor/react": "^4.7.0",
     "@tailwindcss/postcss": "^4.1.17",
     "@types/node": "^24.10.1",
-    "@types/react": "^19.2.5",
+    "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
+    "ajv": "^8.17.1",
     "autoprefixer": "^10.4.22",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
@@ -35,6 +79,7 @@
     "tailwindcss": "^4.1.17",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
-    "vite": "^7.2.4"
+    "vite": "^7.2.4",
+    "vite-plugin-dts": "^4.5.4"
   }
 }
