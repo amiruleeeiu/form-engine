@@ -77,7 +77,12 @@ export const CheckboxField: React.FC<CheckboxFieldConfig> = ({
   const colSpan = `col-span-${cols}`;
   return (
     <div className={cn(colSpan, className)}>
-      <label className={cn("block text-sm font-semibold text-gray-800 mb-3", labelClassName)}>
+      <label
+        className={cn(
+          "block text-sm font-semibold text-gray-800 mb-3",
+          labelClassName
+        )}
+      >
         {label}
       </label>
       <label className="flex items-center space-x-3 cursor-pointer p-4 transition-all duration-200">
@@ -85,14 +90,22 @@ export const CheckboxField: React.FC<CheckboxFieldConfig> = ({
           type="checkbox"
           disabled={!isEnabled}
           {...register(name)}
-          className={cn("w-5 h-5 text-blue-600 border-2 disabled:cursor-not-allowed", inputClassName)}
+          className={cn(
+            "w-5 h-5 text-blue-600 border-2 disabled:cursor-not-allowed",
+            inputClassName
+          )}
         />
         <span className="text-sm font-medium text-gray-800">
           {checkboxLabel || label}
         </span>
       </label>
       {error && (
-        <p className={cn("mt-2 text-sm font-medium text-red-600 flex items-center", errorClassName)}>
+        <p
+          className={cn(
+            "mt-2 text-sm font-medium text-red-600 flex items-center",
+            errorClassName
+          )}
+        >
           <span className="mr-1">⚠</span>
           {error.message as string}
         </p>

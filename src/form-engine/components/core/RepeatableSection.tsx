@@ -58,7 +58,12 @@ export const RepeatableSection: React.FC<RepeatableSectionProps> = ({
   return (
     <div className={cn("mb-8", section.className)}>
       {section.title && (
-        <div className={cn("border-b-2 border-blue-100 pb-3 mb-6", section.headerClassName)}>
+        <div
+          className={cn(
+            "border-b-2 border-blue-100 pb-3 mb-6",
+            section.headerClassName
+          )}
+        >
           <h3 className="text-xl font-bold text-gray-900">{section.title}</h3>
           {section.description && (
             <p className="text-sm text-gray-600 mt-2">{section.description}</p>

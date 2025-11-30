@@ -111,7 +111,12 @@ export const FormEngine: React.FC<FormEngineProps> = ({
         {" "}
         {/* Stepper Header */}
         {hasSteps && showStepNavigation && visibleSteps.length > 1 && (
-          <div className={cn("flex items-center justify-between mb-10 px-4", stepperClassName)}>
+          <div
+            className={cn(
+              "flex items-center justify-between mb-10 px-4",
+              stepperClassName
+            )}
+          >
             {visibleSteps.map((step, index) => (
               <React.Fragment key={index}>
                 <div className="flex flex-col items-center flex-1">
@@ -172,7 +177,8 @@ export const FormEngine: React.FC<FormEngineProps> = ({
                 </div>{" "}
                 {/* Sections within step */}
                 <div className={currentStepData.contentClassName}>
-                  {currentStepData.sections && currentStepData.sections.length > 0
+                  {currentStepData.sections &&
+                  currentStepData.sections.length > 0
                     ? currentStepData.sections.map((section, idx) => (
                         <FormSection
                           key={idx}
@@ -238,7 +244,12 @@ export const FormEngine: React.FC<FormEngineProps> = ({
           </div>
         )}
         {/* Navigation Buttons */}
-        <div className={cn("flex justify-between items-center pt-8 mt-8 border-t-2 border-gray-100", navigationClassName)}>
+        <div
+          className={cn(
+            "flex justify-between items-center pt-8 mt-8 border-t-2 border-gray-100",
+            navigationClassName
+          )}
+        >
           {hasSteps && !isFirstStep ? (
             <button
               type="button"

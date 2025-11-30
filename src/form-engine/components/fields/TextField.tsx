@@ -91,7 +91,10 @@ export const TextField: React.FC<TextFieldConfig> = ({
       {" "}
       <label
         htmlFor={name}
-        className={cn("block text-sm font-medium text-gray-700 mb-1.5", labelClassName)}
+        className={cn(
+          "block text-sm font-medium text-gray-700 mb-1.5",
+          labelClassName
+        )}
       >
         {label}
       </label>{" "}
@@ -111,7 +114,9 @@ export const TextField: React.FC<TextFieldConfig> = ({
         )}
       />{" "}
       {error && (
-        <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>{error.message as string}</p>
+        <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>
+          {error.message as string}
+        </p>
       )}
     </div>
   );
