@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { JSONSchemaEditor } from "./components/JSONSchemaEditor.js";
 import { businessRegistrationSchema } from "./examples/businessRegistrationSchema.js";
+import { businessStarterPackageSchema } from "./examples/businessStarterPackageSchema";
 import { conditionalLogicFormSchema } from "./examples/conditionalLogicSchema.js";
 import { apiDrivenFormSchema } from "./examples/dynamicSelectSchema.js";
 import { fieldLevelValidationSchema } from "./examples/fieldLevelValidationSchema.js";
@@ -28,7 +29,8 @@ type FormType =
   | "stepperSections"
   | "mixed"
   | "fieldValidation"
-  | "businessRegistration";
+  | "businessRegistration"
+  | "businessStarterPackage";
 
 function App() {
   const [viewMode, setViewMode] = useState<ViewMode>("examples");
@@ -66,6 +68,8 @@ function App() {
         return fieldLevelValidationSchema;
       case "businessRegistration":
         return businessRegistrationSchema;
+      case "businessStarterPackage":
+        return businessStarterPackageSchema;
       default:
         return simpleFormSchema;
     }
@@ -73,7 +77,7 @@ function App() {
 
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto">
+      <div className="">
         {/* Header */}
         <div className="text-center mb-10">
           <h1 className="text-5xl font-bold text-gray-900 mb-3">
@@ -187,7 +191,7 @@ function App() {
                   <p className="text-xs font-semibold text-gray-500 mb-2">
                     📋 Real-World Example:
                   </p>
-                  <div className="grid grid-cols-1">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <button
                       onClick={() => setSelectedForm("businessRegistration")}
                       className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
@@ -197,6 +201,16 @@ function App() {
                       }`}
                     >
                       🏢 Business Registration Form (6 Steps + Repeatable)
+                    </button>
+                    <button
+                      onClick={() => setSelectedForm("businessStarterPackage")}
+                      className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                        selectedForm === "businessStarterPackage"
+                          ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg"
+                          : "bg-gradient-to-r from-purple-50 to-pink-50 text-gray-700 hover:from-purple-100 hover:to-pink-100 border-2 border-purple-200"
+                      }`}
+                    >
+                      📦 Business Starter Package (6 Steps)
                     </button>
                   </div>
                 </div>

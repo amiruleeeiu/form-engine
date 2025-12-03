@@ -40,6 +40,7 @@ export interface DynamicSelectConfig {
 // Field types
 export type FieldType =
   | "text"
+  | "textarea"
   | "number"
   | "date"
   | "select"
@@ -88,6 +89,11 @@ export interface TextFieldConfig extends BaseFieldConfig {
   type: "text";
 }
 
+export interface TextareaFieldConfig extends BaseFieldConfig {
+  type: "textarea";
+  rows?: number;
+}
+
 export interface NumberFieldConfig extends BaseFieldConfig {
   type: "number";
   min?: number;
@@ -132,6 +138,7 @@ export interface CheckboxFieldConfig extends BaseFieldConfig {
 
 export type FieldConfig =
   | TextFieldConfig
+  | TextareaFieldConfig
   | NumberFieldConfig
   | DateFieldConfig
   | SelectFieldConfig

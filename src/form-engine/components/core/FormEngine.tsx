@@ -113,50 +113,96 @@ export const FormEngine: React.FC<FormEngineProps> = ({
         {hasSteps && showStepNavigation && visibleSteps.length > 1 && (
           <div
             className={cn(
-              "flex items-center justify-between mb-10 px-4",
+              "bg-slate-50 rounded-lg py-4 px-6 mb-8",
               stepperClassName
             )}
           >
-            {visibleSteps.map((step, index) => (
-              <React.Fragment key={index}>
-                <div className="flex flex-col items-center flex-1">
-                  <div
-                    className={cn(
-                      "w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-lg transition-all duration-300",
-                      index === currentStep
-                        ? "bg-gradient-to-br from-blue-600 to-blue-700 text-white ring-4 ring-blue-200 scale-110"
-                        : index < currentStep
-                        ? "bg-gradient-to-br from-green-500 to-green-600 text-white"
-                        : "bg-gray-200 text-gray-500"
+            <div className="flex items-center justify-between">
+              {visibleSteps.map((step, index) => (
+                <React.Fragment key={index}>
+                  <div className="flex items-center gap-2">
+                    {/* Checkmark for completed steps */}
+                    {index < currentStep && (
+                      <div className="w-5 h-5 rounded-full bg-teal-500 flex items-center justify-center">
+                        <svg
+                          className="w-3 h-3 text-white"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={3}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </div>
                     )}
-                  >
-                    {index < currentStep ? "✓" : index + 1}
+                    <div className="flex flex-col">
+                      <span
+                        className={cn(
+                          "text-[10px] font-medium uppercase tracking-wide",
+                          index === currentStep
+                            ? "text-blue-600"
+                            : index < currentStep
+                            ? "text-teal-600"
+                            : "text-gray-400"
+                        )}
+                      >
+                        Step {index + 1}
+                      </span>
+                      <span
+                        className={cn(
+                          "text-sm font-semibold transition-colors duration-200",
+                          index === currentStep
+                            ? "text-blue-600"
+                            : index < currentStep
+                            ? "text-teal-600"
+                            : "text-gray-500"
+                        )}
+                      >
+                        {step.title}
+                      </span>
+                    </div>
                   </div>
-                  <span
-                    className={cn(
-                      "text-xs mt-3 font-semibold text-center transition-colors duration-300",
-                      index === currentStep
-                        ? "text-blue-700"
-                        : index < currentStep
-                        ? "text-green-700"
-                        : "text-gray-500"
-                    )}
-                  >
-                    {step.title}
-                  </span>
-                </div>
-                {index < visibleSteps.length - 1 && (
-                  <div
-                    className={cn(
-                      "h-1.5 flex-1 mx-3 rounded-full transition-all duration-500",
-                      index < currentStep
-                        ? "bg-gradient-to-r from-green-500 to-green-600"
-                        : "bg-gray-200"
-                    )}
-                  />
-                )}
-              </React.Fragment>
-            ))}
+                  {/* Chevron separator */}
+                  {index < visibleSteps.length - 1 && (
+                    <div className="flex-1 flex justify-center">
+                      <svg
+                        className="w-5 h-5 text-gray-300"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+            {/* Progress bar under current step */}
+            <div className="mt-3 flex gap-1">
+              {visibleSteps.map((_, index) => (
+                <div
+                  key={index}
+                  className={cn(
+                    "h-1 flex-1 rounded-full transition-all duration-300",
+                    index === currentStep
+                      ? "bg-blue-500"
+                      : index < currentStep
+                      ? "bg-teal-500"
+                      : "bg-gray-200"
+                  )}
+                />
+              ))}
+            </div>
           </div>
         )}
         {/* Step/Form Content */}

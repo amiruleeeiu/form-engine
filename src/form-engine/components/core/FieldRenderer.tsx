@@ -3,12 +3,13 @@ import type { FieldConfig } from "../../types/index.js";
 import {
   AutocompleteField,
   CheckboxField,
+  CustomSelectField,
   DateField,
   FileField,
   NumberField,
   RadioField,
-  SelectField,
   TextField,
+  TextareaField,
 } from "../fields/index.js";
 
 interface FieldRendererProps {
@@ -19,12 +20,14 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
   switch (field.type) {
     case "text":
       return <TextField {...field} />;
+    case "textarea":
+      return <TextareaField {...field} />;
     case "number":
       return <NumberField {...field} />;
     case "date":
       return <DateField {...field} />;
     case "select":
-      return <SelectField {...field} />;
+      return <CustomSelectField {...field} />;
     case "autocomplete":
       return <AutocompleteField {...field} />;
     case "file":
