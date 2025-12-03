@@ -1,3 +1,6 @@
+// Import styles
+import "./styles.css";
+
 // Main component
 export { FormEngine } from "./components/core/FormEngine";
 

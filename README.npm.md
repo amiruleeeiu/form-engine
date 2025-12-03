@@ -27,6 +27,17 @@ Make sure you have React 18+ installed:
 npm install react react-dom
 ```
 
+### Import Styles
+
+**Important:** You must import the CSS file in your application:
+
+```tsx
+// In your main entry file (e.g., main.tsx or App.tsx)
+import "@amiruleeeiu/react-form-engine/styles.css";
+```
+
+The library comes with pre-compiled Tailwind CSS styles, so you don't need to configure Tailwind in your project.
+
 ## Quick Start
 
 ```tsx

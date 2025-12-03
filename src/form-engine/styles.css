@@ -1,5 +1,8 @@
 /* React Form Engine Styles */
 
+/* Import Tailwind CSS */
+@import "tailwindcss";
+
 /* React Select Component Styles */
 .react-select__control {
   min-height: 44px;

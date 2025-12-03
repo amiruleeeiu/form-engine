@@ -14,6 +14,9 @@ export default defineConfig({
       tsconfigPath: "./tsconfig.lib.json",
     }),
   ],
+  css: {
+    postcss: "./postcss.config.js",
+  },
   build: {
     lib: {
       entry: resolve(__dirname, "src/form-engine/index.ts"),
@@ -23,8 +26,7 @@ export default defineConfig({
     },
     rollupOptions: {
       // Externalize peer dependencies
-      external: ["react", "react-dom", "react/jsx-runtime"],
-      output: {
+      external: ["react", "react-dom", "react/jsx-runtime"],      output: {
         globals: {
           react: "React",
           "react-dom": "ReactDOM",
@@ -34,7 +36,7 @@ export default defineConfig({
         preserveModules: false,
         // CSS will be extracted to styles.css
         assetFileNames: (assetInfo) => {
-          if (assetInfo.name === "style.css") return "styles.css";
+          if (assetInfo.name?.endsWith(".css")) return "styles.css";
           return assetInfo.name || "asset";
         },
       },
