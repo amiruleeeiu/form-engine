@@ -1,6 +1,6 @@
 {
   "name": "@amiruleeeiu/react-form-engine",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "description": "A powerful and flexible React form engine with dynamic fields, validation, and conditional logic",
   "author": "amiruleeeiu",
