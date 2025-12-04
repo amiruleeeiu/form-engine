@@ -113,7 +113,7 @@ export const dynamicSelectFormSchema: FormSchema = {
         {
           name: "product",
           label: "Product",
-          type: "autocomplete",
+          type: "select",
           placeholder: "Select product",
           cols: 6,
           // Load products dynamically
@@ -153,7 +153,7 @@ export const apiDrivenFormSchema: FormSchema = {
         {
           name: "user",
           label: "Select User",
-          type: "autocomplete",
+          type: "select",
           placeholder: "Search users...",
           cols: 12,
           dynamicOptions: {

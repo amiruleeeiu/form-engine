@@ -84,11 +84,11 @@ export const RadioField: React.FC<RadioFieldConfig> = ({
       >
         {label}
       </label>
-      <div className="space-y-2">
+      <div className="flex flex-wrap gap-4">
         {options.map((option) => (
           <label
             key={option.value}
-            className="flex items-center space-x-2.5 cursor-pointer p-1 transition-colors duration-200"
+            className="flex items-center space-x-2.5 cursor-pointer transition-colors duration-200"
           >
             <input
               type="radio"

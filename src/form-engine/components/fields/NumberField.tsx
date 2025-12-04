@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import type { NumberFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
 import {
@@ -7,7 +7,6 @@ import {
   shouldEnableField,
   shouldShowField,
 } from "../../utils/conditionalLogic.js";
-import { getValidationRules } from "../../utils/fieldValidation.js";
 
 export const NumberField: React.FC<NumberFieldConfig> = ({
   name,
@@ -18,26 +17,17 @@ export const NumberField: React.FC<NumberFieldConfig> = ({
   labelClassName,
   inputClassName,
   errorClassName,
-  min,
-  max,
-  step,
-  validation,
+  maxLength,
   showWhen,
   hideWhen,
   enableWhen,
   disableWhen,
 }) => {
   const {
-    register,
+    control,
     watch,
     formState: { errors },
   } = useFormContext();
-
-  // Get validation rules from field config
-  const validationRules = useMemo(
-    () => getValidationRules(validation),
-    [validation]
-  );
 
   const watchFields = useMemo(() => {
     const fields = new Set<string>();
@@ -85,9 +75,33 @@ export const NumberField: React.FC<NumberFieldConfig> = ({
 
   const error = errors[name];
   const colSpan = `col-span-${cols}`;
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Only allow digits (0-9)
+    const key = e.key;
+    if (
+      !/^\d$/.test(key) &&
+      key !== "Backspace" &&
+      key !== "Delete" &&
+      key !== "ArrowLeft" &&
+      key !== "ArrowRight" &&
+      key !== "Tab"
+    ) {
+      e.preventDefault();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    // Get pasted text
+    const pastedText = e.clipboardData.getData("text");
+    // Only allow if all characters are digits
+    if (!/^\d*$/.test(pastedText)) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div className={cn(colSpan, className)}>
-      {" "}
       <label
         htmlFor={name}
         className={cn(
@@ -96,23 +110,35 @@ export const NumberField: React.FC<NumberFieldConfig> = ({
         )}
       >
         {label}
-      </label>{" "}
-      <input
-        id={name}
-        type="number"
-        placeholder={placeholder}
-        disabled={!isEnabled}
-        min={min}
-        max={max}
-        step={step}
-        {...register(name, { valueAsNumber: true, ...validationRules })}
-        className={cn(
-          "w-full px-4 py-2.5 text-sm border rounded-md bg-white text-gray-900 placeholder-gray-400 transition-colors duration-200 focus:outline-none",
-          error
-            ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
-            : "border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200",
-          !isEnabled && "bg-gray-50 text-gray-500 cursor-not-allowed",
-          inputClassName
+      </label>
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => (
+          <input
+            {...field}
+            id={name}
+            type="text"
+            inputMode="numeric"
+            pattern="\d*"
+            placeholder={placeholder}
+            disabled={!isEnabled}
+            maxLength={maxLength}
+            onKeyDown={handleKeyPress}
+            onPaste={handlePaste}
+            onChange={(e) => {
+              // Filter out non-digit characters
+              const value = e.target.value.replace(/\D/g, "");
+              field.onChange(value);
+            }}
+            className={cn(
+              "w-full px-4 py-2.5 text-sm border rounded-md bg-white text-gray-900 transition-colors duration-200 focus:outline-none disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed",
+              error
+                ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+                : "border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200",
+              inputClassName
+            )}
+          />
         )}
       />
       {error && (

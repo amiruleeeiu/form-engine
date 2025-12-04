@@ -1,13 +1,14 @@
 # Form Engine
 
-A powerful, flexible, and beautiful form builder for React applications built with React Hook Form, Zod, Tailwind CSS, and React Select.
+A powerful, flexible, and beautiful form builder for React applications built with React Hook Form, Zod, and Tailwind CSS.
 
 ## Features
 
 ✨ **Reusable Field Components**
 
-- Text, Number, Date inputs
-- Select and Autocomplete (React Select)
+- Text, Number, Date inputs (with React Day Picker calendar)
+- Numeric String Field (string type but only accepts digits - for IDs, postal codes, etc.)
+- Custom Select with single/multi-select support (with search)
 - File Upload
 - Radio groups and Checkboxes
 - All with built-in validation support
@@ -54,7 +55,6 @@ src/
 │   │   │   ├── NumberField.tsx
 │   │   │   ├── DateField.tsx
 │   │   │   ├── SelectField.tsx
-│   │   │   ├── AutocompleteField.tsx
 │   │   │   ├── FileField.tsx
 │   │   │   ├── RadioField.tsx
 │   │   │   ├── CheckboxField.tsx
@@ -85,9 +85,17 @@ npm install
 ## Dependencies
 
 ```bash
-npm install react-hook-form @hookform/resolvers zod react-select
+npm install react-hook-form @hookform/resolvers zod react-day-picker lucide-react
 npm install -D tailwindcss postcss autoprefixer
 ```
+
+### Key Dependencies
+
+- **react-hook-form** - Form state management and validation
+- **zod** - Schema validation
+- **react-day-picker** - Beautiful date picker with calendar UI
+- **lucide-react** - Icon library
+- **tailwindcss** - Styling
 
 ## Usage
 
@@ -261,13 +269,68 @@ const schema: FormSchema = {
 }
 ```
 
+### Date Field with Calendar Picker
+
+```typescript
+{
+  name: 'dateOfBirth',
+  label: 'Date of Birth',
+  type: 'date',
+  placeholder: 'Select a date',
+  cols: 6,
+  min: '1900-01-01', // Minimum selectable date
+  max: '2024-12-31', // Maximum selectable date
+  validation: {
+    required: 'Date of birth is required',
+  },
+}
+```
+
+The date field uses **React Day Picker** for a beautiful calendar interface with:
+
+- Visual calendar popup for date selection
+- Min/max date restrictions
+- Disabled dates support
+- Formatted date display (e.g., "Dec 4, 2025")
+- Click-outside to close functionality
+
+### Multi-Select Field
+
+```typescript
+{
+  name: 'skills',
+  label: 'Skills',
+  type: 'select',
+  placeholder: 'Select your skills',
+  cols: 6,
+  isMulti: true, // Enable multiple selection
+  options: [
+    { label: 'JavaScript', value: 'js' },
+    { label: 'TypeScript', value: 'ts' },
+    { label: 'React', value: 'react' },
+    { label: 'Node.js', value: 'node' },
+  ],
+  validation: {
+    required: 'Please select at least one skill',
+  },
+}
+```
+
+Features:
+
+- Multiple value selection with checkboxes
+- Selected items displayed as tags with remove buttons
+- Search functionality (for 5+ options)
+- Keyboard navigation support
+- Works with both static and dynamic options
+
 ### Dynamic Select
 
 ```typescript
 {
   name: 'user',
   label: 'Select User',
-  type: 'autocomplete',
+  type: 'select',
   cols: 12,
   dynamicOptions: {
     url: 'https://api.example.com/users',
@@ -348,6 +411,16 @@ const formSchema: FormSchema = {
         max: { value: 120, message: "Invalid age" },
       },
     },
+    {
+      name: "quantity",
+      type: "number",
+      label: "Quantity",
+      validation: {
+        required: true,
+        min: 1, // Simple min validation (default message)
+        max: 9999, // Simple max validation (default message)
+      },
+    },
   ],
 };
 ```
@@ -377,6 +450,36 @@ const formSchema: FormSchema = {
 ```
 
 **See [FIELD_VALIDATION_GUIDE.md](./FIELD_VALIDATION_GUIDE.md) for detailed examples.**
+
+### NumberField Min/Max Validation
+
+The `NumberField` component supports min/max validation through the `validation` prop:
+
+```typescript
+{
+  name: "shares",
+  type: "number",
+  label: "Number of Shares",
+  validation: {
+    required: true,
+    min: { value: 1, message: "Minimum 1 share required" },
+    max: { value: 99999999, message: "Maximum 99,999,999 shares allowed" },
+  },
+}
+
+// Or use simple numbers for default messages
+{
+  name: "age",
+  type: "number",
+  label: "Age",
+  validation: {
+    min: 18, // "Minimum value is 18"
+    max: 120, // "Maximum value is 120"
+  },
+}
+```
+
+**Note:** Use `validation.min` and `validation.max` for number validation. The `min`/`max` props directly on the field config are not used for validation.
 
 ## Conditional Sections
 

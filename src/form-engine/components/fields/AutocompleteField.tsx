@@ -1,6 +1,5 @@
-import React, { useMemo } from "react";
-import { Controller, useFormContext } from "react-hook-form";
-import Select from "react-select";
+import React, { useMemo, useRef, useState } from "react";
+import { useFormContext } from "react-hook-form";
 import type { AutocompleteFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
 import {
@@ -13,10 +12,11 @@ import { useDynamicOptions } from "../../utils/dynamicOptions.js";
 export const AutocompleteField: React.FC<AutocompleteFieldConfig> = ({
   name,
   label,
-  placeholder,
+  placeholder = "Select an option",
   cols = 12,
   className,
   labelClassName,
+  inputClassName,
   errorClassName,
   options: staticOptions = [],
   dynamicOptions,
@@ -26,12 +26,24 @@ export const AutocompleteField: React.FC<AutocompleteFieldConfig> = ({
   enableWhen,
   disableWhen,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const optionsRef = useRef<HTMLDivElement>(null);
+
   const {
-    control,
+    register,
     watch,
+    setValue,
     formState: { errors },
   } = useFormContext();
+
   const { options: dynamicOpts, loading } = useDynamicOptions(dynamicOptions);
+  const currentValue = watch(name);
+
+  const { ref, ...rest } = register(name);
 
   const watchFields = useMemo(() => {
     const fields = new Set<string>();

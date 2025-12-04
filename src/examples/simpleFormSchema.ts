@@ -80,6 +80,21 @@ export const simpleFormSchema: FormSchema = {
           },
         },
         {
+          name: "postalCode",
+          label: "Postal Code (Numeric String)",
+          type: "number",
+          placeholder: "12345",
+          maxLength: 10,
+          cols: 1,
+          validation: {
+            required: "Postal code is required",
+            minLength: {
+              value: 4,
+              message: "Postal code must be at least 4 digits",
+            },
+          },
+        },
+        {
           name: "dateOfBirth",
           label: "Date of Birth",
           type: "date",
@@ -110,6 +125,29 @@ export const simpleFormSchema: FormSchema = {
           ],
           validation: {
             required: "Country is required",
+          },
+        },
+        {
+          name: "skills",
+          label: "Skills (Multiple Select)",
+          type: "select",
+          placeholder: "Select your skills",
+          cols: 6,
+          isMulti: true,
+          options: [
+            { label: "JavaScript", value: "js" },
+            { label: "TypeScript", value: "ts" },
+            { label: "React", value: "react" },
+            { label: "Vue", value: "vue" },
+            { label: "Angular", value: "angular" },
+            { label: "Node.js", value: "node" },
+            { label: "Python", value: "python" },
+            { label: "Java", value: "java" },
+            { label: "PHP", value: "php" },
+            { label: "Ruby", value: "ruby" },
+          ],
+          validation: {
+            required: "Please select at least one skill",
           },
         },
         {
@@ -246,7 +284,7 @@ export const simpleFormSchema: FormSchema = {
         {
           name: "interests",
           label: "Interests",
-          type: "autocomplete",
+          type: "select",
           placeholder: "Select your interests",
           isMulti: true,
           cols: 12,

@@ -116,7 +116,7 @@ export const stepperFormSchema: FormSchema = {
         {
           name: "skills",
           label: "Skills",
-          type: "autocomplete",
+          type: "select",
           placeholder: "Select your skills",
           isMulti: true,
           cols: 12,

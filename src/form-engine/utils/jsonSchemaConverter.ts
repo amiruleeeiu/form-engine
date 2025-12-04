@@ -90,7 +90,6 @@ function mapFieldType(type: string): FieldConfig["type"] {
     number: "number",
     file: "file",
     checkbox: "checkbox",
-    autocomplete: "autocomplete",
   };
 
   return typeMap[type] || "text";

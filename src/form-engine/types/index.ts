@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from "zod";
 
 // Condition types for conditional logic
@@ -44,10 +45,10 @@ export type FieldType =
   | "number"
   | "date"
   | "select"
-  | "autocomplete"
   | "file"
   | "radio"
-  | "checkbox";
+  | "checkbox"
+  | "phone";
 
 // Field-level validation configuration
 export interface FieldValidation {
@@ -59,6 +60,7 @@ export interface FieldValidation {
   pattern?: { value: RegExp; message?: string };
   email?: boolean | string; // true or custom error message
   custom?: (value: any) => boolean | string; // Custom validation function
+  validate?: any; // For custom validation functions
 }
 
 // Base field configuration
@@ -96,9 +98,8 @@ export interface TextareaFieldConfig extends BaseFieldConfig {
 
 export interface NumberFieldConfig extends BaseFieldConfig {
   type: "number";
-  min?: number;
-  max?: number;
-  step?: number;
+  minLength?: number;
+  maxLength?: number;
 }
 
 export interface DateFieldConfig extends BaseFieldConfig {
@@ -109,12 +110,6 @@ export interface DateFieldConfig extends BaseFieldConfig {
 
 export interface SelectFieldConfig extends BaseFieldConfig {
   type: "select";
-  options?: SelectOption[];
-  dynamicOptions?: DynamicSelectConfig;
-}
-
-export interface AutocompleteFieldConfig extends BaseFieldConfig {
-  type: "autocomplete";
   options?: SelectOption[];
   dynamicOptions?: DynamicSelectConfig;
   isMulti?: boolean;
@@ -136,16 +131,21 @@ export interface CheckboxFieldConfig extends BaseFieldConfig {
   checkboxLabel?: string;
 }
 
+export interface PhoneFieldConfig extends BaseFieldConfig {
+  type: "phone";
+  defaultCountry?: string; // ISO 3166-1 alpha-2 country code (e.g., "BD", "US", "GB")
+}
+
 export type FieldConfig =
   | TextFieldConfig
   | TextareaFieldConfig
   | NumberFieldConfig
   | DateFieldConfig
   | SelectFieldConfig
-  | AutocompleteFieldConfig
   | FileFieldConfig
   | RadioFieldConfig
-  | CheckboxFieldConfig;
+  | CheckboxFieldConfig
+  | PhoneFieldConfig;
 
 // Section and Step types
 export interface FormSection {

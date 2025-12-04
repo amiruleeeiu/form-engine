@@ -79,6 +79,7 @@ export default App;
 ### CSS Import is Mandatory
 
 The library comes with **pre-compiled Tailwind CSS** that includes all necessary styles for:
+
 - Form fields
 - Custom select dropdowns
 - Buttons
@@ -90,6 +91,7 @@ If you forget to import the CSS, your form will not display correctly.
 ### No Tailwind Configuration Required
 
 You **DO NOT** need to:
+
 - Install Tailwind CSS in your project
 - Configure `tailwind.config.js`
 - Setup PostCSS
@@ -101,6 +103,7 @@ Everything is already compiled and bundled in the `styles.css` file!
 If your project already uses Tailwind CSS, there might be some style conflicts. You can:
 
 1. **Option 1:** Load the form engine styles first:
+
 ```tsx
 import "@amiruleeeiu/react-form-engine/styles.css";
 import "./your-app-styles.css";
@@ -115,6 +118,7 @@ import "./your-app-styles.css";
 **Problem:** Fields are not styled, layout is broken
 
 **Solution:** Make sure you imported the CSS file:
+
 ```tsx
 import "@amiruleeeiu/react-form-engine/styles.css";
 ```
@@ -130,6 +134,7 @@ import "@amiruleeeiu/react-form-engine/styles.css";
 **Problem:** Type errors when using FormSchema
 
 **Solution:** Import types from the package:
+
 ```tsx
 import type { FormSchema, FieldConfig } from "@amiruleeeiu/react-form-engine";
 ```

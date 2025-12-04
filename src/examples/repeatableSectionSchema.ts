@@ -258,7 +258,7 @@ export const repeatableSectionSchema: FormSchema = {
         {
           name: "technologies",
           label: "Technologies Used",
-          type: "autocomplete",
+          type: "select",
           placeholder: "Select technologies",
           isMulti: true,
           cols: 2,

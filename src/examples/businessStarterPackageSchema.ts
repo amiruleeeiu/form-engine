@@ -144,6 +144,7 @@ export const businessStarterPackageSchema: FormSchema = {
               validation: {
                 required: true,
               },
+              isMulti: true,
               options: [
                 { label: "Dhaka", value: "dhaka" },
                 { label: "Chittagong", value: "chittagong" },
@@ -197,14 +198,15 @@ export const businessStarterPackageSchema: FormSchema = {
             {
               name: "post_code",
               label: "Post Code",
-              type: "text",
+              type: "number",
               placeholder: "Enter",
               cols: 1,
               defaultValue: "1212",
+              maxLength: 4,
               validation: {
                 required: true,
-                pattern: {
-                  value: /^[0-9]{4}$/,
+                minLength: {
+                  value: 4,
                   message: "Post code must be 4 digits",
                 },
               },
@@ -362,8 +364,6 @@ export const businessStarterPackageSchema: FormSchema = {
           placeholder: "0",
           cols: 1,
           defaultValue: 10000,
-          min: 1,
-          max: 99999999,
           validation: {
             required: true,
             min: 1,
@@ -377,8 +377,6 @@ export const businessStarterPackageSchema: FormSchema = {
           placeholder: "0",
           cols: 1,
           defaultValue: 100,
-          min: 1,
-          max: 99999999,
           validation: {
             required: true,
             min: 1,
@@ -392,8 +390,6 @@ export const businessStarterPackageSchema: FormSchema = {
           placeholder: "0",
           cols: 1,
           defaultValue: 3,
-          min: 1,
-          max: 100,
           validation: {
             required: true,
             min: 1,
@@ -407,8 +403,6 @@ export const businessStarterPackageSchema: FormSchema = {
           placeholder: "0",
           cols: 1,
           defaultValue: 12,
-          min: 1,
-          max: 100,
           validation: {
             required: true,
             min: 1,
@@ -422,8 +416,6 @@ export const businessStarterPackageSchema: FormSchema = {
           placeholder: "0",
           cols: 1,
           defaultValue: 2,
-          min: 1,
-          max: 100,
           validation: {
             required: true,
             min: 1,
@@ -437,8 +429,6 @@ export const businessStarterPackageSchema: FormSchema = {
           placeholder: "0",
           cols: 1,
           defaultValue: 2,
-          min: 1,
-          max: 100,
           validation: {
             required: true,
             min: 1,
@@ -452,8 +442,6 @@ export const businessStarterPackageSchema: FormSchema = {
           placeholder: "0",
           cols: 1,
           defaultValue: 3,
-          min: 1,
-          max: 50,
           validation: {
             required: true,
             min: 1,
@@ -467,8 +455,6 @@ export const businessStarterPackageSchema: FormSchema = {
           placeholder: "0",
           cols: 1,
           defaultValue: 5,
-          min: 1,
-          max: 50,
           validation: {
             required: true,
             min: 1,
@@ -531,8 +517,6 @@ export const businessStarterPackageSchema: FormSchema = {
               placeholder: "0",
               cols: 1,
               defaultValue: 100,
-              min: 1,
-              max: 99999999,
               validation: {
                 required: true,
                 min: 1,
@@ -560,14 +544,17 @@ export const businessStarterPackageSchema: FormSchema = {
             {
               name: "director_nid_passport",
               label: "NID/Passport Number",
-              type: "text",
+              type: "number",
               placeholder: "Enter NID or Passport number",
               cols: 1,
               defaultValue: "1234567890",
+              maxLength: 20,
               validation: {
                 required: true,
-                minLength: 8,
-                maxLength: 20,
+                minLength: {
+                  value: 8,
+                  message: "NID/Passport must be at least 8 digits",
+                },
               },
             },
             {
@@ -585,14 +572,15 @@ export const businessStarterPackageSchema: FormSchema = {
             {
               name: "director_tin",
               label: "TIN",
-              type: "text",
+              type: "number",
               placeholder: "Enter",
               cols: 1,
               defaultValue: "123456789012",
+              maxLength: 12,
               validation: {
                 required: true,
-                pattern: {
-                  value: /^[0-9]{12}$/,
+                minLength: {
+                  value: 12,
                   message: "TIN must be 12 digits",
                 },
               },
@@ -789,30 +777,28 @@ export const businessStarterPackageSchema: FormSchema = {
             {
               name: "witness1_phone",
               label: "Phone",
-              type: "text",
-              placeholder: "1X XXX XXXXX",
+              type: "phone",
+              placeholder: "Enter phone number",
               cols: 1,
-              defaultValue: "1712345678",
+              defaultValue: "+8801712345678",
+              defaultCountry: "bd",
               validation: {
                 required: true,
-                pattern: {
-                  value: /^[0-9]{10,11}$/,
-                  message: "Phone must be 10-11 digits",
-                },
               },
             },
             {
               name: "witness1_nid",
               label: "NID",
-              type: "text",
+              type: "number",
               placeholder: "XXXXXXXXXXX",
               cols: 1,
               defaultValue: "9876543210",
+              maxLength: 17,
               validation: {
                 required: true,
-                pattern: {
-                  value: /^[0-9]{10,17}$/,
-                  message: "NID must be 10-17 digits",
+                minLength: {
+                  value: 10,
+                  message: "NID must be at least 10 digits",
                 },
               },
             },
@@ -850,30 +836,28 @@ export const businessStarterPackageSchema: FormSchema = {
             {
               name: "witness2_phone",
               label: "Phone",
-              type: "text",
-              placeholder: "1X XXX XXXXX",
+              type: "phone",
+              placeholder: "Enter phone number",
               cols: 1,
-              defaultValue: "1798765432",
+              defaultValue: "+8801798765432",
+              defaultCountry: "bd",
               validation: {
                 required: true,
-                pattern: {
-                  value: /^[0-9]{10,11}$/,
-                  message: "Phone must be 10-11 digits",
-                },
               },
             },
             {
               name: "witness2_nid",
               label: "NID",
-              type: "text",
+              type: "number",
               placeholder: "XXXXXXXXXXX",
               cols: 1,
               defaultValue: "1234509876",
+              maxLength: 17,
               validation: {
                 required: true,
-                pattern: {
-                  value: /^[0-9]{10,17}$/,
-                  message: "NID must be 10-17 digits",
+                minLength: {
+                  value: 10,
+                  message: "NID must be at least 10 digits",
                 },
               },
             },
@@ -1047,8 +1031,6 @@ export const businessStarterPackageSchema: FormSchema = {
           placeholder: "0",
           cols: 1,
           defaultValue: 1212,
-          min: 1000,
-          max: 9999,
           validation: {
             required: true,
             min: 1000,
