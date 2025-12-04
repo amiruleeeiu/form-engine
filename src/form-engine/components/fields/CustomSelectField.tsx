@@ -1,4 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { flushSync } from "react-dom";
 import { useFormContext } from "react-hook-form";
 import type { SelectFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
@@ -29,9 +36,13 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const [dropdownPosition, setDropdownPosition] = useState<"bottom" | "top">(
+    "bottom"
+  );
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const optionsRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const {
     register,
@@ -129,6 +140,25 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = ({
     }
   }, [isOpen]);
 
+  // Calculate dropdown position based on available space
+  useLayoutEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const buttonRect = buttonRef.current.getBoundingClientRect();
+      const dropdownHeight = 300; // Approximate max height of dropdown
+      const spaceBelow = window.innerHeight - buttonRect.bottom;
+      const spaceAbove = buttonRect.top;
+
+      // Show dropdown above if not enough space below and more space above
+      const newPosition =
+        spaceBelow < dropdownHeight && spaceAbove > spaceBelow
+          ? "top"
+          : "bottom";
+      flushSync(() => {
+        setDropdownPosition(newPosition);
+      });
+    }
+  }, [isOpen]);
+
   useEffect(() => {
     if (isOpen && optionsRef.current && highlightedIndex >= 0) {
       const highlightedElement = optionsRef.current.children[
@@ -166,6 +196,11 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = ({
     const currentValues = Array.isArray(currentValue) ? currentValue : [];
     const newValues = currentValues.filter((v) => v !== valueToRemove);
     setValue(name, newValues, { shouldValidate: true });
+  };
+
+  const handleClearSelection = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setValue(name, isMulti ? [] : null, { shouldValidate: true });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -223,6 +258,7 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = ({
 
       <div className="relative">
         <button
+          ref={buttonRef}
           type="button"
           onClick={() => isEnabled && !loading && setIsOpen(!isOpen)}
           onKeyDown={handleKeyDown}
@@ -306,27 +342,59 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = ({
             )}
           </span>
 
-          <svg
-            className={cn(
-              "w-4 h-4 text-gray-400 transition-transform shrink-0",
-              isOpen && "transform rotate-180"
+          <div className="flex items-center gap-1 shrink-0">
+            {!isMulti && selectedOption && isEnabled && !loading ? (
+              /* Clear Icon - show when value is selected */
+              <button
+                type="button"
+                onClick={handleClearSelection}
+                className="flex items-center justify-center rounded hover:bg-gray-100 transition-colors focus:outline-none"
+                title="Clear selection"
+              >
+                <svg
+                  className="w-4 h-4 text-gray-400 hover:text-gray-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            ) : (
+              /* Dropdown Arrow - show when no value is selected */
+              <svg
+                className={cn(
+                  "w-4 h-4 text-gray-400 transition-transform",
+                  isOpen && "transform rotate-180"
+                )}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
             )}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
+          </div>
         </button>
 
         {/* Dropdown Menu */}
         {isOpen && (
-          <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
+          <div
+            className={cn(
+              "absolute z-50 w-full bg-white border border-gray-300 rounded-md shadow-lg",
+              dropdownPosition === "top" ? "bottom-full mb-1" : "top-full mt-1"
+            )}
+          >
             {/* Search Input */}
             {options.length > 5 && (
               <div className="p-2 border-b border-gray-200">
