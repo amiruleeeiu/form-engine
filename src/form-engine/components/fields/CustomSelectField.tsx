@@ -56,7 +56,7 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = ({
 
   const { options: dynamicOpts, loading } = useDynamicOptions(dynamicOptions);
   const currentValue = watch(name);
-  
+
   const validationRules = getValidationRules(validation);
   const { ref, ...rest } = register(name, validationRules);
 

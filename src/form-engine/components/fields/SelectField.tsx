@@ -84,7 +84,7 @@ export const SelectField: React.FC<SelectFieldConfig> = ({
   const error = errors[name];
   const colSpan = `col-span-${cols}`;
   const validationRules = getValidationRules(validation);
-  
+
   return (
     <div className={cn(colSpan, className)}>
       <label

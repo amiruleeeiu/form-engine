@@ -84,7 +84,7 @@ export const FormSection: React.FC<FormSectionProps> = ({
       )}
       <div
         className={cn(
-          "grid grid-cols-1 md:grid-cols-2 gap-6",
+          "grid grid-cols-1 md:grid-cols-2 gap-3",
           section.fieldsClassName
         )}
       >
