@@ -123,8 +123,6 @@ export const conditionalLogicFormSchema: FormSchema = {
           label: "Age",
           type: "number",
           placeholder: "25",
-          min: 0,
-          max: 120,
           cols: 12,
         },
         {

@@ -8,6 +8,7 @@ import {
   shouldShowField,
 } from "../../utils/conditionalLogic.js";
 import { useDynamicOptions } from "../../utils/dynamicOptions.js";
+import { getValidationRules } from "../../utils/fieldValidation.js";
 
 export const SelectField: React.FC<SelectFieldConfig> = ({
   name,
@@ -20,14 +21,17 @@ export const SelectField: React.FC<SelectFieldConfig> = ({
   errorClassName,
   options: staticOptions = [],
   dynamicOptions,
+  validation,
   showWhen,
   hideWhen,
   enableWhen,
   disableWhen,
+  clearFields,
 }) => {
   const {
     register,
     watch,
+    setValue,
     formState: { errors },
   } = useFormContext();
   const { options: dynamicOpts, loading } = useDynamicOptions(dynamicOptions);
@@ -79,6 +83,8 @@ export const SelectField: React.FC<SelectFieldConfig> = ({
   const options = dynamicOptions ? dynamicOpts : staticOptions;
   const error = errors[name];
   const colSpan = `col-span-${cols}`;
+  const validationRules = getValidationRules(validation);
+  
   return (
     <div className={cn(colSpan, className)}>
       <label
@@ -93,7 +99,31 @@ export const SelectField: React.FC<SelectFieldConfig> = ({
       <select
         id={name}
         disabled={!isEnabled || loading}
-        {...register(name)}
+        {...register(name, {
+          ...validationRules,
+          onChange: (e) => {
+            const newValue = e.target.value;
+            if (clearFields && clearFields.length > 0) {
+              if (
+                !newValue ||
+                newValue === "" ||
+                newValue === null ||
+                newValue === undefined
+              ) {
+                console.log(
+                  `Clearing dependent fields for ${name}:`,
+                  clearFields
+                );
+                clearFields.forEach((fieldName) => {
+                  setValue(fieldName, "", {
+                    shouldValidate: false,
+                    shouldDirty: true,
+                  });
+                });
+              }
+            }
+          },
+        })}
         className={cn(
           "w-full px-4 py-2.5 text-sm border rounded-md bg-white text-gray-900 transition-colors duration-200 focus:outline-none disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed",
           error

@@ -15,6 +15,7 @@ import {
   shouldShowField,
 } from "../../utils/conditionalLogic.js";
 import { useDynamicOptions } from "../../utils/dynamicOptions.js";
+import { getValidationRules } from "../../utils/fieldValidation.js";
 
 export const CustomSelectField: React.FC<SelectFieldConfig> = ({
   name,
@@ -27,11 +28,13 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = ({
   errorClassName,
   options: staticOptions = [],
   dynamicOptions,
+  validation,
   isMulti = false,
   showWhen,
   hideWhen,
   enableWhen,
   disableWhen,
+  clearFields,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -53,8 +56,9 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = ({
 
   const { options: dynamicOpts, loading } = useDynamicOptions(dynamicOptions);
   const currentValue = watch(name);
-
-  const { ref, ...rest } = register(name);
+  
+  const validationRules = getValidationRules(validation);
+  const { ref, ...rest } = register(name, validationRules);
 
   const watchFields = useMemo(() => {
     const fields = new Set<string>();
@@ -185,6 +189,19 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = ({
       setIsOpen(false);
       setSearchQuery("");
       setHighlightedIndex(0);
+
+      // Clear dependent fields when value changes
+      if (clearFields && clearFields.length > 0) {
+        if (!value || value === "" || value === null || value === undefined) {
+          console.log(`Clearing dependent fields for ${name}:`, clearFields);
+          clearFields.forEach((fieldName) => {
+            setValue(fieldName, "", {
+              shouldValidate: false,
+              shouldDirty: true,
+            });
+          });
+        }
+      }
     }
   };
 
@@ -201,6 +218,14 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = ({
   const handleClearSelection = (e: React.MouseEvent) => {
     e.stopPropagation();
     setValue(name, isMulti ? [] : null, { shouldValidate: true });
+
+    // Clear dependent fields when this field is cleared
+    if (clearFields && clearFields.length > 0) {
+      console.log(`Clearing dependent fields for ${name}:`, clearFields);
+      clearFields.forEach((fieldName) => {
+        setValue(fieldName, "", { shouldValidate: false, shouldDirty: true });
+      });
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

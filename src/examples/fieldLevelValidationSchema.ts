@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from "zod";
 import type { FormSchema } from "../form-engine/types/index.js";
 
@@ -119,6 +120,74 @@ export const fieldLevelValidationSchema: FormSchema = {
               value: /^https?:\/\/.+/,
               message: "Website must start with http:// or https://",
             },
+          },
+        },
+      ],
+    },
+    {
+      title: "Location Selection",
+      description: "Select your division, district, and sub-district",
+      fields: [
+        {
+          name: "division",
+          label: "Division",
+          type: "select",
+          placeholder: "Select division",
+          cols: 4,
+          validation: {
+            required: "বিভাগ নির্বাচন আবশ্যক",
+          },
+          dynamicOptions: {
+            url: "http://localhost:3000/division",
+            transform: (data: any[]) =>
+              data.map((item: any) => ({
+                label: item.fullName,
+                value: item.id,
+              })),
+          },
+        },
+        {
+          name: "district",
+          label: "District",
+          type: "select",
+          placeholder: "Select district",
+          cols: 4,
+          validation: {
+            required: "জেলা নির্বাচন আবশ্যক",
+          },
+          dynamicOptions: {
+            url: "http://localhost:3000/district",
+            transform: (data: any[]) =>
+              data.map((item: any) => ({
+                label: item.fullName,
+                value: item.id,
+              })),
+          },
+          showWhen: {
+            field: "division",
+            isNotEmpty: true,
+          },
+        },
+        {
+          name: "subDistrict",
+          label: "Sub-District",
+          type: "select",
+          placeholder: "Select sub-district",
+          cols: 4,
+          validation: {
+            required: "উপজেলা নির্বাচন আবশ্যক",
+          },
+          dynamicOptions: {
+            url: "http://localhost:3000/sub-district",
+            transform: (data: any[]) =>
+              data.map((item: any) => ({
+                label: item.fullName,
+                value: item.id,
+              })),
+          },
+          showWhen: {
+            field: "district",
+            isNotEmpty: true,
           },
         },
       ],

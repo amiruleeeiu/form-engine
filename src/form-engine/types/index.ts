@@ -84,6 +84,9 @@ export interface BaseFieldConfig {
   hideWhen?: Condition;
   enableWhen?: Condition;
   disableWhen?: Condition;
+
+  // Clear dependent fields when this field is cleared/changed
+  clearFields?: string[];
 }
 
 // Specific field configurations

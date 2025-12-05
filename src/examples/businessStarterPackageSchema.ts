@@ -19,6 +19,7 @@ export const businessStarterPackageSchema: FormSchema = {
     {
       title: "General & Office",
       description: "Company general information and office address",
+      className: "bg-white",
       sections: [
         {
           title: "General Information",
@@ -144,7 +145,7 @@ export const businessStarterPackageSchema: FormSchema = {
               validation: {
                 required: true,
               },
-              isMulti: true,
+              clearFields: ["district", "police_station"],
               options: [
                 { label: "Dhaka", value: "dhaka" },
                 { label: "Chittagong", value: "chittagong" },
@@ -166,6 +167,11 @@ export const businessStarterPackageSchema: FormSchema = {
               validation: {
                 required: true,
               },
+              clearFields: ["police_station"],
+              enableWhen: {
+                field: "division",
+                isNotEmpty: true,
+              },
               options: [
                 { label: "Dhaka", value: "dhaka" },
                 { label: "Chittagong", value: "chittagong" },
@@ -186,6 +192,10 @@ export const businessStarterPackageSchema: FormSchema = {
               defaultValue: "gulshan",
               validation: {
                 required: true,
+              },
+              enableWhen: {
+                field: "district",
+                isNotEmpty: true,
               },
               options: [
                 { label: "Dhaka Metropolitan", value: "dhaka_metro" },

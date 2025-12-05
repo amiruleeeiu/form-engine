@@ -1,35 +1,34 @@
-import { z } from "zod";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { FormSchema } from "../form-engine/types/index.js";
 
 // Example 1: Simple form with direct fields only (no sections)
 export const simpleFieldsOnlySchema: FormSchema = {
-  validationSchema: z.object({
-    name: z.string().min(2),
-    email: z.string().email(),
-  }),
   fields: [
     {
       name: "name",
       label: "Name",
       type: "text",
       cols: 6,
+      validation: {
+        required: true,
+        minLength: { value: 2, message: "Name must be at least 2 characters" },
+      },
     },
     {
       name: "email",
       label: "Email",
       type: "text",
       cols: 6,
+      validation: {
+        required: true,
+        email: "Please enter a valid email address",
+      },
     },
   ],
 };
 
 // Example 2: Simple form with sections only (no direct fields)
 export const simpleSectionsOnlySchema: FormSchema = {
-  validationSchema: z.object({
-    firstName: z.string().min(2),
-    lastName: z.string().min(2),
-    email: z.string().email(),
-  }),
   sections: [
     {
       title: "Personal Information",
@@ -39,12 +38,26 @@ export const simpleSectionsOnlySchema: FormSchema = {
           label: "First Name",
           type: "text",
           cols: 6,
+          validation: {
+            required: true,
+            minLength: {
+              value: 2,
+              message: "First name must be at least 2 characters",
+            },
+          },
         },
         {
           name: "lastName",
           label: "Last Name",
           type: "text",
           cols: 6,
+          validation: {
+            required: true,
+            minLength: {
+              value: 2,
+              message: "Last name must be at least 2 characters",
+            },
+          },
         },
       ],
     },
@@ -56,6 +69,104 @@ export const simpleSectionsOnlySchema: FormSchema = {
           label: "Email",
           type: "text",
           cols: 12,
+          validation: {
+            required: "Email is required",
+            email: true,
+          },
+        },
+        {
+          name: "age",
+          label: "Age",
+          type: "number",
+          placeholder: "25",
+          cols: 6,
+          validation: {
+            required: true,
+            min: { value: 18, message: "Age must be at least 18" },
+            max: { value: 120, message: "Age must be less than 120" },
+          },
+        },
+        {
+          name: "phone",
+          label: "Phone Number",
+          type: "text",
+          placeholder: "01XXXXXXXXX",
+          cols: 6,
+          validation: {
+            required: true,
+            pattern: {
+              value: /^01[0-9]{9}$/,
+              message: "Phone number must start with 01 and be 11 digits",
+            },
+          },
+        },
+      ],
+    },
+    {
+      title: "Location Selection",
+      description: "Select your division, district, and sub-district",
+      fields: [
+        {
+          name: "division",
+          label: "Division",
+          type: "select",
+          placeholder: "Select division",
+          cols: 4,
+          validation: {
+            required: "Division is required",
+          },
+          dynamicOptions: {
+            url: "http://localhost:3000/division",
+            transform: (data: any[]) =>
+              data.map((item: any) => ({
+                label: item.fullName,
+                value: item.id,
+              })),
+          },
+        },
+        {
+          name: "district",
+          label: "District",
+          type: "select",
+          placeholder: "Select district",
+          cols: 4,
+          validation: {
+            required: "District is required",
+          },
+          dynamicOptions: {
+            url: "http://localhost:3000/district",
+            transform: (data: any[]) =>
+              data.map((item: any) => ({
+                label: item.fullName,
+                value: item.id,
+              })),
+          },
+          showWhen: {
+            field: "division",
+            isNotEmpty: true,
+          },
+        },
+        {
+          name: "subDistrict",
+          label: "Sub-District",
+          type: "select",
+          placeholder: "Select sub-district",
+          cols: 4,
+          validation: {
+            required: "Sub-District is required",
+          },
+          dynamicOptions: {
+            url: "http://localhost:3000/sub-district",
+            transform: (data: any[]) =>
+              data.map((item: any) => ({
+                label: item.fullName,
+                value: item.id,
+              })),
+          },
+          showWhen: {
+            field: "district",
+            isNotEmpty: true,
+          },
         },
       ],
     },
@@ -64,12 +175,6 @@ export const simpleSectionsOnlySchema: FormSchema = {
 
 // Example 3: Stepper with sections inside steps
 export const stepperWithSectionsSchema: FormSchema = {
-  validationSchema: z.object({
-    firstName: z.string().min(2),
-    lastName: z.string().min(2),
-    address: z.string().min(5),
-    city: z.string().min(2),
-  }),
   steps: [
     {
       title: "Step 1",
@@ -83,12 +188,26 @@ export const stepperWithSectionsSchema: FormSchema = {
               label: "First Name",
               type: "text",
               cols: 6,
+              validation: {
+                required: true,
+                minLength: {
+                  value: 2,
+                  message: "First name must be at least 2 characters",
+                },
+              },
             },
             {
               name: "lastName",
               label: "Last Name",
               type: "text",
               cols: 6,
+              validation: {
+                required: true,
+                minLength: {
+                  value: 2,
+                  message: "Last name must be at least 2 characters",
+                },
+              },
             },
           ],
         },
@@ -106,12 +225,26 @@ export const stepperWithSectionsSchema: FormSchema = {
               label: "Address",
               type: "text",
               cols: 12,
+              validation: {
+                required: true,
+                minLength: {
+                  value: 5,
+                  message: "Address must be at least 5 characters",
+                },
+              },
             },
             {
               name: "city",
               label: "City",
               type: "text",
               cols: 12,
+              validation: {
+                required: true,
+                minLength: {
+                  value: 2,
+                  message: "City name must be at least 2 characters",
+                },
+              },
             },
           ],
         },
@@ -122,11 +255,6 @@ export const stepperWithSectionsSchema: FormSchema = {
 
 // Example 4: Stepper with direct fields (no sections inside)
 export const stepperWithFieldsSchema: FormSchema = {
-  validationSchema: z.object({
-    firstName: z.string().min(2),
-    lastName: z.string().min(2),
-    email: z.string().email(),
-  }),
   steps: [
     {
       title: "Step 1",
@@ -137,12 +265,26 @@ export const stepperWithFieldsSchema: FormSchema = {
           label: "First Name",
           type: "text",
           cols: 6,
+          validation: {
+            required: true,
+            minLength: {
+              value: 2,
+              message: "First name must be at least 2 characters",
+            },
+          },
         },
         {
           name: "lastName",
           label: "Last Name",
           type: "text",
           cols: 6,
+          validation: {
+            required: true,
+            minLength: {
+              value: 2,
+              message: "Last name must be at least 2 characters",
+            },
+          },
         },
       ],
     },
@@ -155,6 +297,10 @@ export const stepperWithFieldsSchema: FormSchema = {
           label: "Email",
           type: "text",
           cols: 12,
+          validation: {
+            required: "Email is required",
+            email: true,
+          },
         },
       ],
     },
@@ -163,11 +309,6 @@ export const stepperWithFieldsSchema: FormSchema = {
 
 // Example 5: Mixed - Stepper with both sections and direct fields
 export const mixedStepperSchema: FormSchema = {
-  validationSchema: z.object({
-    firstName: z.string().min(2),
-    email: z.string().email(),
-    address: z.string().min(5),
-  }),
   steps: [
     {
       title: "Step 1",
@@ -179,6 +320,13 @@ export const mixedStepperSchema: FormSchema = {
           label: "First Name",
           type: "text",
           cols: 12,
+          validation: {
+            required: true,
+            minLength: {
+              value: 2,
+              message: "First name must be at least 2 characters",
+            },
+          },
         },
       ],
     },
@@ -195,6 +343,10 @@ export const mixedStepperSchema: FormSchema = {
               label: "Email",
               type: "text",
               cols: 12,
+              validation: {
+                required: "Email is required",
+                email: true,
+              },
             },
           ],
         },
@@ -206,6 +358,81 @@ export const mixedStepperSchema: FormSchema = {
               label: "Address",
               type: "text",
               cols: 12,
+              validation: {
+                required: true,
+                minLength: {
+                  value: 5,
+                  message: "Address must be at least 5 characters",
+                },
+              },
+            },
+          ],
+        },
+        {
+          title: "Location Selection",
+          description: "Select your division, district, and sub-district",
+          fields: [
+            {
+              name: "division",
+              label: "Division",
+              type: "select",
+              placeholder: "Select division",
+              cols: 4,
+              validation: {
+                required: "Division is required",
+              },
+              dynamicOptions: {
+                url: "http://localhost:3000/division",
+                transform: (data: any[]) =>
+                  data.map((item: any) => ({
+                    label: item.fullName,
+                    value: item.id,
+                  })),
+              },
+            },
+            {
+              name: "district",
+              label: "District",
+              type: "select",
+              placeholder: "Select district",
+              cols: 4,
+              validation: {
+                required: "District is required",
+              },
+              dynamicOptions: {
+                url: "http://localhost:3000/district",
+                transform: (data: any[]) =>
+                  data.map((item: any) => ({
+                    label: item.fullName,
+                    value: item.id,
+                  })),
+              },
+              showWhen: {
+                field: "division",
+                isNotEmpty: true,
+              },
+            },
+            {
+              name: "subDistrict",
+              label: "Sub-District",
+              type: "select",
+              placeholder: "Select sub-district",
+              cols: 4,
+              validation: {
+                required: "Sub-District is required",
+              },
+              dynamicOptions: {
+                url: "http://localhost:3000/sub-district",
+                transform: (data: any[]) =>
+                  data.map((item: any) => ({
+                    label: item.fullName,
+                    value: item.id,
+                  })),
+              },
+              showWhen: {
+                field: "district",
+                isNotEmpty: true,
+              },
             },
           ],
         },
