@@ -92,7 +92,7 @@ export const FileField: React.FC<FileFieldConfig> = ({
         name={name}
         control={control}
         rules={getValidationRules(validation)}
-        render={({ field: { onChange, ...field } }) => (
+        render={({ field: { value, onChange, ...field } }) => (
           <input
             {...field}
             id={name}
