@@ -10,10 +10,19 @@ export function extractDefaultValues(
   const defaults: Record<string, unknown> = {};
 
   // Helper function to process fields
-  const processFields = (fields: FieldConfig[]) => {
+  const processFields = (fields: FieldConfig[], fieldGroup?: string) => {
     fields.forEach((field) => {
       if (field.defaultValue !== undefined) {
-        defaults[field.name] = field.defaultValue;
+        if (fieldGroup) {
+          // Create nested object for grouped fields
+          if (!defaults[fieldGroup]) {
+            defaults[fieldGroup] = {};
+          }
+          (defaults[fieldGroup] as Record<string, any>)[field.name] =
+            field.defaultValue;
+        } else {
+          defaults[field.name] = field.defaultValue;
+        }
       }
     });
   };
@@ -22,11 +31,19 @@ export function extractDefaultValues(
   if (schema.fields) {
     processFields(schema.fields);
   } // Helper function to create default item for repeatable section
-  const createDefaultItem = (fields: FieldConfig[]) => {
+  const createDefaultItem = (fields: FieldConfig[], fieldGroup?: string) => {
     const item: Record<string, any> = {};
     fields.forEach((field) => {
       if (field.defaultValue !== undefined) {
-        item[field.name] = field.defaultValue;
+        if (fieldGroup) {
+          // Create nested object for grouped fields in repeatable items
+          if (!item[fieldGroup]) {
+            item[fieldGroup] = {};
+          }
+          item[fieldGroup][field.name] = field.defaultValue;
+        } else {
+          item[field.name] = field.defaultValue;
+        }
       }
     });
     return item;
@@ -48,7 +65,10 @@ export function extractDefaultValues(
         // Create array with initialCount number of default items
         const items = [];
         for (let i = 0; i < initialCount; i++) {
-          const defaultItem = createDefaultItem(section.fields);
+          const defaultItem = createDefaultItem(
+            section.fields,
+            section.fieldGroup
+          );
           // Merge with repeatableConfig.defaultItem if provided
           items.push({
             ...defaultItem,
@@ -57,7 +77,7 @@ export function extractDefaultValues(
         }
         defaults[sectionName] = items;
       } else {
-        processFields(section.fields);
+        processFields(section.fields, section.fieldGroup);
       }
     });
   }
@@ -85,7 +105,10 @@ export function extractDefaultValues(
             // Create array with initialCount number of default items
             const items = [];
             for (let i = 0; i < initialCount; i++) {
-              const defaultItem = createDefaultItem(section.fields);
+              const defaultItem = createDefaultItem(
+                section.fields,
+                section.fieldGroup
+              );
               // Merge with repeatableConfig.defaultItem if provided
               items.push({
                 ...defaultItem,
@@ -94,7 +117,7 @@ export function extractDefaultValues(
             }
             defaults[sectionName] = items;
           } else {
-            processFields(section.fields);
+            processFields(section.fields, section.fieldGroup);
           }
         });
       }

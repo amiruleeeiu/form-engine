@@ -1,5 +1,20 @@
 import Editor from "@monaco-editor/react";
 import { useState } from "react";
+import { businessRegistrationSchema } from "../examples/businessRegistrationSchema.js";
+import { businessStarterPackageSchema } from "../examples/businessStarterPackageSchema.js";
+import { conditionalLogicFormSchema } from "../examples/conditionalLogicSchema.js";
+import { apiDrivenFormSchema } from "../examples/dynamicSelectSchema.js";
+import { fieldLevelValidationSchema } from "../examples/fieldLevelValidationSchema.js";
+import {
+  mixedStepperSchema,
+  simpleFieldsOnlySchema,
+  simpleSectionsOnlySchema,
+  stepperWithFieldsSchema,
+  stepperWithSectionsSchema,
+} from "../examples/flexibleFormSchema.js";
+import { repeatableSectionSchema } from "../examples/repeatableSectionSchema.js";
+import { simpleFormSchema } from "../examples/simpleFormSchema.js";
+import { stepperFormSchema } from "../examples/stepperFormSchema.js";
 import { FormEngine } from "../form-engine/index.js";
 import type { FormSchema } from "../form-engine/types/index.js";
 import {
@@ -52,26 +67,75 @@ const defaultJSON = `{
   ]
 }`;
 
+// Available example schemas
+const exampleSchemas = {
+  simple: { name: "Simple Form", schema: simpleFormSchema },
+  stepper: { name: "Multi-Step Form", schema: stepperFormSchema },
+  conditional: {
+    name: "Conditional Logic",
+    schema: conditionalLogicFormSchema,
+  },
+  dynamic: { name: "Dynamic API Select", schema: apiDrivenFormSchema },
+  fieldValidation: {
+    name: "Field-Level Validation",
+    schema: fieldLevelValidationSchema,
+  },
+  repeatable: { name: "Repeatable Sections", schema: repeatableSectionSchema },
+  businessRegistration: {
+    name: "Business Registration (6 Steps)",
+    schema: businessRegistrationSchema,
+  },
+  businessStarterPackage: {
+    name: "Business Starter Package",
+    schema: businessStarterPackageSchema,
+  },
+  fieldsOnly: { name: "Fields Only Structure", schema: simpleFieldsOnlySchema },
+  sectionsOnly: {
+    name: "Sections Only Structure",
+    schema: simpleSectionsOnlySchema,
+  },
+  stepperFields: { name: "Stepper + Fields", schema: stepperWithFieldsSchema },
+  stepperSections: {
+    name: "Stepper + Sections",
+    schema: stepperWithSectionsSchema,
+  },
+  mixed: { name: "Mixed Structure", schema: mixedStepperSchema },
+} as const;
+
+type ExampleSchemaKey = keyof typeof exampleSchemas;
+
 export function JSONSchemaEditor() {
   const [jsonInput, setJsonInput] = useState(defaultJSON);
   const [formSchema, setFormSchema] = useState<FormSchema | null>(null);
   const [error, setError] = useState<string>("");
   const [showPreview, setShowPreview] = useState(false);
+  const [selectedExample, setSelectedExample] = useState<ExampleSchemaKey | "">(
+    ""
+  );
 
   const handlePreview = () => {
     setError("");
 
-    // Validate JSON
-    const validation = validateJSONSchema(jsonInput);
-    if (!validation.valid) {
-      setError(validation.error || "Invalid JSON");
-      setShowPreview(false);
-      return;
-    }
-
-    // Convert to FormSchema
     try {
       const parsed = JSON.parse(jsonInput);
+
+      // Check if it's already a FormSchema (has sections, steps, or fields at root)
+      if (parsed.sections || parsed.steps || parsed.fields) {
+        // It's already a FormSchema, use it directly
+        setFormSchema(parsed as FormSchema);
+        setShowPreview(true);
+        return;
+      }
+
+      // Otherwise, validate and convert from JSON schema format
+      const validation = validateJSONSchema(jsonInput);
+      if (!validation.valid) {
+        setError(validation.error || "Invalid JSON");
+        setShowPreview(false);
+        return;
+      }
+
+      // Convert to FormSchema
       const schema = convertJSONToFormSchema(parsed);
       setFormSchema(schema);
       setShowPreview(true);
@@ -89,6 +153,19 @@ export function JSONSchemaEditor() {
     setJsonInput(defaultJSON);
     setError("");
     setShowPreview(false);
+    setSelectedExample("");
+  };
+
+  const handleLoadExampleSchema = (key: ExampleSchemaKey) => {
+    const example = exampleSchemas[key];
+
+    // Remove validationSchema as it contains Zod schema which can't be serialized
+    const { validationSchema, ...schemaWithoutValidation } = example.schema;
+
+    setJsonInput(JSON.stringify(schemaWithoutValidation, null, 2));
+    setSelectedExample(key);
+    setError("");
+    setShowPreview(false);
   };
 
   const handleClear = () => {
@@ -96,6 +173,7 @@ export function JSONSchemaEditor() {
     setError("");
     setShowPreview(false);
     setFormSchema(null);
+    setSelectedExample("");
   };
 
   return (
@@ -108,6 +186,61 @@ export function JSONSchemaEditor() {
         <p className="text-gray-600">
           Paste your JSON schema and preview the generated form
         </p>
+      </div>
+
+      {/* Load Example Schema Dropdown */}
+      <div className="form-container p-6">
+        <div className="mb-4">
+          <label className="block text-sm font-semibold text-gray-700 mb-3">
+            📚 Load Example Schema:
+          </label>
+          <select
+            value={selectedExample}
+            onChange={(e) =>
+              handleLoadExampleSchema(e.target.value as ExampleSchemaKey)
+            }
+            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-700 font-medium"
+          >
+            <option value="">-- Select an example schema --</option>
+            <optgroup label="📋 Main Examples">
+              <option value="simple">{exampleSchemas.simple.name}</option>
+              <option value="stepper">{exampleSchemas.stepper.name}</option>
+              <option value="conditional">
+                {exampleSchemas.conditional.name}
+              </option>
+              <option value="dynamic">{exampleSchemas.dynamic.name}</option>
+              <option value="fieldValidation">
+                {exampleSchemas.fieldValidation.name}
+              </option>
+              <option value="repeatable">
+                {exampleSchemas.repeatable.name}
+              </option>
+            </optgroup>
+            <optgroup label="🏢 Real-World Examples">
+              <option value="businessRegistration">
+                {exampleSchemas.businessRegistration.name}
+              </option>
+              <option value="businessStarterPackage">
+                {exampleSchemas.businessStarterPackage.name}
+              </option>
+            </optgroup>
+            <optgroup label="🏗️ Structure Variations">
+              <option value="fieldsOnly">
+                {exampleSchemas.fieldsOnly.name}
+              </option>
+              <option value="sectionsOnly">
+                {exampleSchemas.sectionsOnly.name}
+              </option>
+              <option value="stepperFields">
+                {exampleSchemas.stepperFields.name}
+              </option>
+              <option value="stepperSections">
+                {exampleSchemas.stepperSections.name}
+              </option>
+              <option value="mixed">{exampleSchemas.mixed.name}</option>
+            </optgroup>
+          </select>
+        </div>
       </div>
 
       {/* Editor Section */}
@@ -136,7 +269,7 @@ export function JSONSchemaEditor() {
               🔍 Preview Form
             </button>
           </div>
-        </div>{" "}
+        </div>
         <div className="border-2 border-gray-300 rounded-lg overflow-hidden">
           <Editor
             height="400px"

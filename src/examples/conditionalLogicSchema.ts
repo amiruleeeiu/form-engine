@@ -4,8 +4,14 @@ import type { FormSchema } from "../form-engine/types/index.js";
 // Complex conditional validation (Optional - can use field-level validation)
 const conditionalFormSchema = z.object({
   userType: z.string().min(1, "User type is required"),
-  companyName: z.string().optional(),
-  taxId: z.string().optional(),
+
+  // Nested business information object
+  businessInformation: z
+    .object({
+      companyName: z.string().optional(),
+      taxId: z.string().optional(),
+    })
+    .optional(),
 
   hasVehicle: z.boolean().optional(),
   vehicleType: z.string().optional(),
@@ -24,6 +30,12 @@ const conditionalFormSchema = z.object({
 /**
  * Form with complex conditional logic and Zod validation.
  * Alternative: Use field-level validation with `validation` property.
+ *
+ * Features demonstrated:
+ * - Nested field grouping using `fieldGroup` property
+ * - Section-level conditional visibility
+ * - Field-level conditional visibility and enable/disable
+ * - Complex Zod validation with nested objects
  */
 
 export const conditionalLogicFormSchema: FormSchema = {
@@ -57,6 +69,8 @@ export const conditionalLogicFormSchema: FormSchema = {
         field: "userType",
         equals: "business",
       },
+      // Group fields under "businessInformation" key
+      fieldGroup: "businessInformation",
       fields: [
         {
           name: "companyName",
@@ -114,31 +128,7 @@ export const conditionalLogicFormSchema: FormSchema = {
         },
       ],
     },
-    {
-      title: "Age Verification",
-      cols: 12,
-      fields: [
-        {
-          name: "age",
-          label: "Age",
-          type: "number",
-          placeholder: "25",
-          cols: 12,
-        },
-        {
-          name: "drivingLicense",
-          label: "Driving License",
-          type: "file",
-          accept: "image/*,.pdf",
-          cols: 12,
-          // Only show if age >= 18
-          showWhen: {
-            field: "age",
-            greaterThan: 17,
-          },
-        },
-      ],
-    },
+
     {
       title: "Subscription Plan",
       cols: 12,

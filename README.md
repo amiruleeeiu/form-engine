@@ -4,26 +4,36 @@ A powerful, flexible, and beautiful form builder for React applications built wi
 
 ## Features
 
-✨ **Reusable Field Components**
+✨ **Rich Field Components**
 
-- Text, Number, Date inputs (with React Day Picker calendar)
-- Numeric String Field (string type but only accepts digits - for IDs, postal codes, etc.)
+- Text, Textarea, Number inputs
+- Date picker (with React Day Picker calendar UI)
+- Phone number input (with country selection)
 - Custom Select with single/multi-select support (with search)
-- File Upload
+- File Upload (single/multiple files)
 - Radio groups and Checkboxes
-- All with built-in validation support
+- All fields support validation
 
 🎨 **Beautiful UI**
 
 - Built with Tailwind CSS
-- Responsive grid layout system
+- Responsive grid layout system (12-column grid)
 - Clean and modern design
+- Mobile-first approach
+
+✅ **Flexible Validation**
+
+- **Zod Schema** - Centralized validation
+- **Field-level validation** - Per-field validation rules
+- **Or combine both** approaches!
+- Support for all field types: text, number, select, date, phone, file, radio, checkbox
 
 🔄 **Conditional Logic**
 
 - Show/hide fields based on other field values
 - Enable/disable fields dynamically
-- Support for complex conditions (equals, notEquals, in, notIn, isEmpty, greaterThan, lessThan)
+- Clear dependent fields when parent field changes
+- Support for complex conditions (equals, notEquals, in, notIn, isEmpty, isNotEmpty, greaterThan, lessThan)
 - Live reactive updates using React Hook Form's `watch()`
 
 📊 **Multi-Step Forms**
@@ -31,18 +41,29 @@ A powerful, flexible, and beautiful form builder for React applications built wi
 - Easy stepper/wizard forms
 - Progress indicator
 - Conditional steps
+- Validation per step
 
 🌐 **Dynamic Options**
 
 - Load select options from API
 - Transform data on the fly
 - Custom fetch functions
+- Perfect for location selectors (division, district, sub-district)
 
-🏗️ **Clean Architecture**
+🏗️ **Flexible Structure**
+
+- Simple forms with direct fields
+- Forms with sections
+- Multi-step forms with sections
+- Multi-step forms with direct fields
+- Mix sections and direct fields in steps
+
+🛠️ **Clean Architecture**
 
 - Uses FormProvider and useFormContext
 - Modular and extensible
-- TypeScript support
+- Full TypeScript support
+- Easy to customize
 
 ## Folder Structure
 
@@ -354,6 +375,150 @@ Features:
 - `greaterThan`: Numeric field is greater than value
 - `lessThan`: Numeric field is less than value
 
+## Complete Example with All Features
+
+```typescript
+import { FormSchema } from "./form-engine/types";
+
+export const completeFormSchema: FormSchema = {
+  sections: [
+    {
+      title: "Personal Information",
+      fields: [
+        {
+          name: "firstName",
+          label: "First Name",
+          type: "text",
+          cols: 6,
+          validation: {
+            required: true,
+            minLength: { value: 2, message: "Minimum 2 characters" },
+          },
+        },
+        {
+          name: "lastName",
+          label: "Last Name",
+          type: "text",
+          cols: 6,
+          validation: {
+            required: true,
+            minLength: 2,
+          },
+        },
+        {
+          name: "email",
+          label: "Email",
+          type: "text",
+          cols: 12,
+          validation: {
+            required: "Email is required",
+            email: true,
+          },
+        },
+        {
+          name: "age",
+          label: "Age",
+          type: "number",
+          cols: 6,
+          validation: {
+            required: true,
+            min: { value: 18, message: "Must be 18+" },
+            max: { value: 120, message: "Invalid age" },
+          },
+        },
+        {
+          name: "phone",
+          label: "Phone Number",
+          type: "phone",
+          cols: 6,
+          validation: {
+            required: true,
+          },
+          defaultCountry: "bd",
+        },
+        {
+          name: "dateOfBirth",
+          label: "Date of Birth",
+          type: "date",
+          cols: 12,
+          validation: {
+            required: true,
+          },
+        },
+      ],
+    },
+    {
+      title: "Location Selection",
+      description: "Select your location",
+      fields: [
+        {
+          name: "division",
+          label: "Division",
+          type: "select",
+          placeholder: "Select division",
+          cols: 4,
+          validation: {
+            required: "Division is required",
+          },
+          dynamicOptions: {
+            url: "http://localhost:3000/division",
+            transform: (data: any[]) =>
+              data.map((item) => ({
+                label: item.fullName,
+                value: item.id,
+              })),
+          },
+        },
+        {
+          name: "district",
+          label: "District",
+          type: "select",
+          placeholder: "Select district",
+          cols: 4,
+          validation: {
+            required: "District is required",
+          },
+          dynamicOptions: {
+            url: "http://localhost:3000/district",
+            transform: (data: any[]) =>
+              data.map((item) => ({
+                label: item.fullName,
+                value: item.id,
+              })),
+          },
+          showWhen: {
+            field: "division",
+            isNotEmpty: true,
+          },
+        },
+        {
+          name: "subDistrict",
+          label: "Sub-District",
+          type: "select",
+          placeholder: "Select sub-district",
+          cols: 4,
+          validation: {
+            required: "Sub-District is required",
+          },
+          dynamicOptions: {
+            url: "http://localhost:3000/sub-district",
+            transform: (data: any[]) =>
+              data.map((item) => ({
+                label: item.fullName,
+                value: item.id,
+              })),
+          },
+          showWhen: {
+            field: "district",
+            isNotEmpty: true,
+          },
+        },
+      ],
+    },
+  ],
+};
+```
+
 ## Validation
 
 The Form Engine supports **two validation approaches**:
@@ -509,6 +674,51 @@ The form engine uses a 12-column grid system. You can specify how many columns e
 { name: 'age', cols: 4, ... }
 ```
 
+## Installation & Usage
+
+### Install from npm
+
+```bash
+npm install @amiruleeeiu/react-form-engine
+```
+
+### Import in your project
+
+```typescript
+import { FormEngine } from "@amiruleeeiu/react-form-engine";
+import "@amiruleeeiu/react-form-engine/styles.css";
+import type { FormSchema } from "@amiruleeeiu/react-form-engine";
+
+// Your form schema
+const myFormSchema: FormSchema = {
+  sections: [
+    {
+      title: "Personal Info",
+      fields: [
+        {
+          name: "name",
+          label: "Full Name",
+          type: "text",
+          validation: {
+            required: true,
+            minLength: { value: 2, message: "Name too short" },
+          },
+        },
+      ],
+    },
+  ],
+};
+
+// Use in component
+function MyForm() {
+  const handleSubmit = (data: any) => {
+    console.log("Form submitted:", data);
+  };
+
+  return <FormEngine schema={myFormSchema} onSubmit={handleSubmit} />;
+}
+```
+
 ## Running the Demo
 
 ```bash
@@ -530,6 +740,32 @@ Then open your browser to see the demo with multiple form examples.
 ### Adding New Conditional Operators
 
 Edit `src/form-engine/utils/conditionalLogic.ts` and add your operator to the `evaluateCondition` function.
+
+## What's New in v1.4.0
+
+✨ **Field-Level Validation** - No more mandatory Zod schemas! Add validation directly to fields:
+
+```typescript
+{
+  name: "email",
+  validation: {
+    required: true,
+    email: "Please enter valid email"
+  }
+}
+```
+
+✅ **All Fields Support Validation** - TextField, NumberField, DateField, SelectField, PhoneField, RadioField, CheckboxField, FileField - all support field-level validation now!
+
+🔧 **Fixed FileField Error** - Resolved "uncontrolled to controlled" input error when uploading files
+
+🎨 **Improved Spacing** - Better field spacing with `gap-4` instead of `gap-6`
+
+📍 **Location Selector Example** - Complete example with Division > District > Sub-District cascade
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 

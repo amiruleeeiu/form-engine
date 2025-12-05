@@ -159,6 +159,10 @@ export interface FormSection {
   className?: string; // Custom class for the section container
   headerClassName?: string; // Custom class for the section header
   fieldsClassName?: string; // Custom class for the fields grid container
+
+  // Nested field grouping - groups all fields in this section under a parent key
+  fieldGroup?: string; // e.g., "businessInformation" will create nested structure
+
   // Repeatable section (Field Array)
   repeatable?: boolean; // Can this section be repeated?
   repeatableConfig?: {

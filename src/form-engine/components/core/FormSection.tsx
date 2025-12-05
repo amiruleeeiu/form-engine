@@ -99,7 +99,7 @@ export const FormSection: React.FC<FormSectionProps> = ({
               field.cols === 6 || field.cols === 1 ? "md:col-span-1" : ""
             )}
           >
-            <FieldRenderer field={field} />
+            <FieldRenderer field={field} fieldGroup={section.fieldGroup} />
           </div>
         ))}
       </div>

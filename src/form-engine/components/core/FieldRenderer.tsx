@@ -14,28 +14,37 @@ import {
 
 interface FieldRendererProps {
   field: FieldConfig;
+  fieldGroup?: string; // Parent key for nested field structure
 }
 
-export const FieldRenderer: React.FC<FieldRendererProps> = ({ field }) => {
-  switch (field.type) {
+export const FieldRenderer: React.FC<FieldRendererProps> = ({
+  field,
+  fieldGroup,
+}) => {
+  // If fieldGroup is provided, create nested field name
+  const fieldName = fieldGroup ? `${fieldGroup}.${field.name}` : field.name;
+
+  // Create modified field config with nested name
+  const modifiedField = fieldGroup ? { ...field, name: fieldName } : field;
+  switch (modifiedField.type) {
     case "text":
-      return <TextField {...field} />;
+      return <TextField {...modifiedField} />;
     case "textarea":
-      return <TextareaField {...field} />;
+      return <TextareaField {...modifiedField} />;
     case "number":
-      return <NumberField {...field} />;
+      return <NumberField {...modifiedField} />;
     case "date":
-      return <DateField {...field} />;
+      return <DateField {...modifiedField} />;
     case "select":
-      return <CustomSelectField {...field} />;
+      return <CustomSelectField {...modifiedField} />;
     case "file":
-      return <FileField {...field} />;
+      return <FileField {...modifiedField} />;
     case "radio":
-      return <RadioField {...field} />;
+      return <RadioField {...modifiedField} />;
     case "checkbox":
-      return <CheckboxField {...field} />;
+      return <CheckboxField {...modifiedField} />;
     case "phone":
-      return <PhoneField {...field} />;
+      return <PhoneField {...modifiedField} />;
     default:
       return null;
   }

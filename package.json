@@ -1,8 +1,8 @@
 {
   "name": "@amiruleeeiu/react-form-engine",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "type": "module",
-  "description": "A powerful and flexible React form engine with dynamic fields, validation, and conditional logic",
+  "description": "A powerful and flexible React form engine with field-level validation, dynamic options, conditional logic, and multi-step forms",
   "author": "amiruleeeiu",
   "license": "MIT",
   "repository": {
@@ -16,8 +16,14 @@
     "react-hook-form",
     "dynamic-forms",
     "validation",
+    "field-level-validation",
     "zod",
-    "typescript"
+    "typescript",
+    "conditional-logic",
+    "multi-step-form",
+    "wizard-form",
+    "dynamic-select",
+    "form-builder"
   ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
