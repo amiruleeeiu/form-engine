@@ -7,6 +7,7 @@ import {
   shouldEnableField,
   shouldShowField,
 } from "../../utils/conditionalLogic.js";
+import { getValidationRules } from "../../utils/fieldValidation.js";
 
 export const FileField: React.FC<FileFieldConfig> = ({
   name,
@@ -16,6 +17,7 @@ export const FileField: React.FC<FileFieldConfig> = ({
   labelClassName,
   inputClassName,
   errorClassName,
+  validation,
   accept,
   multiple = false,
   showWhen,
@@ -89,6 +91,7 @@ export const FileField: React.FC<FileFieldConfig> = ({
       <Controller
         name={name}
         control={control}
+        rules={getValidationRules(validation)}
         render={({ field: { onChange, ...field } }) => (
           <input
             {...field}

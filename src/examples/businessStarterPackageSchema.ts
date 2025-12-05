@@ -373,7 +373,6 @@ export const businessStarterPackageSchema: FormSchema = {
           type: "number",
           placeholder: "0",
           cols: 1,
-          defaultValue: 10000,
           validation: {
             required: true,
             min: 1,

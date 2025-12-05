@@ -10,6 +10,7 @@ import {
   shouldEnableField,
   shouldShowField,
 } from "../../utils/conditionalLogic.js";
+import { getValidationRules } from "../../utils/fieldValidation.js";
 
 export const DateField: React.FC<DateFieldConfig> = ({
   name,
@@ -20,6 +21,7 @@ export const DateField: React.FC<DateFieldConfig> = ({
   labelClassName,
   inputClassName,
   errorClassName,
+  validation,
   min,
   max,
   showWhen,
@@ -140,6 +142,7 @@ export const DateField: React.FC<DateFieldConfig> = ({
       <Controller
         name={name}
         control={control}
+        rules={getValidationRules(validation)}
         render={({ field }) => (
           <div className="relative" ref={containerRef}>
             <div className="relative">

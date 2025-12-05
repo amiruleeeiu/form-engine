@@ -8,6 +8,7 @@ import {
   shouldEnableField,
   shouldShowField,
 } from "../../utils/conditionalLogic.js";
+import { getValidationRules } from "../../utils/fieldValidation.js";
 
 export const CheckboxField: React.FC<CheckboxFieldConfig> = ({
   name,
@@ -18,6 +19,7 @@ export const CheckboxField: React.FC<CheckboxFieldConfig> = ({
   labelClassName,
   inputClassName,
   errorClassName,
+  validation,
   showWhen,
   hideWhen,
   enableWhen,
@@ -89,7 +91,7 @@ export const CheckboxField: React.FC<CheckboxFieldConfig> = ({
         <input
           type="checkbox"
           disabled={!isEnabled}
-          {...register(name)}
+          {...register(name, getValidationRules(validation))}
           className={cn(
             "w-5 h-5 text-blue-600 border-2 disabled:cursor-not-allowed",
             inputClassName

@@ -7,6 +7,7 @@ import {
   shouldEnableField,
   shouldShowField,
 } from "../../utils/conditionalLogic.js";
+import { getValidationRules } from "../../utils/fieldValidation.js";
 
 export const NumberField: React.FC<NumberFieldConfig> = ({
   name,
@@ -17,6 +18,7 @@ export const NumberField: React.FC<NumberFieldConfig> = ({
   labelClassName,
   inputClassName,
   errorClassName,
+  validation,
   maxLength,
   showWhen,
   hideWhen,
@@ -114,6 +116,7 @@ export const NumberField: React.FC<NumberFieldConfig> = ({
       <Controller
         name={name}
         control={control}
+        rules={getValidationRules(validation)}
         render={({ field }) => (
           <input
             {...field}

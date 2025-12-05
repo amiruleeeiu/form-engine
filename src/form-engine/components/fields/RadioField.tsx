@@ -7,6 +7,7 @@ import {
   shouldEnableField,
   shouldShowField,
 } from "../../utils/conditionalLogic.js";
+import { getValidationRules } from "../../utils/fieldValidation.js";
 
 export const RadioField: React.FC<RadioFieldConfig> = ({
   name,
@@ -16,6 +17,7 @@ export const RadioField: React.FC<RadioFieldConfig> = ({
   labelClassName,
   inputClassName,
   errorClassName,
+  validation,
   options,
   showWhen,
   hideWhen,
@@ -94,7 +96,7 @@ export const RadioField: React.FC<RadioFieldConfig> = ({
               type="radio"
               value={option.value}
               disabled={!isEnabled}
-              {...register(name)}
+              {...register(name, getValidationRules(validation))}
               className={cn(
                 "w-4 h-4 text-blue-600 border-gray-300 disabled:cursor-not-allowed",
                 inputClassName

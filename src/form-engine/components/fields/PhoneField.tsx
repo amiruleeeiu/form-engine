@@ -9,6 +9,7 @@ import {
   shouldEnableField,
   shouldShowField,
 } from "../../utils/conditionalLogic.js";
+import { getValidationRules } from "../../utils/fieldValidation.js";
 
 export const PhoneField: React.FC<PhoneFieldConfig> = ({
   name,
@@ -83,18 +84,7 @@ export const PhoneField: React.FC<PhoneFieldConfig> = ({
 
   const error = errors[name];
   const colSpan = `col-span-${cols}`;
-
-  // Build validation rules
-  const rules: Record<string, unknown> = {};
-  if (validation?.required) {
-    rules.required =
-      validation.required === true
-        ? "This field is required"
-        : validation.required;
-  }
-  if (validation?.validate) {
-    rules.validate = validation.validate;
-  }
+  const rules = getValidationRules(validation);
 
   return (
     <div className={cn(colSpan, className)}>
