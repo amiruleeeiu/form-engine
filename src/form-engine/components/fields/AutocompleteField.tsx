@@ -1,5 +1,5 @@
-import React, { useMemo, useRef, useState } from "react";
-import { useFormContext } from "react-hook-form";
+import React, { useMemo, useState } from "react";
+import { Controller, useFormContext } from "react-hook-form";
 import type { AutocompleteFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
 import {
@@ -8,6 +8,7 @@ import {
   shouldShowField,
 } from "../../utils/conditionalLogic.js";
 import { useDynamicOptions } from "../../utils/dynamicOptions.js";
+import { getValidationRules } from "../../utils/fieldValidation.js";
 
 export const AutocompleteField: React.FC<AutocompleteFieldConfig> = ({
   name,
@@ -18,32 +19,23 @@ export const AutocompleteField: React.FC<AutocompleteFieldConfig> = ({
   labelClassName,
   inputClassName,
   errorClassName,
+  validation,
   options: staticOptions = [],
   dynamicOptions,
-  isMulti = false,
   showWhen,
   hideWhen,
   enableWhen,
   disableWhen,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [highlightedIndex, setHighlightedIndex] = useState(0);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const optionsRef = useRef<HTMLDivElement>(null);
 
   const {
-    register,
+    control,
     watch,
-    setValue,
-    formState: { errors },
+    formState: { errors, touchedFields, isSubmitted },
   } = useFormContext();
 
   const { options: dynamicOpts, loading } = useDynamicOptions(dynamicOptions);
-  const currentValue = watch(name);
-
-  const { ref, ...rest } = register(name);
 
   const watchFields = useMemo(() => {
     const fields = new Set<string>();
@@ -91,14 +83,20 @@ export const AutocompleteField: React.FC<AutocompleteFieldConfig> = ({
 
   const options = dynamicOptions ? dynamicOpts : staticOptions;
   const error = errors[name];
+  const isTouched = touchedFields[name];
+  const showError = error && (isTouched || isSubmitted);
   const colSpan = `col-span-${cols}`;
+
+  const filteredOptions = options.filter((option) =>
+    option.label.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className={cn(colSpan, className)}>
       <label
         htmlFor={name}
         className={cn(
-          "block text-sm font-medium text-gray-700 mb-1",
+          "block text-sm font-medium text-gray-700 mb-1.5",
           labelClassName
         )}
       >
@@ -107,53 +105,40 @@ export const AutocompleteField: React.FC<AutocompleteFieldConfig> = ({
       <Controller
         name={name}
         control={control}
+        rules={getValidationRules(validation)}
         render={({ field }) => (
-          <Select
-            {...field}
-            inputId={name}
-            options={options}
-            isMulti={isMulti}
-            isLoading={loading}
-            isDisabled={!isEnabled || loading}
-            placeholder={placeholder}
-            className={error ? "react-select-error" : ""}
-            classNamePrefix="react-select"
-            onChange={(selected) => {
-              if (isMulti) {
-                field.onChange(selected);
-              } else {
-                field.onChange(selected);
-              }
-            }}
-            styles={{
-              control: (base, state) => ({
-                ...base,
-                minHeight: "42px",
-                paddingLeft: "4px",
-                paddingRight: "4px",
-                borderColor: error
-                  ? "#ef4444"
-                  : state.isFocused
-                  ? "#3b82f6"
-                  : "#d1d5db",
-                boxShadow: state.isFocused
-                  ? error
-                    ? "0 0 0 2px rgba(239, 68, 68, 0.1)"
-                    : "0 0 0 2px rgba(59, 130, 246, 0.1)"
-                  : "none",
-                "&:hover": {
-                  borderColor: error ? "#ef4444" : "#9ca3af",
-                },
-              }),
-              valueContainer: (base) => ({
-                ...base,
-                padding: "2px 8px",
-              }),
-            }}
-          />
+          <>
+            <input
+              {...field}
+              id={name}
+              type="text"
+              list={`${name}-options`}
+              placeholder={placeholder}
+              disabled={!isEnabled || loading}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                field.onChange(e.target.value);
+              }}
+              className={cn(
+                "w-full px-4 py-2.5 text-sm border rounded-md bg-white text-gray-900 placeholder-gray-400 transition-colors duration-200 focus:outline-none",
+                showError
+                  ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+                  : "border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200",
+                !isEnabled && "bg-gray-50 text-gray-500 cursor-not-allowed",
+                inputClassName
+              )}
+            />
+            <datalist id={`${name}-options`}>
+              {filteredOptions.map((option, index) => (
+                <option key={index} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </datalist>
+          </>
         )}
-      />{" "}
-      {error && (
+      />
+      {showError && (
         <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>
           {error.message as string}
         </p>

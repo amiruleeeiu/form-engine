@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { Check, ChevronLeft, ChevronRight } from "../../assets/icons/index.js";
 import type { FormEngineProps } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
 import {
@@ -36,7 +37,7 @@ export const FormEngine: React.FC<FormEngineProps> = ({
       ? zodResolver(schema.validationSchema)
       : undefined,
     defaultValues,
-    mode: "onChange",
+    mode: "onSubmit",
   });
 
   const { handleSubmit, watch } = methods;
@@ -113,36 +114,28 @@ export const FormEngine: React.FC<FormEngineProps> = ({
         {hasSteps && showStepNavigation && visibleSteps.length > 1 && (
           <div
             className={cn(
-              "bg-slate-50 rounded-lg py-4 px-6 mb-8",
+              "bg-slate-50 rounded-lg py-3 px-3 sm:py-4 sm:px-6 mb-8",
               stepperClassName
             )}
           >
-            <div className="flex items-center justify-between">
+            {/* Steps Grid Layout */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
               {visibleSteps.map((step, index) => (
-                <React.Fragment key={index}>
-                  <div className="flex items-center gap-2">
+                <div
+                  key={index}
+                  className="flex flex-col gap-2 relative cursor-default"
+                >
+                  <div className="flex items-center gap-3">
                     {/* Checkmark for completed steps */}
                     {index < currentStep && (
-                      <div className="w-5 h-5 rounded-full bg-teal-500 flex items-center justify-center">
-                        <svg
-                          className="w-3 h-3 text-white"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={3}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
+                      <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-teal-500 flex items-center justify-center flex-shrink-0">
+                        <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
                       </div>
                     )}
-                    <div className="flex flex-col">
+                    <div className="flex flex-col min-w-0">
                       <span
                         className={cn(
-                          "text-[10px] font-medium uppercase tracking-wide",
+                          "text-[9px] sm:text-[10px] font-medium uppercase tracking-wide",
                           index === currentStep
                             ? "text-blue-600"
                             : index < currentStep
@@ -154,53 +147,44 @@ export const FormEngine: React.FC<FormEngineProps> = ({
                       </span>
                       <span
                         className={cn(
-                          "text-sm font-semibold transition-colors duration-200",
+                          "text-xs sm:text-sm font-semibold transition-colors duration-200 truncate",
                           index === currentStep
                             ? "text-blue-600"
                             : index < currentStep
                             ? "text-teal-600"
                             : "text-gray-500"
                         )}
+                        title={step.title}
                       >
                         {step.title}
                       </span>
                     </div>
                   </div>
-                  {/* Chevron separator */}
+                  {/* Progress indicator under each step */}
+                  <div
+                    className={cn(
+                      "h-1 w-full rounded-full transition-all duration-300",
+                      index === currentStep
+                        ? "bg-blue-500"
+                        : index < currentStep
+                        ? "bg-teal-500"
+                        : "bg-gray-200"
+                    )}
+                  />
+                  {/* Arrow indicator on right side */}
                   {index < visibleSteps.length - 1 && (
-                    <div className="flex-1 flex justify-center">
-                      <svg
-                        className="w-5 h-5 text-gray-300"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </div>
+                    <ChevronRight
+                      className={cn(
+                        "absolute -right-2 top-3 sm:top-4 w-3 h-3 sm:w-4 sm:h-4 transition-colors duration-200",
+                        index === currentStep
+                          ? "text-blue-500"
+                          : index < currentStep
+                          ? "text-teal-500"
+                          : "text-gray-300"
+                      )}
+                    />
                   )}
-                </React.Fragment>
-              ))}
-            </div>
-            {/* Progress bar under current step */}
-            <div className="mt-3 flex gap-1">
-              {visibleSteps.map((_, index) => (
-                <div
-                  key={index}
-                  className={cn(
-                    "h-1 flex-1 rounded-full transition-all duration-300",
-                    index === currentStep
-                      ? "bg-blue-500"
-                      : index < currentStep
-                      ? "bg-teal-500"
-                      : "bg-gray-200"
-                  )}
-                />
+                </div>
               ))}
             </div>
           </div>
@@ -292,7 +276,7 @@ export const FormEngine: React.FC<FormEngineProps> = ({
         {/* Navigation Buttons */}
         <div
           className={cn(
-            "flex justify-between items-center pt-8 mt-8 border-t-2 border-gray-100",
+            "flex justify-between items-center pt-6 mt-6 border-t border-gray-200",
             navigationClassName
           )}
         >
@@ -301,11 +285,12 @@ export const FormEngine: React.FC<FormEngineProps> = ({
               type="button"
               onClick={handlePrevious}
               className={cn(
-                "px-8 py-3 border-2 border-gray-300 rounded-lg shadow-sm text-base font-semibold text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-200 transition-all duration-200",
+                "inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all duration-200 shadow-sm",
                 prevButtonClassName
               )}
             >
-              ← Previous
+              <ChevronLeft className="w-4 h-4" />
+              Previous
             </button>
           ) : (
             <div />
@@ -314,11 +299,18 @@ export const FormEngine: React.FC<FormEngineProps> = ({
           <button
             type="submit"
             className={cn(
-              "px-8 py-3 border-2 border-transparent rounded-lg shadow-lg text-base font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-200",
+              "inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200 shadow-md hover:shadow-lg",
               submitButtonClassName
             )}
           >
-            {hasSteps && !isLastStep ? "Next →" : submitButtonText}
+            {hasSteps && !isLastStep ? (
+              <>
+                Next
+                <ChevronRight className="w-4 h-4" />
+              </>
+            ) : (
+              submitButtonText
+            )}
           </button>
         </div>
       </form>

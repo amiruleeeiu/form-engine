@@ -1,6 +1,6 @@
-import { Plus, X } from "lucide-react";
 import React from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
+import { Plus, X } from "../../assets/icons/index.js";
 import type { FormSection } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
 import { FieldRenderer } from "./FieldRenderer.js";

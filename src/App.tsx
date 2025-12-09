@@ -15,6 +15,7 @@ import {
 import { securityClearanceSchema } from "./examples/securityClearanceSchema.js";
 import { simpleFormSchema } from "./examples/simpleFormSchema.js";
 import { stepperFormSchema } from "./examples/stepperFormSchema.js";
+import { userProfileSchema } from "./examples/userProfileSchema.js";
 import { FormEngine } from "./form-engine/index.js";
 
 type ViewMode = "examples" | "jsonEditor";
@@ -32,7 +33,8 @@ type FormType =
   | "fieldValidation"
   | "businessRegistration"
   | "businessStarterPackage"
-  | "securityClearance";
+  | "securityClearance"
+  | "userProfile";
 
 function App() {
   const [viewMode, setViewMode] = useState<ViewMode>("examples");
@@ -74,6 +76,8 @@ function App() {
         return businessStarterPackageSchema;
       case "securityClearance":
         return securityClearanceSchema;
+      case "userProfile":
+        return userProfileSchema;
       default:
         return simpleFormSchema;
     }
@@ -186,6 +190,26 @@ function App() {
                       }`}
                     >
                       Field Validation
+                    </button>
+                  </div>
+                </div>
+
+                {/* New Fields Demo */}
+                <div className="mb-3">
+                  <p className="text-xs font-semibold text-gray-500 mb-2">
+                    🆕 New Fields (Password & Profile Picture):
+                  </p>
+                  <div className="grid grid-cols-1 gap-3">
+                    <button
+                      onClick={() => setSelectedForm("userProfile")}
+                      className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                        selectedForm === "userProfile"
+                          ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg"
+                          : "bg-gradient-to-r from-indigo-50 to-purple-50 text-gray-700 hover:from-indigo-100 hover:to-purple-100 border-2 border-indigo-200"
+                      }`}
+                    >
+                      👤 User Profile (Password + Profile Picture +
+                      Autocomplete)
                     </button>
                   </div>
                 </div>

@@ -1,12 +1,15 @@
 import React from "react";
 import type { FieldConfig } from "../../types/index.js";
 import {
+  AutocompleteField,
   CheckboxField,
   CustomSelectField,
   DateField,
   FileField,
   NumberField,
+  PasswordField,
   PhoneField,
+  ProfilePictureField,
   RadioField,
   TextField,
   TextareaField,
@@ -37,6 +40,8 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
       return <DateField {...modifiedField} />;
     case "select":
       return <CustomSelectField {...modifiedField} />;
+    case "autocomplete":
+      return <AutocompleteField {...modifiedField} />;
     case "file":
       return <FileField {...modifiedField} />;
     case "radio":
@@ -45,6 +50,10 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
       return <CheckboxField {...modifiedField} />;
     case "phone":
       return <PhoneField {...modifiedField} />;
+    case "password":
+      return <PasswordField {...modifiedField} />;
+    case "profilePicture":
+      return <ProfilePictureField {...modifiedField} />;
     default:
       return null;
   }

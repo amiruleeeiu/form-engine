@@ -38,6 +38,16 @@ export interface DynamicSelectConfig {
   transform?: (data: any) => SelectOption[];
 }
 
+export interface FileUploadConfig {
+  url: string; // API endpoint for file upload
+  method?: string; // HTTP method (default: "POST")
+  headers?: Record<string, string>; // Custom headers
+  fieldName?: string; // Form data field name (default: "file")
+  additionalData?: Record<string, any>; // Additional form data to send
+  onUploadProgress?: (progress: number) => void; // Upload progress callback
+  transform?: (response: any) => any; // Transform the response to get the final value
+}
+
 // Field types
 export type FieldType =
   | "text"
@@ -45,10 +55,13 @@ export type FieldType =
   | "number"
   | "date"
   | "select"
+  | "autocomplete"
   | "file"
   | "radio"
   | "checkbox"
-  | "phone";
+  | "phone"
+  | "password"
+  | "profilePicture";
 
 // Field-level validation configuration
 export interface FieldValidation {
@@ -118,6 +131,12 @@ export interface SelectFieldConfig extends BaseFieldConfig {
   isMulti?: boolean;
 }
 
+export interface AutocompleteFieldConfig extends BaseFieldConfig {
+  type: "autocomplete";
+  options?: SelectOption[];
+  dynamicOptions?: DynamicSelectConfig;
+}
+
 export interface FileFieldConfig extends BaseFieldConfig {
   type: "file";
   accept?: string;
@@ -139,16 +158,31 @@ export interface PhoneFieldConfig extends BaseFieldConfig {
   defaultCountry?: string; // ISO 3166-1 alpha-2 country code (e.g., "BD", "US", "GB")
 }
 
+export interface PasswordFieldConfig extends BaseFieldConfig {
+  type: "password";
+  showToggle?: boolean; // Show/hide password toggle button (default: true)
+}
+
+export interface ProfilePictureFieldConfig extends BaseFieldConfig {
+  type: "profilePicture";
+  accept?: string; // File type filter (default: "image/*")
+  maxSize?: number; // Maximum file size in bytes
+  uploadConfig?: FileUploadConfig; // API upload configuration
+}
+
 export type FieldConfig =
   | TextFieldConfig
   | TextareaFieldConfig
   | NumberFieldConfig
   | DateFieldConfig
   | SelectFieldConfig
+  | AutocompleteFieldConfig
   | FileFieldConfig
   | RadioFieldConfig
   | CheckboxFieldConfig
-  | PhoneFieldConfig;
+  | PhoneFieldConfig
+  | PasswordFieldConfig
+  | ProfilePictureFieldConfig;
 
 // Section and Step types
 export interface FormSection {

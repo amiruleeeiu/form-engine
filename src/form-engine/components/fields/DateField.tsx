@@ -1,8 +1,8 @@
-import { Calendar } from "lucide-react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 import { Controller, useFormContext } from "react-hook-form";
+import { Calendar } from "../../assets/icons/index.js";
 import type { DateFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
 import {

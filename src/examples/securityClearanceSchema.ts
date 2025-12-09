@@ -96,7 +96,7 @@ export const securityClearanceSchema: FormSchema = {
 
     // ==================== STEP 3: Tax Identification ====================
     {
-      title: "Tax Identification Details",
+      title: "Tax Identification Details How mane items",
       description: "Tax information for expatriate/employee",
       sections: [
         {

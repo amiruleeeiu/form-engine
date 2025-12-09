@@ -87,7 +87,7 @@ export const CheckboxField: React.FC<CheckboxFieldConfig> = ({
       >
         {label}
       </label>
-      <label className="flex items-center space-x-3 cursor-pointer p-4 transition-all duration-200">
+      <label className="flex items-center space-x-3 cursor-pointer py-4 transition-all duration-200">
         <input
           type="checkbox"
           disabled={!isEnabled}

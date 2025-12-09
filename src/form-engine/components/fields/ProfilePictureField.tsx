@@ -1,0 +1,273 @@
+import React, { useMemo, useState } from "react";
+import { Controller, useFormContext } from "react-hook-form";
+import type { ProfilePictureFieldConfig } from "../../types/index.js";
+import { cn } from "../../utils/cn.js";
+import {
+  getWatchedFields,
+  shouldEnableField,
+  shouldShowField,
+} from "../../utils/conditionalLogic.js";
+import { getValidationRules } from "../../utils/fieldValidation.js";
+
+export const ProfilePictureField: React.FC<ProfilePictureFieldConfig> = ({
+  name,
+  label,
+  cols = 12,
+  className,
+  labelClassName,
+  inputClassName,
+  errorClassName,
+  validation,
+  accept = "image/*",
+  maxSize,
+  uploadConfig,
+  showWhen,
+  hideWhen,
+  enableWhen,
+  disableWhen,
+}) => {
+  const [preview, setPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  const {
+    control,
+    watch,
+    formState: { errors },
+  } = useFormContext();
+
+  const watchFields = useMemo(() => {
+    const fields = new Set<string>();
+    [showWhen, hideWhen, enableWhen, disableWhen].forEach((condition) => {
+      getWatchedFields(condition).forEach((field) => fields.add(field));
+    });
+    return Array.from(fields);
+  }, [showWhen, hideWhen, enableWhen, disableWhen]);
+
+  const watchedValues = watch(watchFields);
+
+  const valueMap = useMemo(() => {
+    const map: Record<string, unknown> = {};
+    watchFields.forEach((field, index) => {
+      map[field] = watchedValues[index];
+    });
+    return map;
+  }, [watchFields, watchedValues]);
+
+  const isVisible = useMemo(() => {
+    const showField = showWhen?.field ? valueMap[showWhen.field] : undefined;
+    const hideField = hideWhen?.field ? valueMap[hideWhen.field] : undefined;
+    return shouldShowField(
+      showWhen,
+      hideWhen,
+      showWhen ? showField : hideField
+    );
+  }, [showWhen, hideWhen, valueMap]);
+
+  const isEnabled = useMemo(() => {
+    const enableField = enableWhen?.field
+      ? valueMap[enableWhen.field]
+      : undefined;
+    const disableField = disableWhen?.field
+      ? valueMap[disableWhen.field]
+      : undefined;
+    return shouldEnableField(
+      enableWhen,
+      disableWhen,
+      enableWhen ? enableField : disableField
+    );
+  }, [enableWhen, disableWhen, valueMap]);
+
+  if (!isVisible) return null;
+
+  const error = errors[name];
+  const colSpan = `col-span-${cols}`;
+
+  const handleFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    onChange: (value: FileList | string | null) => void
+  ) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+
+      // Check file size if maxSize is specified
+      if (maxSize && file.size > maxSize) {
+        const maxSizeMB = (maxSize / (1024 * 1024)).toFixed(2);
+        setUploadError(`File size must be less than ${maxSizeMB}MB`);
+        e.target.value = "";
+        return;
+      }
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+
+      // If uploadConfig is provided, upload to API
+      if (uploadConfig) {
+        setUploading(true);
+        setUploadError(null);
+
+        try {
+          const formData = new FormData();
+          const fieldName = uploadConfig.fieldName || "file";
+          formData.append(fieldName, file);
+
+          // Add additional data if provided
+          if (uploadConfig.additionalData) {
+            Object.entries(uploadConfig.additionalData).forEach(
+              ([key, value]) => {
+                formData.append(key, value);
+              }
+            );
+          }
+
+          const response = await fetch(uploadConfig.url, {
+            method: uploadConfig.method || "POST",
+            headers: uploadConfig.headers,
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error(`Upload failed: ${response.statusText}`);
+          }
+
+          const data = await response.json();
+
+          // Transform response if transformer is provided
+          const finalValue = uploadConfig.transform
+            ? uploadConfig.transform(data)
+            : data;
+
+          // Set the transformed value (e.g., image URL from response)
+          onChange(finalValue);
+        } catch (err) {
+          setUploadError(err instanceof Error ? err.message : "Upload failed");
+          setPreview(null);
+          e.target.value = "";
+        } finally {
+          setUploading(false);
+        }
+      } else {
+        // No upload config, just set the file
+        onChange(files);
+      }
+    } else {
+      setPreview(null);
+      onChange(null);
+    }
+  };
+
+  const clearImage = (onChange: (value: FileList | string | null) => void) => {
+    setPreview(null);
+    setUploadError(null);
+    onChange(null);
+    // Reset the input
+    const input = document.getElementById(name) as HTMLInputElement;
+    if (input) {
+      input.value = "";
+    }
+  };
+
+  return (
+    <div className={cn(colSpan, className)}>
+      <label
+        htmlFor={name}
+        className={cn(
+          "block text-sm font-medium text-gray-700 mb-1.5",
+          labelClassName
+        )}
+      >
+        {label}
+      </label>
+      <Controller
+        name={name}
+        control={control}
+        rules={getValidationRules(validation)}
+        render={({ field: { value, onChange, ...field } }) => (
+          <div className="space-y-3">
+            {preview ? (
+              <div className="relative inline-block">
+                <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-gray-200">
+                  <img
+                    src={preview}
+                    alt="Profile preview"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => clearImage(onChange)}
+                  disabled={!isEnabled}
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  title="Remove image"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="w-4 h-4"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              <div className="w-32 h-32 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-12 h-12 text-gray-400"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+                  />
+                </svg>
+              </div>
+            )}
+
+            <input
+              {...field}
+              id={name}
+              type="file"
+              accept={accept}
+              disabled={!isEnabled || uploading}
+              onChange={(e) => handleFileChange(e, onChange)}
+              className={cn(
+                "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50",
+                inputClassName
+              )}
+            />
+            {uploading && (
+              <p className="text-xs text-blue-600 mt-1">Uploading...</p>
+            )}
+          </div>
+        )}
+      />
+      {uploadError && (
+        <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>
+          {uploadError}
+        </p>
+      )}
+      {error && (
+        <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>
+          {error.message as string}
+        </p>
+      )}
+    </div>
+  );
+};

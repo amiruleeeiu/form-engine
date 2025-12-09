@@ -4,6 +4,16 @@ import "./styles.css";
 // Main component
 export { FormEngine } from "./components/core/FormEngine";
 
+// Icons
+export {
+  Calendar,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  X,
+} from "./assets/icons/index";
+
 // Types
 export * from "./types/index";
 
