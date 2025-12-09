@@ -23,10 +23,12 @@ export const RadioField: React.FC<RadioFieldConfig> = ({
   hideWhen,
   enableWhen,
   disableWhen,
+  clearFields,
 }) => {
   const {
     register,
     watch,
+    setValue,
     formState: { errors },
   } = useFormContext();
 
@@ -74,6 +76,15 @@ export const RadioField: React.FC<RadioFieldConfig> = ({
 
   if (!isVisible) return null;
 
+  // Handle clearing dependent fields
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (clearFields && clearFields.length > 0) {
+      clearFields.forEach((fieldName) => {
+        setValue(fieldName, undefined, { shouldValidate: false });
+      });
+    }
+  };
+
   const error = errors[name];
   const colSpan = `col-span-${cols}`;
   return (
@@ -97,6 +108,10 @@ export const RadioField: React.FC<RadioFieldConfig> = ({
               value={option.value}
               disabled={!isEnabled}
               {...register(name, getValidationRules(validation))}
+              onChange={(e) => {
+                register(name, getValidationRules(validation)).onChange(e);
+                handleChange(e);
+              }}
               className={cn(
                 "w-4 h-4 text-blue-600 border-gray-300 disabled:cursor-not-allowed",
                 inputClassName

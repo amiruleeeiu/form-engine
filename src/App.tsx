@@ -12,6 +12,7 @@ import {
   stepperWithFieldsSchema,
   stepperWithSectionsSchema,
 } from "./examples/flexibleFormSchema.js";
+import { securityClearanceSchema } from "./examples/securityClearanceSchema.js";
 import { simpleFormSchema } from "./examples/simpleFormSchema.js";
 import { stepperFormSchema } from "./examples/stepperFormSchema.js";
 import { FormEngine } from "./form-engine/index.js";
@@ -30,7 +31,8 @@ type FormType =
   | "mixed"
   | "fieldValidation"
   | "businessRegistration"
-  | "businessStarterPackage";
+  | "businessStarterPackage"
+  | "securityClearance";
 
 function App() {
   const [viewMode, setViewMode] = useState<ViewMode>("examples");
@@ -70,6 +72,8 @@ function App() {
         return businessRegistrationSchema;
       case "businessStarterPackage":
         return businessStarterPackageSchema;
+      case "securityClearance":
+        return securityClearanceSchema;
       default:
         return simpleFormSchema;
     }
@@ -191,7 +195,7 @@ function App() {
                   <p className="text-xs font-semibold text-gray-500 mb-2">
                     📋 Real-World Example:
                   </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <button
                       onClick={() => setSelectedForm("businessRegistration")}
                       className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
@@ -211,6 +215,16 @@ function App() {
                       }`}
                     >
                       📦 Business Starter Package (6 Steps)
+                    </button>
+                    <button
+                      onClick={() => setSelectedForm("securityClearance")}
+                      className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                        selectedForm === "securityClearance"
+                          ? "bg-gradient-to-r from-orange-600 to-red-600 text-white shadow-lg"
+                          : "bg-gradient-to-r from-orange-50 to-red-50 text-gray-700 hover:from-orange-100 hover:to-red-100 border-2 border-orange-200"
+                      }`}
+                    >
+                      🔐 Security Clearance (8 Steps + Complex)
                     </button>
                   </div>
                 </div>
