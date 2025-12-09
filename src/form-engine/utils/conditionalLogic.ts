@@ -10,7 +10,6 @@ export function evaluateCondition(
   if (!condition) return true;
 
   const {
-    field,
     operator,
     equals,
     notEquals,
@@ -30,11 +29,11 @@ export function evaluateCondition(
   }
 
   if (condition.in !== undefined) {
-    return condition.in.includes(fieldValue);
+    return (condition.in as any[]).includes(fieldValue);
   }
 
   if (condition.notIn !== undefined) {
-    return !condition.notIn.includes(fieldValue);
+    return !(condition.notIn as any[]).includes(fieldValue);
   }
 
   if (isEmpty === true) {
@@ -73,9 +72,13 @@ export function evaluateCondition(
       case "notEquals":
         return fieldValue !== condition.notEquals;
       case "in":
-        return condition.in ? condition.in.includes(fieldValue) : false;
+        return condition.in
+          ? (condition.in as any[]).includes(fieldValue)
+          : false;
       case "notIn":
-        return condition.notIn ? !condition.notIn.includes(fieldValue) : true;
+        return condition.notIn
+          ? !(condition.notIn as any[]).includes(fieldValue)
+          : true;
       case "isEmpty":
         return (
           fieldValue === null || fieldValue === undefined || fieldValue === ""

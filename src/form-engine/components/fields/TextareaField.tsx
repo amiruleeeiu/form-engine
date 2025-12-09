@@ -13,7 +13,7 @@ export const TextareaField: React.FC<TextareaFieldConfig> = ({
   name,
   label,
   placeholder,
-  cols = 12,
+  cols: _cols = 12, // Used for grid layout in parent
   className,
   labelClassName,
   inputClassName,

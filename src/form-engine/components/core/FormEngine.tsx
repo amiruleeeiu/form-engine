@@ -34,7 +34,7 @@ export const FormEngine: React.FC<FormEngineProps> = ({
 
   const methods = useForm({
     resolver: schema.validationSchema
-      ? zodResolver(schema.validationSchema)
+      ? zodResolver(schema.validationSchema as any)
       : undefined,
     defaultValues,
     mode: "onSubmit",

@@ -36,6 +36,14 @@ A powerful, flexible, and beautiful form builder for React applications built wi
 - Support for complex conditions (equals, notEquals, in, notIn, isEmpty, isNotEmpty, greaterThan, lessThan)
 - Live reactive updates using React Hook Form's `watch()`
 
+🔁 **Repeatable Sections (Form Arrays)**
+
+- Add/remove groups of fields dynamically
+- Perfect for work experience, education, skills, etc.
+- Configurable min/max items
+- Default values support
+- Custom styling options
+
 📊 **Multi-Step Forms**
 
 - Easy stepper/wizard forms
@@ -659,6 +667,80 @@ The `NumberField` component supports min/max validation through the `validation`
 }
 ```
 
+## Repeatable Sections (Form Arrays)
+
+Repeatable sections allow users to dynamically add and remove groups of fields:
+
+```typescript
+{
+  title: "Work Experience",
+  description: "Add your work experience (you can add multiple)",
+  repeatable: true,
+  repeatableConfig: {
+    addButtonText: "Add Experience",
+    removeButtonText: "Remove",
+    minItems: 1,        // Minimum items required
+    maxItems: 10,       // Maximum items allowed
+    initialItems: 1,    // Items to show on form load
+    defaultItem: {      // Default values for new items
+      companyName: "",
+      position: ""
+    }
+  },
+  fields: [
+    {
+      name: "companyName",
+      label: "Company Name",
+      type: "text",
+      cols: 6,
+      validation: { required: true }
+    },
+    {
+      name: "position",
+      label: "Position",
+      type: "text",
+      cols: 6,
+      validation: { required: true }
+    },
+    {
+      name: "startDate",
+      label: "Start Date",
+      type: "date",
+      cols: 6
+    },
+    {
+      name: "endDate",
+      label: "End Date",
+      type: "date",
+      cols: 6
+    }
+  ]
+}
+```
+
+**Form data structure:**
+
+```typescript
+{
+  workExperience: [
+    {
+      companyName: "ABC Corp",
+      position: "Developer",
+      startDate: "2020-01-01",
+      endDate: "2022-12-31",
+    },
+    {
+      companyName: "XYZ Ltd",
+      position: "Senior Developer",
+      startDate: "2023-01-01",
+      endDate: null,
+    },
+  ];
+}
+```
+
+**See [REPEATABLE_SECTIONS_GUIDE.md](./REPEATABLE_SECTIONS_GUIDE.md) for detailed examples.**
+
 ## Grid Layout
 
 The form engine uses a 12-column grid system. You can specify how many columns each field should span:
@@ -741,27 +823,40 @@ Then open your browser to see the demo with multiple form examples.
 
 Edit `src/form-engine/utils/conditionalLogic.ts` and add your operator to the `evaluateCondition` function.
 
-## What's New in v1.4.0
+## What's New in v1.5.0
 
-✨ **Field-Level Validation** - No more mandatory Zod schemas! Add validation directly to fields:
+🔁 **Repeatable Sections** - Add/remove groups of fields dynamically!
 
 ```typescript
 {
-  name: "email",
-  validation: {
-    required: true,
-    email: "Please enter valid email"
-  }
+  title: "Work Experience",
+  repeatable: true,
+  repeatableConfig: {
+    addButtonText: "Add Experience",
+    removeButtonText: "Remove",
+    minItems: 1,
+    maxItems: 10,
+    initialItems: 1
+  },
+  fields: [...]
 }
 ```
 
-✅ **All Fields Support Validation** - TextField, NumberField, DateField, SelectField, PhoneField, RadioField, CheckboxField, FileField - all support field-level validation now!
+Perfect for:
 
-🔧 **Fixed FileField Error** - Resolved "uncontrolled to controlled" input error when uploading files
+- Multiple work experiences
+- Education history
+- Skills list
+- Project details
+- Any repeating data structure
 
-🎨 **Improved Spacing** - Better field spacing with `gap-4` instead of `gap-6`
+✨ **Previous Updates (v1.4.0)**
 
-📍 **Location Selector Example** - Complete example with Division > District > Sub-District cascade
+- Field-Level Validation - No mandatory Zod schemas!
+- All fields support validation
+- Fixed FileField "uncontrolled to controlled" error
+- Improved spacing
+- Location selector examples
 
 ## Contributing
 

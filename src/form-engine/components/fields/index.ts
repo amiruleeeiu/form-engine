@@ -1,4 +1,3 @@
-export { AutocompleteField } from "./AutocompleteField.js";
 export { CheckboxField } from "./CheckboxField.js";
 export { CustomSelectField } from "./CustomSelectField.js";
 export { DateField } from "./DateField.js";

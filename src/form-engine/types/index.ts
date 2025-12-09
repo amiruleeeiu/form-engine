@@ -55,7 +55,6 @@ export type FieldType =
   | "number"
   | "date"
   | "select"
-  | "autocomplete"
   | "file"
   | "radio"
   | "checkbox"
@@ -131,12 +130,6 @@ export interface SelectFieldConfig extends BaseFieldConfig {
   isMulti?: boolean;
 }
 
-export interface AutocompleteFieldConfig extends BaseFieldConfig {
-  type: "autocomplete";
-  options?: SelectOption[];
-  dynamicOptions?: DynamicSelectConfig;
-}
-
 export interface FileFieldConfig extends BaseFieldConfig {
   type: "file";
   accept?: string;
@@ -176,7 +169,6 @@ export type FieldConfig =
   | NumberFieldConfig
   | DateFieldConfig
   | SelectFieldConfig
-  | AutocompleteFieldConfig
   | FileFieldConfig
   | RadioFieldConfig
   | CheckboxFieldConfig

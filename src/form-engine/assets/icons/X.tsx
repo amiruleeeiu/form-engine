@@ -2,9 +2,10 @@ import React from "react";
 
 interface XProps {
   className?: string;
+  size?: number;
 }
 
-export const X: React.FC<XProps> = ({ className }) => {
+export const X: React.FC<XProps> = ({ className, size = 24 }) => {
   return (
     <svg
       className={className}
@@ -12,6 +13,8 @@ export const X: React.FC<XProps> = ({ className }) => {
       stroke="currentColor"
       viewBox="0 0 24 24"
       strokeWidth={2}
+      width={size}
+      height={size}
     >
       <path
         strokeLinecap="round"

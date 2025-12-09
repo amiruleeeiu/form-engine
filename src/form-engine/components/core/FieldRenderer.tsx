@@ -1,7 +1,6 @@
 import React from "react";
 import type { FieldConfig } from "../../types/index.js";
 import {
-  AutocompleteField,
   CheckboxField,
   CustomSelectField,
   DateField,
@@ -40,8 +39,6 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
       return <DateField {...modifiedField} />;
     case "select":
       return <CustomSelectField {...modifiedField} />;
-    case "autocomplete":
-      return <AutocompleteField {...modifiedField} />;
     case "file":
       return <FileField {...modifiedField} />;
     case "radio":

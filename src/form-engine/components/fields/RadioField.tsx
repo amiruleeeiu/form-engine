@@ -77,7 +77,7 @@ export const RadioField: React.FC<RadioFieldConfig> = ({
   if (!isVisible) return null;
 
   // Handle clearing dependent fields
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = () => {
     if (clearFields && clearFields.length > 0) {
       clearFields.forEach((fieldName) => {
         setValue(fieldName, undefined, { shouldValidate: false });
@@ -110,7 +110,7 @@ export const RadioField: React.FC<RadioFieldConfig> = ({
               {...register(name, getValidationRules(validation))}
               onChange={(e) => {
                 register(name, getValidationRules(validation)).onChange(e);
-                handleChange(e);
+                handleChange();
               }}
               className={cn(
                 "w-4 h-4 text-blue-600 border-gray-300 disabled:cursor-not-allowed",
