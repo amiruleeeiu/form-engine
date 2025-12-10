@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/incompatible-library */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -128,7 +130,7 @@ export const FormEngine: React.FC<FormEngineProps> = ({
                   <div className="flex items-center gap-3">
                     {/* Checkmark for completed steps */}
                     {index < currentStep && (
-                      <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-teal-500 flex items-center justify-center flex-shrink-0">
+                      <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-teal-500 flex items-center justify-center shrink-0">
                         <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
                       </div>
                     )}
@@ -299,7 +301,7 @@ export const FormEngine: React.FC<FormEngineProps> = ({
           <button
             type="submit"
             className={cn(
-              "inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200 shadow-md hover:shadow-lg",
+              "inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold text-white bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200 shadow-md hover:shadow-lg",
               submitButtonClassName
             )}
           >

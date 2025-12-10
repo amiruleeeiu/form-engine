@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import type { DynamicSelectConfig, SelectOption } from "../types/index.js";
 

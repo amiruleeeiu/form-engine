@@ -1,94 +1,30 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useFormContext } from "react-hook-form";
+import { useFieldConfig } from "../../hooks/useFieldConfig.js";
 import type { TextFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
-import {
-  getWatchedFields,
-  shouldEnableField,
-  shouldShowField,
-} from "../../utils/conditionalLogic.js";
-import { getValidationRules } from "../../utils/fieldValidation.js";
 
-export const TextField: React.FC<TextFieldConfig> = ({
-  name,
-  label,
-  placeholder,
-  cols = 12,
-  className,
-  labelClassName,
-  inputClassName,
-  errorClassName,
-  validation,
-  showWhen,
-  hideWhen,
-  enableWhen,
-  disableWhen,
-}) => {
+export const TextField: React.FC<TextFieldConfig> = (props) => {
   const {
-    register,
-    watch,
-    formState: { errors },
-  } = useFormContext();
+    name,
+    label,
+    placeholder,
+    className,
+    labelClassName,
+    inputClassName,
+    errorClassName,
+  } = props;
 
-  // Get validation rules from field config
-  const validationRules = useMemo(
-    () => getValidationRules(validation),
-    [validation]
-  );
+  const { register } = useFormContext();
 
-  // Get all fields that need to be watched for conditional logic
-  const watchFields = useMemo(() => {
-    const fields = new Set<string>();
-    [showWhen, hideWhen, enableWhen, disableWhen].forEach((condition) => {
-      getWatchedFields(condition).forEach((field) => fields.add(field));
-    });
-    return Array.from(fields);
-  }, [showWhen, hideWhen, enableWhen, disableWhen]);
-
-  // Watch the dependent fields
-  const watchedValues = watch(watchFields);
-
-  // Build a map of field values for evaluation
-  const valueMap = useMemo(() => {
-    const map: Record<string, unknown> = {};
-    watchFields.forEach((field, index) => {
-      map[field] = watchedValues[index];
-    });
-    return map;
-  }, [watchFields, watchedValues]);
-
-  // Evaluate visibility and enabled state
-  const isVisible = useMemo(() => {
-    const showField = showWhen?.field ? valueMap[showWhen.field] : undefined;
-    const hideField = hideWhen?.field ? valueMap[hideWhen.field] : undefined;
-    return shouldShowField(
-      showWhen,
-      hideWhen,
-      showWhen ? showField : hideField
-    );
-  }, [showWhen, hideWhen, valueMap]);
-
-  const isEnabled = useMemo(() => {
-    const enableField = enableWhen?.field
-      ? valueMap[enableWhen.field]
-      : undefined;
-    const disableField = disableWhen?.field
-      ? valueMap[disableWhen.field]
-      : undefined;
-    return shouldEnableField(
-      enableWhen,
-      disableWhen,
-      enableWhen ? enableField : disableField
-    );
-  }, [enableWhen, disableWhen, valueMap]);
+  // Use custom hook for all common field logic
+  const { validationRules, isVisible, isEnabled, error, colSpan } =
+    useFieldConfig(props);
 
   if (!isVisible) return null;
 
-  const error = errors[name];
-  const colSpan = `col-span-${cols}`;
   return (
     <div className={cn(colSpan, className)}>
-      {" "}
       <label
         htmlFor={name}
         className={cn(
@@ -97,7 +33,7 @@ export const TextField: React.FC<TextFieldConfig> = ({
         )}
       >
         {label}
-      </label>{" "}
+      </label>
       <input
         id={name}
         type="text"
@@ -105,14 +41,14 @@ export const TextField: React.FC<TextFieldConfig> = ({
         disabled={!isEnabled}
         {...register(name, validationRules)}
         className={cn(
-          "w-full px-4 py-2.5 text-sm border rounded-md bg-white text-gray-900 placeholder-gray-400 transition-colors duration-200 focus:outline-none",
+          "w-full px-3 py-2.5 text-sm border rounded-md bg-white text-gray-900 placeholder-gray-400 transition-colors duration-200 focus:outline-none",
           error
             ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
             : "border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200",
           !isEnabled && "bg-gray-50 text-gray-500 cursor-not-allowed",
           inputClassName
         )}
-      />{" "}
+      />
       {error && (
         <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>
           {error.message as string}

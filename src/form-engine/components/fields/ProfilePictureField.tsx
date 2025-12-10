@@ -1,87 +1,36 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
+import { User, X } from "../../assets/icons/index.js";
+import { useFieldConfig } from "../../hooks/useFieldConfig.js";
 import type { ProfilePictureFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
-import {
-  getWatchedFields,
-  shouldEnableField,
-  shouldShowField,
-} from "../../utils/conditionalLogic.js";
-import { getValidationRules } from "../../utils/fieldValidation.js";
 
-export const ProfilePictureField: React.FC<ProfilePictureFieldConfig> = ({
-  name,
-  label,
-  cols = 12,
-  className,
-  labelClassName,
-  inputClassName,
-  errorClassName,
-  validation,
-  accept = "image/*",
-  maxSize,
-  uploadConfig,
-  showWhen,
-  hideWhen,
-  enableWhen,
-  disableWhen,
-}) => {
+export const ProfilePictureField: React.FC<ProfilePictureFieldConfig> = (
+  props
+) => {
+  const {
+    name,
+    label,
+    className,
+    labelClassName,
+    inputClassName,
+    errorClassName,
+    accept = "image/*",
+    maxSize,
+    uploadConfig,
+  } = props;
+
   const [preview, setPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
-  const {
-    control,
-    watch,
-    formState: { errors },
-  } = useFormContext();
+  const { control } = useFormContext();
 
-  const watchFields = useMemo(() => {
-    const fields = new Set<string>();
-    [showWhen, hideWhen, enableWhen, disableWhen].forEach((condition) => {
-      getWatchedFields(condition).forEach((field) => fields.add(field));
-    });
-    return Array.from(fields);
-  }, [showWhen, hideWhen, enableWhen, disableWhen]);
-
-  const watchedValues = watch(watchFields);
-
-  const valueMap = useMemo(() => {
-    const map: Record<string, unknown> = {};
-    watchFields.forEach((field, index) => {
-      map[field] = watchedValues[index];
-    });
-    return map;
-  }, [watchFields, watchedValues]);
-
-  const isVisible = useMemo(() => {
-    const showField = showWhen?.field ? valueMap[showWhen.field] : undefined;
-    const hideField = hideWhen?.field ? valueMap[hideWhen.field] : undefined;
-    return shouldShowField(
-      showWhen,
-      hideWhen,
-      showWhen ? showField : hideField
-    );
-  }, [showWhen, hideWhen, valueMap]);
-
-  const isEnabled = useMemo(() => {
-    const enableField = enableWhen?.field
-      ? valueMap[enableWhen.field]
-      : undefined;
-    const disableField = disableWhen?.field
-      ? valueMap[disableWhen.field]
-      : undefined;
-    return shouldEnableField(
-      enableWhen,
-      disableWhen,
-      enableWhen ? enableField : disableField
-    );
-  }, [enableWhen, disableWhen, valueMap]);
+  // Use custom hook for all common field logic
+  const { validationRules, isVisible, isEnabled, error, colSpan } =
+    useFieldConfig(props);
 
   if (!isVisible) return null;
-
-  const error = errors[name];
-  const colSpan = `col-span-${cols}`;
 
   const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -186,8 +135,8 @@ export const ProfilePictureField: React.FC<ProfilePictureFieldConfig> = ({
       <Controller
         name={name}
         control={control}
-        rules={getValidationRules(validation)}
-        render={({ field: { value, onChange, ...field } }) => (
+        rules={validationRules}
+        render={({ field: { onChange, ...field } }) => (
           <div className="space-y-3">
             {preview ? (
               <div className="relative inline-block">
@@ -205,38 +154,12 @@ export const ProfilePictureField: React.FC<ProfilePictureFieldConfig> = ({
                   className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
                   title="Remove image"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2}
-                    stroke="currentColor"
-                    className="w-4 h-4"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                  <X className="w-4 h-4" />
                 </button>
               </div>
             ) : (
               <div className="w-32 h-32 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-12 h-12 text-gray-400"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-                  />
-                </svg>
+                <User className="w-12 h-12 text-gray-400" />
               </div>
             )}
 

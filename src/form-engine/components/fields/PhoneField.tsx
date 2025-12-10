@@ -1,90 +1,31 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { AlertCircle } from "../../assets/icons/AlertCircle.js";
+import { useFieldConfig } from "../../hooks/useFieldConfig.js";
 import type { PhoneFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
-import {
-  getWatchedFields,
-  shouldEnableField,
-  shouldShowField,
-} from "../../utils/conditionalLogic.js";
-import { getValidationRules } from "../../utils/fieldValidation.js";
 
-export const PhoneField: React.FC<PhoneFieldConfig> = ({
-  name,
-  label,
-  placeholder = "Enter phone number",
-  cols = 12,
-  className,
-  labelClassName,
-  inputClassName,
-  errorClassName,
-  validation,
-  showWhen,
-  hideWhen,
-  enableWhen,
-  disableWhen,
-  defaultCountry = "bd",
-}) => {
+export const PhoneField: React.FC<PhoneFieldConfig> = (props) => {
   const {
-    control,
-    watch,
-    formState: { errors },
-  } = useFormContext();
+    name,
+    label,
+    placeholder = "Enter phone number",
+    className,
+    labelClassName,
+    inputClassName,
+    errorClassName,
+    defaultCountry = "bd",
+  } = props;
 
-  // Get all fields that need to be watched for conditional logic
-  const watchFields = useMemo(() => {
-    const fields = new Set<string>();
-    [showWhen, hideWhen, enableWhen, disableWhen].forEach((condition) => {
-      getWatchedFields(condition).forEach((field) => fields.add(field));
-    });
-    return Array.from(fields);
-  }, [showWhen, hideWhen, enableWhen, disableWhen]);
+  const { control } = useFormContext();
 
-  // Watch the dependent fields
-  const watchedValues = watch(watchFields);
-
-  // Create a map of field names to their values
-  const valueMap = useMemo(() => {
-    const map: Record<string, unknown> = {};
-    watchFields.forEach((field, index) => {
-      map[field] = watchedValues[index];
-    });
-    return map;
-  }, [watchFields, watchedValues]);
-
-  // Check visibility
-  const isVisible = useMemo(() => {
-    const showField = showWhen?.field ? valueMap[showWhen.field] : undefined;
-    const hideField = hideWhen?.field ? valueMap[hideWhen.field] : undefined;
-    return shouldShowField(
-      showWhen,
-      hideWhen,
-      showWhen ? showField : hideField
-    );
-  }, [showWhen, hideWhen, valueMap]);
-
-  // Check if field should be enabled
-  const isEnabled = useMemo(() => {
-    const enableField = enableWhen?.field
-      ? valueMap[enableWhen.field]
-      : undefined;
-    const disableField = disableWhen?.field
-      ? valueMap[disableWhen.field]
-      : undefined;
-    return shouldEnableField(
-      enableWhen,
-      disableWhen,
-      enableWhen ? enableField : disableField
-    );
-  }, [enableWhen, disableWhen, valueMap]);
+  // Use custom hook for all common field logic
+  const { validationRules, isVisible, isEnabled, error, colSpan } =
+    useFieldConfig(props);
 
   if (!isVisible) return null;
-
-  const error = errors[name];
-  const colSpan = `col-span-${cols}`;
-  const rules = getValidationRules(validation);
 
   return (
     <div className={cn(colSpan, className)}>
@@ -101,7 +42,7 @@ export const PhoneField: React.FC<PhoneFieldConfig> = ({
       <Controller
         name={name}
         control={control}
-        rules={rules}
+        rules={validationRules}
         render={({ field: { onChange, value } }) => (
           <PhoneInput
             country={defaultCountry}
@@ -147,13 +88,7 @@ export const PhoneField: React.FC<PhoneFieldConfig> = ({
             errorClassName
           )}
         >
-          <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fillRule="evenodd"
-              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-              clipRule="evenodd"
-            />
-          </svg>
+          <AlertCircle />
           {error.message as string}
         </p>
       )}

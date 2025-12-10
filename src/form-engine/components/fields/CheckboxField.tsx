@@ -1,82 +1,28 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useMemo } from "react";
+import React from "react";
 import { useFormContext } from "react-hook-form";
+import { useFieldConfig } from "../../hooks/useFieldConfig.js";
 import type { CheckboxFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
-import {
-  getWatchedFields,
-  shouldEnableField,
-  shouldShowField,
-} from "../../utils/conditionalLogic.js";
 import { getValidationRules } from "../../utils/fieldValidation.js";
 
-export const CheckboxField: React.FC<CheckboxFieldConfig> = ({
-  name,
-  label,
-  checkboxLabel,
-  cols = 12,
-  className,
-  labelClassName,
-  inputClassName,
-  errorClassName,
-  validation,
-  showWhen,
-  hideWhen,
-  enableWhen,
-  disableWhen,
-}) => {
+export const CheckboxField: React.FC<CheckboxFieldConfig> = (props) => {
   const {
-    register,
-    watch,
-    formState: { errors },
-  } = useFormContext();
+    name,
+    label,
+    checkboxLabel,
+    className,
+    labelClassName,
+    inputClassName,
+    errorClassName,
+    validation,
+  } = props;
 
-  const watchFields = useMemo(() => {
-    const fields = new Set<string>();
-    [showWhen, hideWhen, enableWhen, disableWhen].forEach((condition) => {
-      getWatchedFields(condition).forEach((field) => fields.add(field));
-    });
-    return Array.from(fields);
-  }, [showWhen, hideWhen, enableWhen, disableWhen]);
+  const { register } = useFormContext();
 
-  const watchedValues = watch(watchFields);
-
-  const valueMap = useMemo(() => {
-    const map: Record<string, any> = {};
-    watchFields.forEach((field, index) => {
-      map[field] = watchedValues[index];
-    });
-    return map;
-  }, [watchFields, watchedValues]);
-
-  const isVisible = useMemo(() => {
-    const showField = showWhen?.field ? valueMap[showWhen.field] : undefined;
-    const hideField = hideWhen?.field ? valueMap[hideWhen.field] : undefined;
-    return shouldShowField(
-      showWhen,
-      hideWhen,
-      showWhen ? showField : hideField
-    );
-  }, [showWhen, hideWhen, valueMap]);
-
-  const isEnabled = useMemo(() => {
-    const enableField = enableWhen?.field
-      ? valueMap[enableWhen.field]
-      : undefined;
-    const disableField = disableWhen?.field
-      ? valueMap[disableWhen.field]
-      : undefined;
-    return shouldEnableField(
-      enableWhen,
-      disableWhen,
-      enableWhen ? enableField : disableField
-    );
-  }, [enableWhen, disableWhen, valueMap]);
+  // Use custom hook for all common field logic
+  const { isVisible, isEnabled, error, colSpan } = useFieldConfig(props);
 
   if (!isVisible) return null;
-
-  const error = errors[name];
-  const colSpan = `col-span-${cols}`;
   return (
     <div className={cn(colSpan, className)}>
       <label

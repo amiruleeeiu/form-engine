@@ -98,7 +98,7 @@ export const simpleFormSchema: FormSchema = {
           name: "dateOfBirth",
           label: "Date of Birth",
           type: "date",
-          cols: 2, // Full row on desktop and mobile
+          cols: 1, // Full row on desktop and mobile
           validation: {
             required: "Date of birth is required",
           },

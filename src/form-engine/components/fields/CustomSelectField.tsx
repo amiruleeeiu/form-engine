@@ -1,106 +1,52 @@
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { flushSync } from "react-dom";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
+import { Check, ChevronDown, Spinner, X } from "../../assets/icons/index.js";
+import { useClickOutside } from "../../hooks/useClickOutside.js";
+import { useDropdownPosition } from "../../hooks/useDropdownPosition.js";
+import { useFieldConfig } from "../../hooks/useFieldConfig.js";
 import type { SelectFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
-import {
-  getWatchedFields,
-  shouldEnableField,
-  shouldShowField,
-} from "../../utils/conditionalLogic.js";
 import { useDynamicOptions } from "../../utils/dynamicOptions.js";
-import { getValidationRules } from "../../utils/fieldValidation.js";
 
-export const CustomSelectField: React.FC<SelectFieldConfig> = ({
-  name,
-  label,
-  placeholder = "Select an option",
-  cols = 12,
-  className,
-  labelClassName,
-  inputClassName,
-  errorClassName,
-  options: staticOptions = [],
-  dynamicOptions,
-  validation,
-  isMulti = false,
-  showWhen,
-  hideWhen,
-  enableWhen,
-  disableWhen,
-  clearFields,
-}) => {
+export const CustomSelectField: React.FC<SelectFieldConfig> = (props) => {
+  const {
+    name,
+    label,
+    placeholder = "Select an option",
+    className,
+    labelClassName,
+    inputClassName,
+    errorClassName,
+    options: staticOptions = [],
+    dynamicOptions,
+    isMulti = false,
+    clearFields,
+  } = props;
+
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [highlightedIndex, setHighlightedIndex] = useState(0);
-  const [dropdownPosition, setDropdownPosition] = useState<"bottom" | "top">(
-    "bottom"
-  );
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const optionsRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const {
-    register,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useFormContext();
+  const { register, watch, setValue } = useFormContext();
 
   const { options: dynamicOpts, loading } = useDynamicOptions(dynamicOptions);
   const currentValue = watch(name);
 
-  const validationRules = getValidationRules(validation);
+  const dropdownPosition = useDropdownPosition({
+    isOpen,
+    triggerRef: buttonRef,
+    dropdownHeight: 300,
+  });
+
+  // Use custom hook for all common field logic
+  const { validationRules, isVisible, isEnabled, error, colSpan } =
+    useFieldConfig(props);
+
   const { ref, ...rest } = register(name, validationRules);
-
-  const watchFields = useMemo(() => {
-    const fields = new Set<string>();
-    [showWhen, hideWhen, enableWhen, disableWhen].forEach((condition) => {
-      getWatchedFields(condition).forEach((field) => fields.add(field));
-    });
-    return Array.from(fields);
-  }, [showWhen, hideWhen, enableWhen, disableWhen]);
-
-  const watchedValues = watch(watchFields);
-
-  const valueMap = useMemo(() => {
-    const map: Record<string, unknown> = {};
-    watchFields.forEach((field, index) => {
-      map[field] = watchedValues[index];
-    });
-    return map;
-  }, [watchFields, watchedValues]);
-
-  const isVisible = useMemo(() => {
-    const showField = showWhen?.field ? valueMap[showWhen.field] : undefined;
-    const hideField = hideWhen?.field ? valueMap[hideWhen.field] : undefined;
-    return shouldShowField(
-      showWhen,
-      hideWhen,
-      showWhen ? showField : hideField
-    );
-  }, [showWhen, hideWhen, valueMap]);
-
-  const isEnabled = useMemo(() => {
-    const enableField = enableWhen?.field
-      ? valueMap[enableWhen.field]
-      : undefined;
-    const disableField = disableWhen?.field
-      ? valueMap[disableWhen.field]
-      : undefined;
-    return shouldEnableField(
-      enableWhen,
-      disableWhen,
-      enableWhen ? enableField : disableField
-    );
-  }, [enableWhen, disableWhen, valueMap]);
 
   const options = dynamicOptions ? dynamicOpts : staticOptions;
 
@@ -123,43 +69,18 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = ({
     return options.filter((opt) => values.includes(opt.value));
   }, [options, currentValue, isMulti]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-        setSearchQuery("");
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  useClickOutside({
+    ref: dropdownRef,
+    handler: () => {
+      setIsOpen(false);
+      setSearchQuery("");
+    },
+    enabled: true,
+  });
 
   useEffect(() => {
     if (isOpen && searchInputRef.current) {
       searchInputRef.current.focus();
-    }
-  }, [isOpen]);
-
-  // Calculate dropdown position based on available space
-  useLayoutEffect(() => {
-    if (isOpen && buttonRef.current) {
-      const buttonRect = buttonRef.current.getBoundingClientRect();
-      const dropdownHeight = 300; // Approximate max height of dropdown
-      const spaceBelow = window.innerHeight - buttonRect.bottom;
-      const spaceAbove = buttonRect.top;
-
-      // Show dropdown above if not enough space below and more space above
-      const newPosition =
-        spaceBelow < dropdownHeight && spaceAbove > spaceBelow
-          ? "top"
-          : "bottom";
-      flushSync(() => {
-        setDropdownPosition(newPosition);
-      });
     }
   }, [isOpen]);
 
@@ -176,6 +97,8 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = ({
       }
     }
   }, [highlightedIndex, isOpen]);
+
+  if (!isVisible) return null;
 
   const handleSelect = (value: string | number) => {
     if (isMulti) {
@@ -264,9 +187,6 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = ({
 
   if (!isVisible) return null;
 
-  const error = errors[name];
-  const colSpan = `col-span-${cols}`;
-
   return (
     <div className={cn(colSpan, className)} ref={dropdownRef}>
       <label
@@ -290,7 +210,7 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = ({
           disabled={!isEnabled || loading}
           className={cn(
             "relative w-full flex items-center justify-between gap-2",
-            "px-4 py-2.5 text-sm text-left bg-white border rounded-md text-gray-900 placeholder-gray-400 transition-colors duration-200 focus:outline-none",
+            "px-2.5 py-2.5 text-sm text-left bg-white border rounded-md text-gray-900 placeholder-gray-400 transition-colors duration-200 focus:outline-none",
             error
               ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
               : "border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200",
@@ -303,26 +223,7 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = ({
           <span className="flex items-center gap-2 flex-1 min-w-0">
             {loading ? (
               <>
-                <svg
-                  className="animate-spin h-4 w-4 text-gray-400"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
+                <Spinner className="animate-spin h-4 w-4 text-gray-400" />
                 <span className="text-gray-500 truncate">Loading...</span>
               </>
             ) : isMulti && selectedOptions.length > 0 ? (
@@ -338,19 +239,7 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = ({
                       onClick={(e) => handleRemoveOption(e, option.value)}
                       className="flex items-center justify-center rounded hover:bg-blue-200 transition-colors focus:outline-none p-0.5"
                     >
-                      <svg
-                        className="w-3.5 h-3.5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2.5}
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
+                      <X className="w-3.5 h-3.5" />
                     </button>
                   </span>
                 ))}
@@ -376,38 +265,16 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = ({
                 className="flex items-center justify-center rounded hover:bg-gray-100 transition-colors focus:outline-none"
                 title="Clear selection"
               >
-                <svg
-                  className="w-4 h-4 text-gray-400 hover:text-gray-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+                <X className="w-4 h-4 text-gray-400 hover:text-gray-600" />
               </button>
             ) : (
               /* Dropdown Arrow - show when no value is selected */
-              <svg
+              <ChevronDown
                 className={cn(
                   "w-4 h-4 text-gray-400 transition-transform",
                   isOpen && "transform rotate-180"
                 )}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
+              />
             )}
           </div>
         </button>
@@ -471,37 +338,13 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = ({
                           )}
                         >
                           {isSelected && (
-                            <svg
-                              className="w-3 h-3 text-white"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={3}
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
+                            <Check className="w-3 h-3 text-white" />
                           )}
                         </div>
                       )}
                       <span className="truncate flex-1">{option.label}</span>
                       {isSelected && !isMulti && (
-                        <svg
-                          className="w-4 h-4 shrink-0"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
+                        <Check className="w-4 h-4 shrink-0" />
                       )}
                     </div>
                   );

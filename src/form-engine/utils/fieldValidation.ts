@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { FieldValidation } from "../types/index.js";
 
 /**

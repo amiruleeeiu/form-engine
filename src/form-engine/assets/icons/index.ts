@@ -1,6 +1,13 @@
+export { AlertCircle } from "./AlertCircle.js";
 export { Calendar } from "./Calendar.js";
 export { Check } from "./Check.js";
+export { ChevronDown } from "./ChevronDown.js";
 export { ChevronLeft } from "./ChevronLeft.js";
 export { ChevronRight } from "./ChevronRight.js";
+export { Eye } from "./Eye.js";
+export { EyeOff } from "./EyeOff.js";
+export { Phone } from "./Phone.js";
 export { Plus } from "./Plus.js";
+export { Spinner } from "./Spinner.js";
+export { User } from "./User.js";
 export { X } from "./X.js";

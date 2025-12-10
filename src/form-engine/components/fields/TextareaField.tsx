@@ -1,91 +1,29 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useFormContext } from "react-hook-form";
+import { useFieldConfig } from "../../hooks/useFieldConfig.js";
 import type { TextareaFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
-import {
-  getWatchedFields,
-  shouldEnableField,
-  shouldShowField,
-} from "../../utils/conditionalLogic.js";
-import { getValidationRules } from "../../utils/fieldValidation.js";
 
-export const TextareaField: React.FC<TextareaFieldConfig> = ({
-  name,
-  label,
-  placeholder,
-  cols: _cols = 12, // Used for grid layout in parent
-  className,
-  labelClassName,
-  inputClassName,
-  errorClassName,
-  validation,
-  rows = 4,
-  showWhen,
-  hideWhen,
-  enableWhen,
-  disableWhen,
-}) => {
+export const TextareaField: React.FC<TextareaFieldConfig> = (props) => {
   const {
-    register,
-    watch,
-    formState: { errors },
-  } = useFormContext();
+    name,
+    label,
+    placeholder,
+    className,
+    labelClassName,
+    inputClassName,
+    errorClassName,
+    validation,
+    rows = 4,
+  } = props;
 
-  // Get validation rules from field config
-  const validationRules = useMemo(
-    () => getValidationRules(validation),
-    [validation]
-  );
+  const { register } = useFormContext();
 
-  // Get all fields that need to be watched for conditional logic
-  const watchFields = useMemo(() => {
-    const fields = new Set<string>();
-    [showWhen, hideWhen, enableWhen, disableWhen].forEach((condition) => {
-      getWatchedFields(condition).forEach((field) => fields.add(field));
-    });
-    return Array.from(fields);
-  }, [showWhen, hideWhen, enableWhen, disableWhen]);
-
-  // Watch the dependent fields
-  const watchedValues = watch(watchFields);
-
-  // Build a map of field values for evaluation
-  const valueMap = useMemo(() => {
-    const map: Record<string, unknown> = {};
-    watchFields.forEach((field, index) => {
-      map[field] = watchedValues[index];
-    });
-    return map;
-  }, [watchFields, watchedValues]);
-
-  // Evaluate visibility and enabled state
-  const isVisible = useMemo(() => {
-    const showField = showWhen?.field ? valueMap[showWhen.field] : undefined;
-    const hideField = hideWhen?.field ? valueMap[hideWhen.field] : undefined;
-    return shouldShowField(
-      showWhen,
-      hideWhen,
-      showWhen ? showField : hideField
-    );
-  }, [showWhen, hideWhen, valueMap]);
-
-  const isEnabled = useMemo(() => {
-    const enableField = enableWhen?.field
-      ? valueMap[enableWhen.field]
-      : undefined;
-    const disableField = disableWhen?.field
-      ? valueMap[disableWhen.field]
-      : undefined;
-    return shouldEnableField(
-      enableWhen,
-      disableWhen,
-      enableWhen ? enableField : disableField
-    );
-  }, [enableWhen, disableWhen, valueMap]);
+  // Use custom hook for all common field logic
+  const { validationRules, isVisible, isEnabled, error } =
+    useFieldConfig(props);
 
   if (!isVisible) return null;
-
-  const error = errors[name];
 
   return (
     <div className={cn("space-y-2", className)}>

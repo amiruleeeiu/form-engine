@@ -37,7 +37,7 @@ export const RepeatableSection: React.FC<RepeatableSectionProps> = ({
   const handleAdd = () => {
     if (canAdd) {
       // Get default values for the new item from field defaultValues
-      const defaultItem: Record<string, any> = {};
+      const defaultItem: Record<string, unknown> = {};
       section.fields.forEach((field) => {
         if (field.defaultValue !== undefined) {
           defaultItem[field.name] = field.defaultValue;
