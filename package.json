@@ -1,5 +1,5 @@
 {
-  "name": "@amiruleeeiu/react-form-engine",
+  "name": "react-hook-form-engine",
   "version": "1.6.0",
   "type": "module",
   "description": "A powerful and flexible React form engine with repeatable sections, field-level validation, dynamic options, conditional logic, and multi-step forms",
