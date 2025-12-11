@@ -1,8 +1,8 @@
 {
   "name": "react-hook-form-engine",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "type": "module",
-  "description": "A powerful and flexible React form engine with repeatable sections, field-level validation, dynamic options, conditional logic, and multi-step forms",
+  "description": "A powerful and flexible React form engine with API data sources, repeatable sections, field-level validation, dynamic options, conditional logic, and multi-step forms",
   "author": "amiruleeeiu",
   "license": "MIT",
   "repository": {
@@ -26,7 +26,14 @@
     "form-builder",
     "repeatable-sections",
     "form-array",
-    "field-array"
+    "field-array",
+    "api-data-source",
+    "read-only-fields",
+    "data-fetching",
+    "tailwind-css",
+    "phone-input",
+    "date-picker",
+    "file-upload"
   ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -47,7 +54,11 @@
   "files": [
     "dist",
     "README.md",
-    "USAGE_GUIDE.md"
+    "CHANGELOG.md",
+    "USAGE_GUIDE.md",
+    "API_DATA_GUIDE.md",
+    "FIELD_VALIDATION_GUIDE.md",
+    "REPEATABLE_SECTIONS_GUIDE.md"
   ],
   "sideEffects": [
     "**/*.css"
