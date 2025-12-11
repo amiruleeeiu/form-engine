@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { JSONSchemaEditor } from "./components/JSONSchemaEditor.js";
+import { apiDataFormSchema } from "./examples/apiDataFormSchema.js";
 import { businessRegistrationSchema } from "./examples/businessRegistrationSchema.js";
 import { businessStarterPackageSchema } from "./examples/businessStarterPackageSchema";
 import { conditionalLogicFormSchema } from "./examples/conditionalLogicSchema.js";
@@ -34,7 +35,8 @@ type FormType =
   | "businessRegistration"
   | "businessStarterPackage"
   | "securityClearance"
-  | "userProfile";
+  | "userProfile"
+  | "apiData";
 
 function App() {
   const [viewMode, setViewMode] = useState<ViewMode>("examples");
@@ -78,6 +80,8 @@ function App() {
         return securityClearanceSchema;
       case "userProfile":
         return userProfileSchema;
+      case "apiData":
+        return apiDataFormSchema;
       default:
         return simpleFormSchema;
     }
@@ -190,6 +194,16 @@ function App() {
                       }`}
                     >
                       Field Validation
+                    </button>
+                    <button
+                      onClick={() => setSelectedForm("apiData")}
+                      className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                        selectedForm === "fieldValidation"
+                          ? "bg-blue-600 text-white shadow-lg shadow-blue-500/50"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}
+                    >
+                      Api Data
                     </button>
                   </div>
                 </div>

@@ -38,6 +38,16 @@ export interface DynamicSelectConfig {
   transform?: (data: any) => SelectOption[];
 }
 
+// API Data Source configuration for read-only fields
+export interface DataSource {
+  id: string; // Unique identifier for this data source
+  url: string; // API endpoint
+  method?: "GET" | "POST"; // HTTP method (default: GET)
+  headers?: Record<string, string>; // Custom headers
+  params?: Record<string, any>; // Query params or request body
+  transform?: (data: any) => Record<string, any>; // Transform response data
+}
+
 export interface FileUploadConfig {
   url: string; // API endpoint for file upload
   method?: string; // HTTP method (default: "POST")
@@ -87,6 +97,11 @@ export interface BaseFieldConfig {
   inputClassName?: string; // Custom class for the input element
   errorClassName?: string; // Custom class for the error message
   defaultValue?: any;
+
+  // Read-only field with API data
+  readOnly?: boolean; // Make field read-only
+  dataSourceId?: string; // Reference to DataSource id
+  dataPath?: string; // Path to extract value from data source (e.g., "user.name")
 
   // Field-level validation (optional, can be used with or without Zod schema)
   validation?: FieldValidation;
@@ -180,6 +195,7 @@ export type FieldConfig =
 export interface FormSection {
   title?: string;
   description?: string;
+  dataSourceId?: string; // Data source for all fields in this section
   fields: FieldConfig[];
   cols?: number; // Grid columns for the section
   className?: string; // Custom class for the section container
@@ -211,6 +227,7 @@ export interface FormSection {
 export interface FormStep {
   title: string;
   description?: string;
+  dataSourceId?: string; // Data source for all fields in this step
   sections?: FormSection[];
   fields?: FieldConfig[];
   className?: string; // Custom class for the step container
@@ -224,6 +241,7 @@ export interface FormStep {
 
 // Main form schema
 export interface FormSchema {
+  dataSources?: DataSource[]; // API data sources
   steps?: FormStep[];
   sections?: FormSection[];
   fields?: FieldConfig[];
