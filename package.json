@@ -1,6 +1,6 @@
 {
   "name": "react-hook-form-engine",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "type": "module",
   "description": "A powerful and flexible React form engine with API data sources, repeatable sections, field-level validation, dynamic options, conditional logic, and multi-step forms",
   "author": "amiruleeeiu",

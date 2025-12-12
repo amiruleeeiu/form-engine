@@ -7,13 +7,45 @@ import type { FormSchema } from "../form-engine/types/index.js";
  * - 7 steps with multiple sections
  * - Complex conditional logic for address sections
  * - Repeatable passport details section
- * - Multiple file uploads
+ * - Multiple file uploads with centralized upload configuration
  * - Various field types and validations
  */
 
 export const securityClearanceSchema: FormSchema = {
   title: "Application for Security Clearance",
   description: "Application for security clearance (SC)",
+
+  // Centralized file upload configuration
+  // Configure these upload sources to enable automatic file uploads to your API
+  uploadSources: [
+    {
+      id: "document-upload",
+      url: "http://localhost:3000/api/upload",
+      method: "POST",
+      fieldName: "file",
+      additionalData: {
+        folder: "security-clearance-documents",
+        category: "official",
+      },
+      transform: (response) => {
+        // Extract file URL from API response
+        // Adjust this based on your API response structure
+        return response.file?.path || response.url;
+      },
+    },
+    {
+      id: "image-upload",
+      url: "http://localhost:3000/api/upload",
+      method: "POST",
+      fieldName: "image",
+      additionalData: {
+        folder: "profile-pictures",
+        resize: "300x300",
+      },
+      transform: (response) => response.file?.path,
+    },
+  ],
+
   steps: [
     // ==================== STEP 1: Basic Instructions ====================
     {
@@ -83,10 +115,11 @@ export const securityClearanceSchema: FormSchema = {
             {
               name: "bank_statement",
               label: "Bank Statement",
-              type: "file",
+              type: "dropzone",
               placeholder: "Choose file",
-              cols: 12,
+              cols: 6,
               accept: ".pdf",
+              uploadSourceId: "document-upload",
               helpText: "N.B: Maximum PDF file upload size 2MB",
             },
           ],
@@ -116,6 +149,7 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Choose file",
               cols: 12,
               accept: ".pdf",
+              uploadSourceId: "document-upload",
               helpText: "N.B: Maximum PDF file upload size 2MB",
             },
           ],
@@ -524,6 +558,7 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Choose file",
               cols: 12,
               accept: ".pdf",
+              uploadSourceId: "document-upload",
               helpText: "N.B: Maximum PDF file upload size 2MB",
               validation: {
                 required: false,
@@ -830,6 +865,7 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Choose file",
               cols: 12,
               accept: ".pdf",
+              uploadSourceId: "document-upload",
               helpText: "N.B: Maximum PDF file upload size 2MB",
               validation: {
                 required: false,
@@ -989,6 +1025,7 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Choose file",
               cols: 12,
               accept: ".pdf",
+              uploadSourceId: "document-upload",
               helpText: "N.B: Maximum PDF file upload size 2MB",
               validation: {
                 required: false,
@@ -1110,6 +1147,7 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Choose file",
               cols: 12,
               accept: ".pdf",
+              uploadSourceId: "document-upload",
               helpText: "Each File Max. size 2MB",
               validation: {
                 required: false,
@@ -1123,6 +1161,7 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Choose file",
               cols: 12,
               accept: ".pdf",
+              uploadSourceId: "document-upload",
               helpText: "Each File Max. size 2MB",
               validation: {
                 required: false,
@@ -1136,6 +1175,7 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Choose file",
               cols: 12,
               accept: ".pdf",
+              uploadSourceId: "document-upload",
               helpText: "Each File Max. size 2MB",
               validation: {
                 required: false,
@@ -1148,6 +1188,7 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Choose file",
               cols: 12,
               accept: ".pdf",
+              uploadSourceId: "document-upload",
               helpText: "Each File Max. size 2MB",
               validation: {
                 required: false,
@@ -1161,6 +1202,7 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Choose file",
               cols: 12,
               accept: ".pdf",
+              uploadSourceId: "document-upload",
               helpText: "Each File Max. size 2MB",
               validation: {
                 required: false,
@@ -1174,6 +1216,7 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Choose file",
               cols: 12,
               accept: ".pdf",
+              uploadSourceId: "document-upload",
               helpText: "Each File Max. size 2MB",
               validation: {
                 required: false,
@@ -1187,6 +1230,7 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Choose file",
               cols: 12,
               accept: ".pdf",
+              uploadSourceId: "document-upload",
               helpText: "Each File Max. size 2MB",
               validation: {
                 required: false,
@@ -1200,6 +1244,7 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Choose file",
               cols: 12,
               accept: ".pdf",
+              uploadSourceId: "document-upload",
               helpText: "Each File Max. size 2MB",
               validation: {
                 required: false,
@@ -1213,6 +1258,7 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Choose file",
               cols: 12,
               accept: ".pdf",
+              uploadSourceId: "document-upload",
               helpText: "Each File Max. size 2MB",
               validation: {
                 required: false,
@@ -1225,6 +1271,7 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Choose file",
               cols: 12,
               accept: ".pdf",
+              uploadSourceId: "document-upload",
               helpText: "Each File Max. size 2MB",
               validation: {
                 required: false,
@@ -1237,6 +1284,7 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Choose file",
               cols: 12,
               accept: ".pdf",
+              uploadSourceId: "document-upload",
               helpText: "Each File Max. size 2MB",
               validation: {
                 required: false,
@@ -1327,6 +1375,7 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Choose file",
               cols: 12,
               accept: "image/*",
+              uploadSourceId: "image-upload",
               helpText: "Maximum file size 2MB",
               validation: {
                 required: false,

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { User, X } from "../../assets/icons/index.js";
 import { useFieldConfig } from "../../hooks/useFieldConfig.js";
+import { useUploadSources } from "../../hooks/useUploadSources.js";
 import type { ProfilePictureFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
 
@@ -18,6 +19,7 @@ export const ProfilePictureField: React.FC<ProfilePictureFieldConfig> = (
     accept = "image/*",
     maxSize,
     uploadConfig,
+    uploadSourceId,
   } = props;
 
   const [preview, setPreview] = useState<string | null>(null);
@@ -25,6 +27,7 @@ export const ProfilePictureField: React.FC<ProfilePictureFieldConfig> = (
   const [uploadError, setUploadError] = useState<string | null>(null);
 
   const { control } = useFormContext();
+  const { getUploadSource } = useUploadSources();
 
   // Use custom hook for all common field logic
   const { validationRules, isVisible, isEnabled, error, colSpan } =
@@ -55,28 +58,34 @@ export const ProfilePictureField: React.FC<ProfilePictureFieldConfig> = (
       };
       reader.readAsDataURL(file);
 
+      // Get upload config from either inline config or uploadSourceId
+      let finalUploadConfig = uploadConfig;
+      if (!finalUploadConfig && uploadSourceId) {
+        finalUploadConfig = getUploadSource(uploadSourceId);
+      }
+
       // If uploadConfig is provided, upload to API
-      if (uploadConfig) {
+      if (finalUploadConfig) {
         setUploading(true);
         setUploadError(null);
 
         try {
           const formData = new FormData();
-          const fieldName = uploadConfig.fieldName || "file";
+          const fieldName = finalUploadConfig.fieldName || "file";
           formData.append(fieldName, file);
 
           // Add additional data if provided
-          if (uploadConfig.additionalData) {
-            Object.entries(uploadConfig.additionalData).forEach(
+          if (finalUploadConfig.additionalData) {
+            Object.entries(finalUploadConfig.additionalData).forEach(
               ([key, value]) => {
                 formData.append(key, value);
               }
             );
           }
 
-          const response = await fetch(uploadConfig.url, {
-            method: uploadConfig.method || "POST",
-            headers: uploadConfig.headers,
+          const response = await fetch(finalUploadConfig.url, {
+            method: finalUploadConfig.method || "POST",
+            headers: finalUploadConfig.headers,
             body: formData,
           });
 
@@ -87,8 +96,8 @@ export const ProfilePictureField: React.FC<ProfilePictureFieldConfig> = (
           const data = await response.json();
 
           // Transform response if transformer is provided
-          const finalValue = uploadConfig.transform
-            ? uploadConfig.transform(data)
+          const finalValue = finalUploadConfig.transform
+            ? finalUploadConfig.transform(data)
             : data;
 
           // Set the transformed value (e.g., image URL from response)
@@ -136,7 +145,7 @@ export const ProfilePictureField: React.FC<ProfilePictureFieldConfig> = (
         name={name}
         control={control}
         rules={validationRules}
-        render={({ field: { onChange, ...field } }) => (
+        render={({ field: { onChange, value, ...field } }) => (
           <div className="space-y-3">
             {preview ? (
               <div className="relative inline-block">
@@ -170,6 +179,7 @@ export const ProfilePictureField: React.FC<ProfilePictureFieldConfig> = (
               accept={accept}
               disabled={!isEnabled || uploading}
               onChange={(e) => handleFileChange(e, onChange)}
+              value="" // File inputs can only have empty string as value
               className={cn(
                 "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50",
                 inputClassName

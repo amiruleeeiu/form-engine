@@ -4,6 +4,7 @@ import {
   CheckboxField,
   CustomSelectField,
   DateField,
+  DropzoneField,
   FileField,
   NumberField,
   PasswordField,
@@ -74,6 +75,8 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({
       return <CustomSelectField {...modifiedField} />;
     case "file":
       return <FileField {...modifiedField} />;
+    case "dropzone":
+      return <DropzoneField {...modifiedField} />;
     case "radio":
       return <RadioField {...modifiedField} />;
     case "checkbox":

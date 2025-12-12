@@ -13,6 +13,18 @@ import type { FormSchema } from "../form-engine/types/index.js";
 export const simpleFormSchema: FormSchema = {
   // No validationSchema! Using field-level validation only
   // No defaultValues here! They are defined in each field using `defaultValue` property
+
+  // Centralized upload configuration
+  uploadSources: [
+    {
+      id: "profile-upload",
+      url: "https://api.example.com/upload/images",
+      method: "POST",
+      fieldName: "file",
+      transform: (response) => response.data?.imageUrl || response.url,
+    },
+  ],
+
   sections: [
     {
       title: "Personal Information",
@@ -302,6 +314,7 @@ export const simpleFormSchema: FormSchema = {
           label: "Profile Picture",
           type: "file",
           accept: "image/*",
+          uploadSourceId: "profile-upload",
           cols: 6,
         },
         {

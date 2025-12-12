@@ -1,6 +1,16 @@
 import type { FormSchema } from "../form-engine/types/index.js";
 
 export const userProfileSchema: FormSchema = {
+  // Centralized upload configuration
+  uploadSources: [
+    {
+      id: "profile-image-upload",
+      url: "http://localhost:3000/api/upload",
+      method: "POST",
+      fieldName: "file",
+      transform: (response) => response.file?.path || response.url,
+    },
+  ],
   sections: [
     {
       title: "User Profile",
@@ -42,18 +52,11 @@ export const userProfileSchema: FormSchema = {
           label: "Profile Picture",
           cols: 12,
           maxSize: 5 * 1024 * 1024, // 5MB
-          // Simple upload configuration (just URL and transform)
-          uploadConfig: {
-            url: "http://localhost:3000/api/upload",
-            transform: (response) => response.file.path, // Extract URL from API response
-          },
-          // With Authorization header (optional)
+          uploadSourceId: "profile-image-upload", // Use centralized upload source
+          // Alternative: Inline upload configuration (if you don't want to use uploadSources)
           // uploadConfig: {
-          //   url: "https://api.example.com/upload",
-          //   headers: {
-          //     "Authorization": "Bearer your-token"
-          //   },
-          //   transform: (response) => response.data.url,
+          //   url: "http://localhost:3000/api/upload",
+          //   transform: (response) => response.file.path,
           // },
           validation: {
             required: "Profile picture is required",

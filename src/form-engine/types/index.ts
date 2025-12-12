@@ -48,6 +48,18 @@ export interface DataSource {
   transform?: (data: any) => Record<string, any>; // Transform response data
 }
 
+// File Upload Source configuration for centralized upload API
+export interface FileUploadSource {
+  id: string; // Unique identifier for this upload source
+  url: string; // API endpoint for file upload
+  method?: string; // HTTP method (default: "POST")
+  headers?: Record<string, string>; // Custom headers
+  fieldName?: string; // Form data field name (default: "file")
+  additionalData?: Record<string, any>; // Additional form data to send
+  onUploadProgress?: (progress: number) => void; // Upload progress callback
+  transform?: (response: any) => any; // Transform the response to get the final value
+}
+
 export interface FileUploadConfig {
   url: string; // API endpoint for file upload
   method?: string; // HTTP method (default: "POST")
@@ -66,6 +78,7 @@ export type FieldType =
   | "date"
   | "select"
   | "file"
+  | "dropzone"
   | "radio"
   | "checkbox"
   | "phone"
@@ -91,12 +104,14 @@ export interface BaseFieldConfig {
   label: string;
   type: FieldType;
   placeholder?: string;
+  helpText?: string; // Help text displayed below the field
   cols?: number; // Column span: 1 (half row), 2 or 12 (full row). Default: 1. Mobile is always full width.
   className?: string; // Custom class for the field container
   labelClassName?: string; // Custom class for the label
   inputClassName?: string; // Custom class for the input element
   errorClassName?: string; // Custom class for the error message
   defaultValue?: any;
+  disabled?: boolean; // Disable the field
 
   // Read-only field with API data
   readOnly?: boolean; // Make field read-only
@@ -149,6 +164,16 @@ export interface FileFieldConfig extends BaseFieldConfig {
   type: "file";
   accept?: string;
   multiple?: boolean;
+  uploadSourceId?: string; // Reference to FileUploadSource id for automatic upload
+}
+
+export interface DropzoneFieldConfig extends BaseFieldConfig {
+  type: "dropzone";
+  accept?: string; // File type filter (e.g., "image/*", ".pdf,.doc")
+  multiple?: boolean; // Allow multiple files
+  maxSize?: number; // Maximum file size in bytes
+  maxFiles?: number; // Maximum number of files (for multiple mode)
+  uploadSourceId?: string; // Reference to FileUploadSource id for automatic upload
 }
 
 export interface RadioFieldConfig extends BaseFieldConfig {
@@ -175,7 +200,8 @@ export interface ProfilePictureFieldConfig extends BaseFieldConfig {
   type: "profilePicture";
   accept?: string; // File type filter (default: "image/*")
   maxSize?: number; // Maximum file size in bytes
-  uploadConfig?: FileUploadConfig; // API upload configuration
+  uploadConfig?: FileUploadConfig; // API upload configuration (inline)
+  uploadSourceId?: string; // Reference to FileUploadSource id (alternative to uploadConfig)
 }
 
 export type FieldConfig =
@@ -185,6 +211,7 @@ export type FieldConfig =
   | DateFieldConfig
   | SelectFieldConfig
   | FileFieldConfig
+  | DropzoneFieldConfig
   | RadioFieldConfig
   | CheckboxFieldConfig
   | PhoneFieldConfig
@@ -241,7 +268,8 @@ export interface FormStep {
 
 // Main form schema
 export interface FormSchema {
-  dataSources?: DataSource[]; // API data sources
+  dataSources?: DataSource[]; // API data sources for read-only fields
+  uploadSources?: FileUploadSource[]; // File upload sources for file fields
   steps?: FormStep[];
   sections?: FormSection[];
   fields?: FieldConfig[];

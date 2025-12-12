@@ -1,6 +1,7 @@
 export { CheckboxField } from "./CheckboxField.js";
 export { CustomSelectField } from "./CustomSelectField.js";
 export { DateField } from "./DateField.js";
+export { DropzoneField } from "./DropzoneField.js";
 export { FileField } from "./FileField.js";
 export { NumberField } from "./NumberField.js";
 export { PasswordField } from "./PasswordField.js";

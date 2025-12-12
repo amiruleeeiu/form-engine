@@ -9,11 +9,46 @@ import type { FormSchema } from "../form-engine/types/index.js";
  * 2. Capital & Share
  * 3. Subscriber Info (Repeatable Directors)
  * 4. Witness Info
- * 5. Applicant Info
- * 6. Declared by
+ * 5. Additional Information
+ * 6. Summary / Preview
  */
 
 export const businessStarterPackageSchema: FormSchema = {
+  title: "Business Starter Package Application",
+  description: "Complete application form for Business Starter Package",
+
+  // Centralized upload configuration
+  uploadSources: [
+    {
+      id: "business-document-upload",
+      url: "https://api.example.com/upload/business-documents",
+      method: "POST",
+      headers: {
+        Authorization: "Bearer your-token-here",
+      },
+      fieldName: "file",
+      additionalData: {
+        folder: "business-starter-package",
+        category: "documents",
+      },
+      transform: (response) => response.data?.fileUrl || response.url,
+    },
+    {
+      id: "business-image-upload",
+      url: "https://api.example.com/upload/business-images",
+      method: "POST",
+      headers: {
+        Authorization: "Bearer your-token-here",
+      },
+      fieldName: "image",
+      additionalData: {
+        folder: "business-starter-package",
+        category: "photos",
+      },
+      transform: (response) => response.data?.imageUrl || response.url,
+    },
+  ],
+
   steps: [
     // Step 1: General & Office
     {
@@ -732,6 +767,7 @@ export const businessStarterPackageSchema: FormSchema = {
               label: "Principal Promoter's NID/Passport",
               type: "file",
               accept: ".pdf,.jpg,.jpeg,.png",
+              uploadSourceId: "business-document-upload",
               cols: 1,
               validation: {
                 required: true,
@@ -742,6 +778,7 @@ export const businessStarterPackageSchema: FormSchema = {
               label: "Principal Promoter's Photo",
               type: "file",
               accept: ".jpg,.jpeg,.png",
+              uploadSourceId: "business-image-upload",
               cols: 1,
             },
           ],

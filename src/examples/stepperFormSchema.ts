@@ -31,6 +31,25 @@ const jobApplicationSchema = z.object({
 export const stepperFormSchema: FormSchema = {
   validationSchema: jobApplicationSchema,
   // defaultValues will be extracted from field-level `defaultValue` property
+
+  // Centralized upload configuration
+  uploadSources: [
+    {
+      id: "resume-upload",
+      url: "https://api.example.com/upload/documents",
+      method: "POST",
+      headers: {
+        Authorization: "Bearer your-token-here",
+      },
+      fieldName: "file",
+      additionalData: {
+        folder: "resumes",
+        category: "job-application",
+      },
+      transform: (response) => response.data?.fileUrl || response.url,
+    },
+  ],
+
   steps: [
     {
       title: "Personal Details",
@@ -62,6 +81,7 @@ export const stepperFormSchema: FormSchema = {
           label: "Upload Resume",
           type: "file",
           accept: ".pdf,.doc,.docx",
+          uploadSourceId: "resume-upload",
           cols: 12,
         },
       ],
