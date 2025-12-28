@@ -36,6 +36,9 @@ export interface DynamicSelectConfig {
   url?: string;
   fetchFunction?: () => Promise<SelectOption[]>;
   transform?: (data: any) => SelectOption[];
+  // Cascading dropdown support
+  dependsOn?: string; // Parent field name (e.g., "division" for district dropdown)
+  dependsOnPath?: string; // For nested fields (e.g., "residential_info.bangladesh_address.rented_by_company.division")
 }
 
 // API Data Source configuration for read-only fields

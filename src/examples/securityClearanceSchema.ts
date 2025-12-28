@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { FormSchema } from "../form-engine/types/index.js";
 
 /**
@@ -406,12 +407,14 @@ export const securityClearanceSchema: FormSchema = {
               validation: {
                 required: false,
               },
-              options: [
-                { value: "", label: "Select One" },
-                { value: "1", label: "Option 1" },
-                { value: "2", label: "Option 2" },
-                { value: "3", label: "Option 3" },
-              ],
+              dynamicOptions: {
+                url: "http://localhost:3000/api/divisions",
+                transform: (data) =>
+                  data.map((item: any) => ({
+                    value: item.id,
+                    label: item.name,
+                  })),
+              },
             },
             {
               name: "district",
@@ -422,12 +425,17 @@ export const securityClearanceSchema: FormSchema = {
               validation: {
                 required: false,
               },
-              options: [
-                { value: "", label: "Select Division First" },
-                { value: "1", label: "Option 1" },
-                { value: "2", label: "Option 2" },
-                { value: "3", label: "Option 3" },
-              ],
+              dynamicOptions: {
+                dependsOn: "division",
+                dependsOnPath:
+                  "residential_info.bangladesh_address.rented_by_company.division",
+                url: "http://localhost:3000/api/districts?division_id={parentValue}",
+                transform: (data) =>
+                  data.map((item: any) => ({
+                    value: item.id,
+                    label: item.name,
+                  })),
+              },
             },
             {
               name: "police_station",
@@ -438,12 +446,17 @@ export const securityClearanceSchema: FormSchema = {
               validation: {
                 required: false,
               },
-              options: [
-                { value: "", label: "Select District First" },
-                { value: "1", label: "Option 1" },
-                { value: "2", label: "Option 2" },
-                { value: "3", label: "Option 3" },
-              ],
+              dynamicOptions: {
+                dependsOn: "district",
+                dependsOnPath:
+                  "residential_info.bangladesh_address.rented_by_company.district",
+                url: "http://localhost:3000/api/police-stations?district_id={parentValue}",
+                transform: (data) =>
+                  data.map((item: any) => ({
+                    value: item.id,
+                    label: item.name,
+                  })),
+              },
             },
             {
               name: "post_office",

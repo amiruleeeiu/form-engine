@@ -1,21 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
+import { useFormContext } from "react-hook-form";
 import type { DynamicSelectConfig, SelectOption } from "../types/index.js";
 
 /**
- * Hook to load dynamic select options
+ * Hook to load dynamic select options (with cascading support)
  */
 export function useDynamicOptions(config?: DynamicSelectConfig): {
   options: SelectOption[];
   loading: boolean;
   error: string | null;
 } {
+  const { watch } = useFormContext();
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Watch parent field if this is a cascading dropdown
+  const parentValue = config?.dependsOn
+    ? watch(config.dependsOnPath || config.dependsOn)
+    : null;
+
   useEffect(() => {
     if (!config) return;
+
+    // If this is a cascading dropdown and parent has no value, reset
+    if (config.dependsOn && !parentValue) {
+      setOptions([]);
+      return;
+    }
 
     const loadOptions = async () => {
       setLoading(true);
@@ -30,7 +43,9 @@ export function useDynamicOptions(config?: DynamicSelectConfig): {
         }
         // Otherwise fetch from URL
         else if (config.url) {
-          const response = await fetch(config.url);
+          // Replace {parentValue} placeholder for cascading dropdowns
+          const url = config.url.replace("{parentValue}", parentValue || "");
+          const response = await fetch(url);
           if (!response.ok) {
             throw new Error(`Failed to fetch: ${response.statusText}`);
           }
@@ -51,7 +66,7 @@ export function useDynamicOptions(config?: DynamicSelectConfig): {
     };
 
     loadOptions();
-  }, [config]);
+  }, [config, parentValue]);
 
   return { options, loading, error };
 }
