@@ -153,12 +153,14 @@ export const securityClearanceSchema: FormSchema = {
               validation: {
                 required: false,
               },
-              options: [
-                { value: "", label: "Select one" },
-                { value: "1", label: "Option 1" },
-                { value: "2", label: "Option 2" },
-                { value: "3", label: "Option 3" },
-              ],
+              dynamicOptions: {
+                url: "http://localhost:3000/country",
+                transform: (data) =>
+                  data.map((item: any) => ({
+                    value: item.id,
+                    label: item.name,
+                  })),
+              },
             },
             {
               name: "state_province_region",
@@ -307,12 +309,14 @@ export const securityClearanceSchema: FormSchema = {
               validation: {
                 required: false,
               },
-              options: [
-                { value: "", label: "Select one" },
-                { value: "1", label: "Option 1" },
-                { value: "2", label: "Option 2" },
-                { value: "3", label: "Option 3" },
-              ],
+              dynamicOptions: {
+                url: "http://localhost:3000/district",
+                transform: (data) =>
+                  data.map((item: any) => ({
+                    value: item.id,
+                    label: item.name,
+                  })),
+              },
             },
             {
               name: "police_station",
@@ -323,12 +327,17 @@ export const securityClearanceSchema: FormSchema = {
               validation: {
                 required: false,
               },
-              options: [
-                { value: "", label: "Select one" },
-                { value: "1", label: "Option 1" },
-                { value: "2", label: "Option 2" },
-                { value: "3", label: "Option 3" },
-              ],
+              dynamicOptions: {
+                dependsOn: "district",
+                dependsOnPath:
+                  "residential_info.bangladesh_address.company_owned_within_factory.district",
+                url: "http://localhost:3000/thana?districtId={parentValue}",
+                transform: (data) =>
+                  data.map((item: any) => ({
+                    value: item.id,
+                    label: item.name,
+                  })),
+              },
             },
             {
               name: "post_office",
@@ -408,7 +417,7 @@ export const securityClearanceSchema: FormSchema = {
                 required: false,
               },
               dynamicOptions: {
-                url: "http://localhost:3000/api/divisions",
+                url: "http://localhost:3000/division",
                 transform: (data) =>
                   data.map((item: any) => ({
                     value: item.id,
@@ -429,7 +438,7 @@ export const securityClearanceSchema: FormSchema = {
                 dependsOn: "division",
                 dependsOnPath:
                   "residential_info.bangladesh_address.rented_by_company.division",
-                url: "http://localhost:3000/api/districts?division_id={parentValue}",
+                url: "http://localhost:3000/district?divisionId={parentValue}",
                 transform: (data) =>
                   data.map((item: any) => ({
                     value: item.id,
@@ -450,7 +459,7 @@ export const securityClearanceSchema: FormSchema = {
                 dependsOn: "district",
                 dependsOnPath:
                   "residential_info.bangladesh_address.rented_by_company.district",
-                url: "http://localhost:3000/api/police-stations?district_id={parentValue}",
+                url: "http://localhost:3000/thana?districtId={parentValue}",
                 transform: (data) =>
                   data.map((item: any) => ({
                     value: item.id,
@@ -582,12 +591,14 @@ export const securityClearanceSchema: FormSchema = {
               validation: {
                 required: false,
               },
-              options: [
-                { value: "", label: "Select One" },
-                { value: "1", label: "Option 1" },
-                { value: "2", label: "Option 2" },
-                { value: "3", label: "Option 3" },
-              ],
+              dynamicOptions: {
+                url: "http://localhost:3000/division",
+                transform: (data) =>
+                  data.map((item: any) => ({
+                    value: item.id,
+                    label: item.name,
+                  })),
+              },
             },
             {
               name: "district",
@@ -598,12 +609,17 @@ export const securityClearanceSchema: FormSchema = {
               validation: {
                 required: false,
               },
-              options: [
-                { value: "", label: "Select Division First" },
-                { value: "1", label: "Option 1" },
-                { value: "2", label: "Option 2" },
-                { value: "3", label: "Option 3" },
-              ],
+              dynamicOptions: {
+                dependsOn: "division",
+                dependsOnPath:
+                  "residential_info.bangladesh_address.company_owned_outside_factory.division",
+                url: "http://localhost:3000/district?divisionId={parentValue}",
+                transform: (data) =>
+                  data.map((item: any) => ({
+                    value: item.id,
+                    label: item.name,
+                  })),
+              },
             },
             {
               name: "police_station",
@@ -614,12 +630,17 @@ export const securityClearanceSchema: FormSchema = {
               validation: {
                 required: false,
               },
-              options: [
-                { value: "", label: "Select District First" },
-                { value: "1", label: "Option 1" },
-                { value: "2", label: "Option 2" },
-                { value: "3", label: "Option 3" },
-              ],
+              dynamicOptions: {
+                dependsOn: "district",
+                dependsOnPath:
+                  "residential_info.bangladesh_address.company_owned_outside_factory.district",
+                url: "http://localhost:3000/thana?districtId={parentValue}",
+                transform: (data) =>
+                  data.map((item: any) => ({
+                    value: item.id,
+                    label: item.name,
+                  })),
+              },
             },
             {
               name: "post_office",
@@ -732,12 +753,14 @@ export const securityClearanceSchema: FormSchema = {
               validation: {
                 required: false,
               },
-              options: [
-                { value: "", label: "Select One" },
-                { value: "1", label: "Option 1" },
-                { value: "2", label: "Option 2" },
-                { value: "3", label: "Option 3" },
-              ],
+              dynamicOptions: {
+                url: "http://localhost:3000/division",
+                transform: (data) =>
+                  data.map((item: any) => ({
+                    value: item.id,
+                    label: item.name,
+                  })),
+              },
             },
             {
               name: "district",
@@ -748,12 +771,17 @@ export const securityClearanceSchema: FormSchema = {
               validation: {
                 required: false,
               },
-              options: [
-                { value: "", label: "Select Division First" },
-                { value: "1", label: "Option 1" },
-                { value: "2", label: "Option 2" },
-                { value: "3", label: "Option 3" },
-              ],
+              dynamicOptions: {
+                dependsOn: "division",
+                dependsOnPath:
+                  "residential_info.bangladesh_address.self_arrangement_regular.division",
+                url: "http://localhost:3000/district?divisionId={parentValue}",
+                transform: (data) =>
+                  data.map((item: any) => ({
+                    value: item.id,
+                    label: item.name,
+                  })),
+              },
             },
             {
               name: "police_station",
@@ -764,12 +792,17 @@ export const securityClearanceSchema: FormSchema = {
               validation: {
                 required: false,
               },
-              options: [
-                { value: "", label: "Select District First" },
-                { value: "1", label: "Option 1" },
-                { value: "2", label: "Option 2" },
-                { value: "3", label: "Option 3" },
-              ],
+              dynamicOptions: {
+                dependsOn: "district",
+                dependsOnPath:
+                  "residential_info.bangladesh_address.self_arrangement_regular.district",
+                url: "http://localhost:3000/thana?districtId={parentValue}",
+                transform: (data) =>
+                  data.map((item: any) => ({
+                    value: item.id,
+                    label: item.name,
+                  })),
+              },
             },
             {
               name: "post_office",
@@ -895,12 +928,14 @@ export const securityClearanceSchema: FormSchema = {
               validation: {
                 required: false,
               },
-              options: [
-                { value: "", label: "Select One" },
-                { value: "1", label: "Option 1" },
-                { value: "2", label: "Option 2" },
-                { value: "3", label: "Option 3" },
-              ],
+              dynamicOptions: {
+                url: "http://localhost:3000/division",
+                transform: (data) =>
+                  data.map((item: any) => ({
+                    value: item.id,
+                    label: item.name,
+                  })),
+              },
             },
             {
               name: "district",
@@ -911,12 +946,17 @@ export const securityClearanceSchema: FormSchema = {
               validation: {
                 required: false,
               },
-              options: [
-                { value: "", label: "Select Division First" },
-                { value: "1", label: "Option 1" },
-                { value: "2", label: "Option 2" },
-                { value: "3", label: "Option 3" },
-              ],
+              dynamicOptions: {
+                dependsOn: "division",
+                dependsOnPath:
+                  "residential_info.bangladesh_address.self_arrangement_temporary.division",
+                url: "http://localhost:3000/district?divisionId={parentValue}",
+                transform: (data) =>
+                  data.map((item: any) => ({
+                    value: item.id,
+                    label: item.name,
+                  })),
+              },
             },
             {
               name: "police_station",
@@ -927,12 +967,17 @@ export const securityClearanceSchema: FormSchema = {
               validation: {
                 required: false,
               },
-              options: [
-                { value: "", label: "Select District First" },
-                { value: "1", label: "Option 1" },
-                { value: "2", label: "Option 2" },
-                { value: "3", label: "Option 3" },
-              ],
+              dynamicOptions: {
+                dependsOn: "district",
+                dependsOnPath:
+                  "residential_info.bangladesh_address.self_arrangement_temporary.district",
+                url: "http://localhost:3000/thana?districtId={parentValue}",
+                transform: (data) =>
+                  data.map((item: any) => ({
+                    value: item.id,
+                    label: item.name,
+                  })),
+              },
             },
             {
               name: "post_office",
