@@ -210,10 +210,10 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = (props) => {
           disabled={!isEnabled || loading}
           className={cn(
             "relative w-full flex items-center justify-between gap-2",
-            "px-2.5 py-2.5 text-sm text-left bg-white border rounded-md text-gray-900 placeholder-gray-400 transition-colors duration-200 focus:outline-none",
+            "px-2.5 py-[.55rem] text-sm text-left bg-white border rounded-md text-gray-900 placeholder-gray-400 transition-colors duration-200 focus:outline-none",
             error
               ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
-              : "border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200",
+              : "border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring focus:ring-blue-500",
             !isEnabled && "bg-gray-50 text-gray-500 cursor-not-allowed",
             loading && "cursor-wait",
             isMulti && selectedOptions.length > 0 && "py-2",
@@ -265,7 +265,7 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = (props) => {
                 className="flex items-center justify-center rounded hover:bg-gray-100 transition-colors focus:outline-none"
                 title="Clear selection"
               >
-                <X className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                <X className="w-4 h-4 text-gray-400 hover:text-gray-500" />
               </button>
             ) : (
               /* Dropdown Arrow - show when no value is selected */
@@ -323,7 +323,7 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = (props) => {
                       onMouseEnter={() => setHighlightedIndex(index)}
                       className={cn(
                         "flex items-center gap-2 px-3 py-2 text-sm cursor-pointer",
-                        isSelected && !isMulti && "bg-blue-50 text-blue-600",
+                        isSelected && !isMulti && "bg-blue-50 text-blue-500",
                         isHighlighted && "bg-gray-100",
                         !isSelected && !isHighlighted && "text-gray-700"
                       )}
@@ -333,7 +333,7 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = (props) => {
                           className={cn(
                             "flex items-center justify-center w-4 h-4 border rounded shrink-0",
                             isSelected
-                              ? "bg-blue-600 border-blue-600"
+                              ? "bg-blue-500 border-blue-500"
                               : "border-gray-300"
                           )}
                         >
@@ -358,7 +358,7 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = (props) => {
       {error && (
         <p
           className={cn(
-            "mt-1.5 text-xs text-red-600 flex items-center gap-1",
+            "mt-1.5 text-xs text-red-500 flex items-center gap-1",
             errorClassName
           )}
         >

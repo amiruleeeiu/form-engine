@@ -249,6 +249,9 @@ export interface FormSection {
   // Conditional logic for sections
   showWhen?: Condition;
   hideWhen?: Condition;
+
+  // Clear all fields in this section when it becomes hidden
+  clearOnHide?: boolean;
 }
 
 export interface FormStep {

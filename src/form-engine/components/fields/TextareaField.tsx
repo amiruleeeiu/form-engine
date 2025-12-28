@@ -44,8 +44,8 @@ export const TextareaField: React.FC<TextareaFieldConfig> = (props) => {
         disabled={!isEnabled}
         {...register(name, validationRules)}
         className={cn(
-          "w-full px-4 py-3 border-2 rounded-lg shadow-sm transition-all duration-200 resize-y",
-          "focus:ring-4 bg-white focus:ring-blue-100 focus:border-blue-500 focus:outline-none",
+          "w-full px-4 py-3 border rounded-sm transition-all duration-200 resize-y",
+          "focus:ring bg-white focus:ring-blue-500 focus:border-blue-500 focus:outline-none",
           "hover:border-gray-400",
           error
             ? "border-red-300 focus:border-red-500 focus:ring-red-100"

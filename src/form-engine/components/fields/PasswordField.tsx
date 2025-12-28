@@ -53,7 +53,7 @@ export const PasswordField: React.FC<PasswordFieldConfig> = (props) => {
           placeholder={placeholder}
           disabled={!isEnabled}
           className={cn(
-            "w-full px-4 py-2.5 text-sm border rounded-md bg-white text-gray-900 placeholder-gray-400 transition-colors duration-200 focus:outline-none",
+            "w-full px-4 py-[.55rem] text-sm border rounded-md bg-white text-gray-900 placeholder-gray-400 transition-colors duration-200 focus:outline-none",
             showError
               ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
               : "border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200",

@@ -60,7 +60,7 @@ export const PhoneField: React.FC<PhoneFieldConfig> = (props) => {
             inputClass={cn("phone-input-field", inputClassName)}
             inputStyle={{
               width: "100%",
-              height: "42px",
+              height: "40px",
               paddingTop: "10px",
               paddingBottom: "10px",
               border: error ? "1.5px solid #ef4444" : "1px solid #d1d5db",

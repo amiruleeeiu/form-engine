@@ -4,10 +4,11 @@ import type { FormSchema } from "../form-engine/types/index.js";
  * Security Clearance Application Form
  *
  * This is a comprehensive security clearance form with:
- * - 7 steps with multiple sections
- * - Complex conditional logic for address sections
- * - Repeatable passport details section
+ * - Multiple steps covering all aspects of security clearance
+ * - Complex conditional logic for address sections (Bangladesh residential addresses)
+ * - Repeatable sections for passport details and travel history
  * - Multiple file uploads with centralized upload configuration
+ * - Company information, expatriate details, compensation, manpower statistics
  * - Various field types and validations
  */
 
@@ -16,7 +17,6 @@ export const securityClearanceSchema: FormSchema = {
   description: "Application for security clearance (SC)",
 
   // Centralized file upload configuration
-  // Configure these upload sources to enable automatic file uploads to your API
   uploadSources: [
     {
       id: "document-upload",
@@ -28,8 +28,6 @@ export const securityClearanceSchema: FormSchema = {
         category: "official",
       },
       transform: (response) => {
-        // Extract file URL from API response
-        // Adjust this based on your API response structure
         return response.file?.path || response.url;
       },
     },
@@ -47,39 +45,16 @@ export const securityClearanceSchema: FormSchema = {
   ],
 
   steps: [
-    // ==================== STEP 1: Basic Instructions ====================
-    {
-      title: "Basic Instructions",
-      description: "Work permit reference information",
-      sections: [
-        {
-          title: "Basic Instructions",
-          fields: [
-            {
-              name: "work_permit_reference_no",
-              label: "Please give your approved work permit reference No.",
-              type: "text",
-              placeholder: "Enter work permit reference number",
-              cols: 12,
-              validation: {
-                required: false,
-              },
-            },
-          ],
-        },
-      ],
-    },
-
-    // ==================== STEP 2: Bank Details ====================
     {
       title: "Bank Details",
       description: "Expatriate/Employee banking information",
       sections: [
         {
           title: "Expatriate/Employee Bank Details",
+          fieldGroup: "bank_info",
           fields: [
             {
-              name: "account_holder_name",
+              name: "acc_holder_name",
               label: "Account Holder Name",
               type: "text",
               placeholder: "Enter account holder name",
@@ -106,7 +81,7 @@ export const securityClearanceSchema: FormSchema = {
               cols: 1,
             },
             {
-              name: "bank_account_number",
+              name: "bank_acc_number",
               label: "Bank Account Number",
               type: "text",
               placeholder: "Enter bank account number",
@@ -134,6 +109,7 @@ export const securityClearanceSchema: FormSchema = {
       sections: [
         {
           title: "Expatriate/Employee Tax Identification Details",
+          fieldGroup: "tin_info",
           fields: [
             {
               name: "tin_number",
@@ -165,9 +141,10 @@ export const securityClearanceSchema: FormSchema = {
         // Abroad Address
         {
           title: "Residential Address (Abroad)",
+          fieldGroup: "residential_info.abroad_address",
           fields: [
             {
-              name: "abroad_country",
+              name: "country",
               label: "Country",
               type: "select",
               placeholder: "Select country",
@@ -183,7 +160,7 @@ export const securityClearanceSchema: FormSchema = {
               ],
             },
             {
-              name: "abroad_state",
+              name: "state_province_region",
               label: "State / Province / Region",
               type: "text",
               placeholder: "Enter state/province/region",
@@ -194,7 +171,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "abroad_city",
+              name: "city_town",
               label: "City / Town",
               type: "text",
               placeholder: "Enter city/town",
@@ -205,7 +182,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "abroad_postal_code",
+              name: "postal_code_zip_code",
               label: "Postal Code / ZIP Code",
               type: "text",
               placeholder: "Enter postal code",
@@ -216,7 +193,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "abroad_street_address",
+              name: "street_address",
               label: "Street Address",
               type: "textarea",
               placeholder: "Enter street address",
@@ -312,13 +289,16 @@ export const securityClearanceSchema: FormSchema = {
         // Factory Address (Within Factory)
         {
           title: "Factory Address",
+          fieldGroup:
+            "residential_info.bangladesh_address.company_owned_within_factory",
           showWhen: {
             field: "accommodation_location",
             equals: "within_factory",
           },
+          clearOnHide: true,
           fields: [
             {
-              name: "bd_district",
+              name: "district",
               label: "District",
               type: "select",
               placeholder: "Select district",
@@ -334,7 +314,7 @@ export const securityClearanceSchema: FormSchema = {
               ],
             },
             {
-              name: "bd_police_station",
+              name: "police_station",
               label: "Police Station",
               type: "select",
               placeholder: "Select police station",
@@ -350,7 +330,7 @@ export const securityClearanceSchema: FormSchema = {
               ],
             },
             {
-              name: "bd_post_office",
+              name: "post_office",
               label: "Post Office",
               type: "text",
               placeholder: "Enter post office",
@@ -361,7 +341,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "bd_post_code",
+              name: "post_code",
               label: "Post Code",
               type: "text",
               placeholder: "Enter post code",
@@ -372,7 +352,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "bd_house_address",
+              name: "house_flat_road",
               label: "House, Flat/Apartment, Road",
               type: "text",
               placeholder: "Enter address",
@@ -383,7 +363,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "bd_mobile_no",
+              name: "mobile_no",
               label: "Mobile No.",
               type: "phone",
               placeholder: "1X XXX XXXXX",
@@ -394,7 +374,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "bd_email",
+              name: "email",
               label: "Email",
               type: "text",
               placeholder: "Enter email",
@@ -410,13 +390,15 @@ export const securityClearanceSchema: FormSchema = {
         // Residential Address (Company - Rented)
         {
           title: "Residential Address (Rented by Company)",
+          fieldGroup: "residential_info.bangladesh_address.rented_by_company",
           showWhen: {
             field: "accommodation_status_company",
             equals: "rented_by_company",
           },
+          clearOnHide: true,
           fields: [
             {
-              name: "division_company",
+              name: "division",
               label: "Division",
               type: "select",
               placeholder: "Select One",
@@ -432,7 +414,7 @@ export const securityClearanceSchema: FormSchema = {
               ],
             },
             {
-              name: "district_company",
+              name: "district",
               label: "District",
               type: "select",
               placeholder: "Select Division First",
@@ -448,7 +430,7 @@ export const securityClearanceSchema: FormSchema = {
               ],
             },
             {
-              name: "police_station_company",
+              name: "police_station",
               label: "Police Station",
               type: "select",
               placeholder: "Select District First",
@@ -464,7 +446,7 @@ export const securityClearanceSchema: FormSchema = {
               ],
             },
             {
-              name: "post_office_company",
+              name: "post_office",
               label: "Post Office",
               type: "text",
               placeholder: "Post office",
@@ -475,7 +457,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "post_code_company",
+              name: "post_code",
               label: "Post Code",
               type: "text",
               placeholder: "Post Code",
@@ -486,7 +468,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "area_company",
+              name: "area",
               label: "Area",
               type: "text",
               placeholder: "Area",
@@ -497,7 +479,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "road_company",
+              name: "road",
               label: "Road",
               type: "text",
               placeholder: "Road",
@@ -508,7 +490,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "flat_company",
+              name: "flat",
               label: "Flat",
               type: "text",
               placeholder: "Flat",
@@ -519,7 +501,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "house_company",
+              name: "house",
               label: "House",
               type: "text",
               placeholder: "House",
@@ -530,7 +512,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "mobile_no_company",
+              name: "mobile",
               label: "Mobile No.",
               type: "phone",
               placeholder: "Mobile No.",
@@ -541,7 +523,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "email_company",
+              name: "email",
               label: "Email",
               type: "text",
               placeholder: "Email",
@@ -552,7 +534,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "rental_deed_company",
+              name: "rental_deed_agreement",
               label: "Rental Deed Agreement",
               type: "file",
               placeholder: "Choose file",
@@ -570,13 +552,16 @@ export const securityClearanceSchema: FormSchema = {
         // Residential Address (Outside Factory)
         {
           title: "Address (Outside Factory)",
+          fieldGroup:
+            "residential_info.bangladesh_address.company_owned_outside_factory",
           showWhen: {
             field: "accommodation_location",
             equals: "outside_factory",
           },
+          clearOnHide: true,
           fields: [
             {
-              name: "division_outside_factory",
+              name: "division",
               label: "Division",
               type: "select",
               placeholder: "Select One",
@@ -592,7 +577,7 @@ export const securityClearanceSchema: FormSchema = {
               ],
             },
             {
-              name: "district_outside_factory",
+              name: "district",
               label: "District",
               type: "select",
               placeholder: "Select Division First",
@@ -608,7 +593,7 @@ export const securityClearanceSchema: FormSchema = {
               ],
             },
             {
-              name: "police_station_outside_factory",
+              name: "police_station",
               label: "Police Station",
               type: "select",
               placeholder: "Select District First",
@@ -624,7 +609,7 @@ export const securityClearanceSchema: FormSchema = {
               ],
             },
             {
-              name: "post_office_outside_factory",
+              name: "post_office",
               label: "Post Office",
               type: "text",
               placeholder: "Post office",
@@ -635,7 +620,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "post_code_outside_factory",
+              name: "post_code",
               label: "Post Code",
               type: "text",
               placeholder: "Post Code",
@@ -646,7 +631,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "area_outside_factory",
+              name: "area",
               label: "Area",
               type: "text",
               placeholder: "Area",
@@ -657,7 +642,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "road_outside_factory",
+              name: "road",
               label: "Road",
               type: "text",
               placeholder: "Road",
@@ -668,7 +653,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "flat_outside_factory",
+              name: "flat",
               label: "Flat",
               type: "text",
               placeholder: "Flat",
@@ -679,7 +664,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "house_outside_factory",
+              name: "house",
               label: "House",
               type: "text",
               placeholder: "House",
@@ -690,7 +675,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "mobile_no_outside_factory",
+              name: "mobile",
               label: "Mobile No.",
               type: "phone",
               placeholder: "Mobile No.",
@@ -701,7 +686,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "email_outside_factory",
+              name: "email",
               label: "Email",
               type: "text",
               placeholder: "Email",
@@ -717,13 +702,16 @@ export const securityClearanceSchema: FormSchema = {
         // Current Address (Self Arrangement - Regular)
         {
           title: "Current Address (Regular)",
+          fieldGroup:
+            "residential_info.bangladesh_address.self_arrangement_regular",
           showWhen: {
             field: "accommodation_status_self",
             equals: "regular",
           },
+          clearOnHide: true,
           fields: [
             {
-              name: "division_regular",
+              name: "division",
               label: "Division",
               type: "select",
               placeholder: "Select One",
@@ -739,7 +727,7 @@ export const securityClearanceSchema: FormSchema = {
               ],
             },
             {
-              name: "district_regular",
+              name: "district",
               label: "District",
               type: "select",
               placeholder: "Select Division First",
@@ -755,7 +743,7 @@ export const securityClearanceSchema: FormSchema = {
               ],
             },
             {
-              name: "police_station_regular",
+              name: "police_station",
               label: "Police Station",
               type: "select",
               placeholder: "Select District First",
@@ -771,7 +759,7 @@ export const securityClearanceSchema: FormSchema = {
               ],
             },
             {
-              name: "post_office_regular",
+              name: "post_office",
               label: "Post Office",
               type: "text",
               placeholder: "Post office",
@@ -782,7 +770,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "post_code_regular",
+              name: "post_code",
               label: "Post Code",
               type: "text",
               placeholder: "Post Code",
@@ -793,7 +781,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "area_regular",
+              name: "area",
               label: "Area",
               type: "text",
               placeholder: "Area",
@@ -804,7 +792,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "road_regular",
+              name: "road",
               label: "Road",
               type: "text",
               placeholder: "Road",
@@ -815,7 +803,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "flat_regular",
+              name: "flat",
               label: "Flat",
               type: "text",
               placeholder: "Flat",
@@ -826,7 +814,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "house_regular",
+              name: "house",
               label: "House",
               type: "text",
               placeholder: "House",
@@ -837,7 +825,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "mobile_no_regular",
+              name: "mobile",
               label: "Mobile No.",
               type: "phone",
               placeholder: "Mobile No.",
@@ -848,7 +836,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "email_regular",
+              name: "email",
               label: "Email",
               type: "text",
               placeholder: "email",
@@ -859,7 +847,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "rental_deed_regular",
+              name: "rental_deed_agreement",
               label: "Rental Deed Agreement",
               type: "file",
               placeholder: "Choose file",
@@ -877,13 +865,16 @@ export const securityClearanceSchema: FormSchema = {
         // Temporary Address (Self Arrangement - Temporary)
         {
           title: "Temporary Address",
+          fieldGroup:
+            "residential_info.bangladesh_address.self_arrangement_temporary",
           showWhen: {
             field: "accommodation_status_self",
             equals: "temporary",
           },
+          clearOnHide: true,
           fields: [
             {
-              name: "division_temporary",
+              name: "division",
               label: "Division",
               type: "select",
               placeholder: "Select One",
@@ -899,7 +890,7 @@ export const securityClearanceSchema: FormSchema = {
               ],
             },
             {
-              name: "district_temporary",
+              name: "district",
               label: "District",
               type: "select",
               placeholder: "Select Division First",
@@ -915,7 +906,7 @@ export const securityClearanceSchema: FormSchema = {
               ],
             },
             {
-              name: "police_station_temporary",
+              name: "police_station",
               label: "Police Station",
               type: "select",
               placeholder: "Select District First",
@@ -931,7 +922,7 @@ export const securityClearanceSchema: FormSchema = {
               ],
             },
             {
-              name: "post_office_temporary",
+              name: "post_office",
               label: "Post Office",
               type: "text",
               placeholder: "Post office",
@@ -942,7 +933,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "post_code_temporary",
+              name: "post_code",
               label: "Post Code",
               type: "text",
               placeholder: "Post Code",
@@ -953,7 +944,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "area_temporary",
+              name: "area",
               label: "Area",
               type: "text",
               placeholder: "Area",
@@ -964,7 +955,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "road_temporary",
+              name: "road",
               label: "Road",
               type: "text",
               placeholder: "Road",
@@ -975,7 +966,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "flat_temporary",
+              name: "flat",
               label: "Flat",
               type: "text",
               placeholder: "Flat",
@@ -986,7 +977,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "house_temporary",
+              name: "house",
               label: "House",
               type: "text",
               placeholder: "House",
@@ -997,7 +988,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "mobile_no_temporary",
+              name: "mobile",
               label: "Mobile No.",
               type: "phone",
               placeholder: "Mobile No.",
@@ -1008,7 +999,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "email_temporary",
+              name: "email",
               label: "Email",
               type: "text",
               placeholder: "Email",
@@ -1019,7 +1010,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "rental_deed_temporary",
+              name: "rental_deed_agreement",
               label: "Rental Deed Agreement",
               type: "file",
               placeholder: "Choose file",
@@ -1032,7 +1023,7 @@ export const securityClearanceSchema: FormSchema = {
               },
             },
             {
-              name: "expected_date_regular",
+              name: "expected_date_for_regular_residence",
               label: "Expected Date for Regular Residence",
               type: "date",
               placeholder: "dd-mm-yyyy",
@@ -1053,9 +1044,10 @@ export const securityClearanceSchema: FormSchema = {
       sections: [
         {
           title: "Previous Passport Information",
+          fieldGroup: "previous_passport_details",
           fields: [
             {
-              name: "has_previous_passport",
+              name: "have_any_previous_passport",
               label: "Do you have any previous passports?",
               type: "radio",
               cols: 12,
@@ -1063,18 +1055,19 @@ export const securityClearanceSchema: FormSchema = {
                 required: false,
               },
               options: [
-                { value: "yes", label: "Yes" },
-                { value: "no", label: "No" },
+                { value: "Yes", label: "Yes" },
+                { value: "No", label: "No" },
               ],
             },
           ],
         },
         {
           title: "Previous Passport Details",
+          fieldGroup: "previous_passport_details.previous_passport_info_if_yes",
           repeatable: true,
           showWhen: {
-            field: "has_previous_passport",
-            equals: "yes",
+            field: "previous_passport_details.have_any_previous_passport",
+            equals: "Yes",
           },
           fields: [
             {

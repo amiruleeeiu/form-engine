@@ -41,10 +41,10 @@ export const TextField: React.FC<TextFieldConfig> = (props) => {
         disabled={!isEnabled}
         {...register(name, validationRules)}
         className={cn(
-          "w-full px-3 py-2.5 text-sm border rounded-md bg-white text-gray-900 placeholder-gray-400 transition-colors duration-200 focus:outline-none",
+          "w-full px-3 py-[.55rem] text-sm border rounded-md bg-white text-gray-900 placeholder-gray-400 transition-colors duration-200 focus:outline-none",
           error
             ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
-            : "border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200",
+            : "border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring focus:ring-blue-500",
           !isEnabled && "bg-gray-50 text-gray-500 cursor-not-allowed",
           inputClassName
         )}

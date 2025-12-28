@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useFormContext } from "react-hook-form";
 import type { FormSection as FormSectionType } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
@@ -19,7 +19,7 @@ export const FormSection: React.FC<FormSectionProps> = ({
   section,
   sectionIndex = 0,
 }) => {
-  const { watch } = useFormContext();
+  const { watch, setValue, getValues } = useFormContext();
 
   // Get all fields that need to be watched for section visibility
   const watchFields = useMemo(() => {
@@ -56,6 +56,59 @@ export const FormSection: React.FC<FormSectionProps> = ({
       section.showWhen ? showField : hideField
     );
   }, [section.showWhen, section.hideWhen, valueMap]);
+
+  // Clear all fields in this section when it becomes hidden (if clearOnHide is true)
+  useEffect(() => {
+    if (!isVisible && section.clearOnHide) {
+      const currentValues = getValues();
+
+      // Helper function to clear nested values
+      const clearNestedFields = (obj: any, path: string[]) => {
+        if (path.length === 0) return;
+
+        const [current, ...rest] = path;
+        if (rest.length === 0) {
+          // Last key - delete it
+          delete obj[current];
+        } else if (obj[current] && typeof obj[current] === "object") {
+          clearNestedFields(obj[current], rest);
+          // Remove empty objects
+          if (Object.keys(obj[current]).length === 0) {
+            delete obj[current];
+          }
+        }
+      };
+
+      // Clear all fields in this section
+      section.fields.forEach((field) => {
+        const fieldPath = section.fieldGroup
+          ? `${section.fieldGroup}.${field.name}`
+          : field.name;
+
+        // Parse the path and clear the field
+        const pathParts = fieldPath.split(".");
+        if (pathParts.length === 1) {
+          // Simple field
+          setValue(fieldPath, undefined, { shouldValidate: false });
+        } else {
+          // Nested field - need to clear from the root
+          clearNestedFields(currentValues, pathParts);
+          // Update the form with cleaned values
+          setValue(pathParts[0], currentValues[pathParts[0]], {
+            shouldValidate: false,
+          });
+        }
+      });
+    }
+  }, [
+    isVisible,
+    section.clearOnHide,
+    section.fields,
+    section.fieldGroup,
+    setValue,
+    getValues,
+  ]);
+
   if (!isVisible) return null;
 
   // Check if this is a repeatable section
