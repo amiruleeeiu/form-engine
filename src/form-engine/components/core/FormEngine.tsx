@@ -1,11 +1,21 @@
 /* eslint-disable react-hooks/incompatible-library */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { createContext, useMemo, useState } from "react";
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Check, ChevronLeft, ChevronRight } from "../../assets/icons/index.js";
 import { useDataSources } from "../../hooks/useDataSources.js";
-import type { FileUploadSource, FormEngineProps } from "../../types/index.js";
+import type {
+  FieldConfig,
+  FileUploadSource,
+  FormEngineProps,
+} from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
 import {
   getWatchedFields,
@@ -54,10 +64,96 @@ export const FormEngine: React.FC<FormEngineProps> = ({
       ? zodResolver(schema.validationSchema as any)
       : undefined,
     defaultValues,
-    mode: "onSubmit",
+    mode: "onBlur",
+    reValidateMode: "onChange",
   });
 
-  const { handleSubmit, watch } = methods;
+  const { handleSubmit, watch, setValue } = methods;
+
+  // Build a map of field dependencies (which fields depend on which)
+  const fieldDependencies = useMemo(() => {
+    const deps = new Map<string, string[]>();
+
+    const extractFields = (fields: FieldConfig[], prefix = "") => {
+      fields.forEach((field) => {
+        const fieldPath = prefix ? `${prefix}.${field.name}` : field.name;
+
+        // Check if this field has dynamicOptions with dependsOn
+        if (field.type === "select" && field.dynamicOptions?.dependsOn) {
+          const parentField =
+            field.dynamicOptions.dependsOnPath ||
+            field.dynamicOptions.dependsOn;
+
+          if (!deps.has(parentField)) {
+            deps.set(parentField, []);
+          }
+          deps.get(parentField)!.push(fieldPath);
+        }
+      });
+    };
+
+    // Extract from steps
+    if (schema.steps) {
+      schema.steps.forEach((step) => {
+        step.sections?.forEach((section) => {
+          extractFields(section.fields, section.fieldGroup);
+        });
+        if (step.fields) {
+          extractFields(step.fields);
+        }
+      });
+    }
+
+    // Extract from sections
+    if (schema.sections) {
+      schema.sections.forEach((section) => {
+        extractFields(section.fields, section.fieldGroup);
+      });
+    }
+
+    // Extract from fields
+    if (schema.fields) {
+      extractFields(schema.fields);
+    }
+
+    return deps;
+  }, [schema]);
+
+  // Track previous field values to detect changes
+  const prevValuesRef = useRef<Record<string, any>>({});
+
+  // Watch all fields that have dependents
+  const fieldsToWatch = Array.from(fieldDependencies.keys());
+  const watchedFieldValues = watch(fieldsToWatch);
+
+  // Auto-clear dependent fields when parent field changes
+  useEffect(() => {
+    fieldsToWatch.forEach((fieldName, index) => {
+      const currentValue = watchedFieldValues[index];
+      const prevValue = prevValuesRef.current[fieldName];
+
+      // If value changed (including cleared), clear dependent fields
+      if (prevValue !== undefined && currentValue !== prevValue) {
+        const dependentFields = fieldDependencies.get(fieldName) || [];
+
+        if (dependentFields.length > 0) {
+          console.log(
+            `Field "${fieldName}" changed, clearing dependents:`,
+            dependentFields
+          );
+          dependentFields.forEach((depField) => {
+            setValue(depField, null, {
+              shouldValidate: false,
+              shouldDirty: false,
+            });
+          });
+        }
+      }
+
+      // Update tracked value
+      prevValuesRef.current[fieldName] = currentValue;
+    });
+  }, [watchedFieldValues, fieldsToWatch, fieldDependencies, setValue]);
 
   // Determine if we're using steps
   const hasSteps = schema.steps && schema.steps.length > 0;

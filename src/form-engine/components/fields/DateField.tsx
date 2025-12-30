@@ -26,8 +26,14 @@ export const DateField: React.FC<DateFieldConfig> = (props) => {
   const { control } = useFormContext();
 
   // Use custom hook for all common field logic
-  const { validationRules, isVisible, isEnabled, error, colSpan } =
-    useFieldConfig(props);
+  const {
+    validationRules,
+    isVisible,
+    isEnabled,
+    error,
+    colSpan,
+    shouldShowError,
+  } = useFieldConfig(props);
 
   const [isOpen, setIsOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -151,7 +157,7 @@ export const DateField: React.FC<DateFieldConfig> = (props) => {
           </div>
         )}
       />
-      {error && (
+      {shouldShowError && (
         <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>
           {error.message as string}
         </p>

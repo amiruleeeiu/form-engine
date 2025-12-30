@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useFormContext } from "react-hook-form";
 import type { BaseFieldConfig } from "../types/index.js";
 import {
@@ -25,8 +25,15 @@ export const useFieldConfig = (config: BaseFieldConfig) => {
 
   const {
     watch,
-    formState: { errors },
+    setValue,
+    formState: { errors, touchedFields, isSubmitted },
   } = useFormContext();
+
+  // Track previous visibility state
+  const prevVisibleRef = useRef<boolean | null>(null);
+
+  // Watch current field value for error display logic
+  const fieldValue = watch(name);
 
   // Get validation rules from field config
   const validationRules = useMemo(
@@ -81,11 +88,62 @@ export const useFieldConfig = (config: BaseFieldConfig) => {
     );
   }, [enableWhen, disableWhen, valueMap]);
 
-  // Get field error
-  const error = errors[name];
+  // Get field error - handle nested paths for array fields
+  const error = useMemo(() => {
+    // For nested paths like "fieldGroup.0.fieldName", we need to traverse the errors object
+    const pathParts = name.split(".");
+    let currentError: any = errors;
+
+    for (const part of pathParts) {
+      if (currentError === undefined || currentError === null) {
+        return undefined;
+      }
+      currentError = currentError[part];
+    }
+
+    return currentError;
+  }, [errors, name]);
 
   // Calculate grid column span class
   const colSpan = `col-span-${cols}`;
+
+  // Check if field is touched
+  const isTouched = useMemo(() => {
+    const pathParts = name.split(".");
+    let current: any = touchedFields;
+
+    for (const part of pathParts) {
+      if (current === undefined || current === null) {
+        return false;
+      }
+      current = current[part];
+    }
+
+    return !!current;
+  }, [touchedFields, name]);
+
+  // Show error only if field has been touched or form has been submitted
+  const shouldShowError = !!error && (isTouched || isSubmitted);
+
+  // Clear field value when it becomes hidden
+  useEffect(() => {
+    // Skip if no conditional visibility logic
+    if (!showWhen && !hideWhen) return;
+
+    // Skip on initial render
+    if (prevVisibleRef.current === null) {
+      prevVisibleRef.current = isVisible;
+      return;
+    }
+
+    // If field was visible before and is now hidden, clear its value
+    if (prevVisibleRef.current === true && isVisible === false) {
+      setValue(name, null, { shouldValidate: false, shouldDirty: false });
+    }
+
+    // Update the previous visibility state
+    prevVisibleRef.current = isVisible;
+  }, [isVisible, name, setValue, showWhen, hideWhen]);
 
   return {
     validationRules,
@@ -93,5 +151,7 @@ export const useFieldConfig = (config: BaseFieldConfig) => {
     isEnabled,
     error,
     colSpan,
+    shouldShowError,
+    fieldValue,
   };
 };

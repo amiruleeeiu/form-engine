@@ -16,11 +16,17 @@ export const RadioField: React.FC<RadioFieldConfig> = (props) => {
     clearFields,
   } = props;
 
-  const { register, setValue } = useFormContext();
+  const { register } = useFormContext();
 
   // Use custom hook for all common field logic
-  const { validationRules, isVisible, isEnabled, error, colSpan } =
-    useFieldConfig(props);
+  const {
+    validationRules,
+    isVisible,
+    isEnabled,
+    error,
+    colSpan,
+    shouldShowError,
+  } = useFieldConfig(props);
 
   if (!isVisible) return null;
 
@@ -67,7 +73,7 @@ export const RadioField: React.FC<RadioFieldConfig> = (props) => {
           </label>
         ))}
       </div>
-      {error && (
+      {shouldShowError && (
         <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>
           {error.message as string}
         </p>

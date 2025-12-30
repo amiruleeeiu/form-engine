@@ -22,8 +22,14 @@ export const PhoneField: React.FC<PhoneFieldConfig> = (props) => {
   const { control } = useFormContext();
 
   // Use custom hook for all common field logic
-  const { validationRules, isVisible, isEnabled, error, colSpan } =
-    useFieldConfig(props);
+  const {
+    validationRules,
+    isVisible,
+    isEnabled,
+    error,
+    colSpan,
+    shouldShowError,
+  } = useFieldConfig(props);
 
   if (!isVisible) return null;
 
@@ -54,7 +60,7 @@ export const PhoneField: React.FC<PhoneFieldConfig> = (props) => {
             countryCodeEditable={false}
             containerClass={cn(
               "phone-input-wrapper",
-              error && "phone-input-error",
+              shouldShowError && "phone-input-error",
               !isEnabled && "phone-input-disabled"
             )}
             inputClass={cn("phone-input-field", inputClassName)}
@@ -63,13 +69,17 @@ export const PhoneField: React.FC<PhoneFieldConfig> = (props) => {
               height: "40px",
               paddingTop: "10px",
               paddingBottom: "10px",
-              border: error ? "1.5px solid #ef4444" : "1px solid #d1d5db",
+              border: shouldShowError
+                ? "1.5px solid #ef4444"
+                : "1px solid #d1d5db",
               borderRadius: "0.375rem",
               outline: "none",
             }}
             buttonClass="phone-input-button"
             buttonStyle={{
-              border: error ? "1.5px solid #ef4444" : "1px solid #d1d5db",
+              border: shouldShowError
+                ? "1.5px solid #ef4444"
+                : "1px solid #d1d5db",
               borderRight: "none",
               borderRadius: "0.375rem 0 0 0.375rem",
               outline: "none",
@@ -81,7 +91,7 @@ export const PhoneField: React.FC<PhoneFieldConfig> = (props) => {
         )}
       />
 
-      {error && (
+      {shouldShowError && (
         <p
           className={cn(
             "mt-1.5 text-xs text-red-600 flex items-center gap-1",

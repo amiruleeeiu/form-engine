@@ -43,8 +43,14 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = (props) => {
   });
 
   // Use custom hook for all common field logic
-  const { validationRules, isVisible, isEnabled, error, colSpan } =
-    useFieldConfig(props);
+  const {
+    validationRules,
+    isVisible,
+    isEnabled,
+    error,
+    colSpan,
+    shouldShowError,
+  } = useFieldConfig(props);
 
   const { ref, ...rest } = register(name, validationRules);
 
@@ -112,19 +118,6 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = (props) => {
       setIsOpen(false);
       setSearchQuery("");
       setHighlightedIndex(0);
-
-      // Clear dependent fields when value changes
-      if (clearFields && clearFields.length > 0) {
-        if (!value || value === "" || value === null || value === undefined) {
-          console.log(`Clearing dependent fields for ${name}:`, clearFields);
-          clearFields.forEach((fieldName) => {
-            setValue(fieldName, "", {
-              shouldValidate: false,
-              shouldDirty: true,
-            });
-          });
-        }
-      }
     }
   };
 
@@ -141,14 +134,6 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = (props) => {
   const handleClearSelection = (e: React.MouseEvent) => {
     e.stopPropagation();
     setValue(name, isMulti ? [] : null, { shouldValidate: true });
-
-    // Clear dependent fields when this field is cleared
-    if (clearFields && clearFields.length > 0) {
-      console.log(`Clearing dependent fields for ${name}:`, clearFields);
-      clearFields.forEach((fieldName) => {
-        setValue(fieldName, "", { shouldValidate: false, shouldDirty: true });
-      });
-    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -211,7 +196,7 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = (props) => {
           className={cn(
             "relative w-full flex items-center justify-between gap-2",
             "px-2.5 py-[.55rem] text-sm text-left bg-white border rounded-md text-gray-900 placeholder-gray-400 transition-colors duration-200 focus:outline-none",
-            error
+            shouldShowError
               ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
               : "border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring focus:ring-blue-500",
             !isEnabled && "bg-gray-50 text-gray-500 cursor-not-allowed",
@@ -355,7 +340,7 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = (props) => {
         )}
       </div>
 
-      {error && (
+      {shouldShowError && (
         <p
           className={cn(
             "mt-1.5 text-xs text-red-500 flex items-center gap-1",

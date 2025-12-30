@@ -97,6 +97,7 @@ export interface FieldValidation {
   max?: number | { value: number; message?: string };
   pattern?: { value: RegExp; message?: string };
   email?: boolean | string; // true or custom error message
+  phone?: boolean | string; // true or custom error message for phone validation
   custom?: (value: any) => boolean | string; // Custom validation function
   validate?: any; // For custom validation functions
 }

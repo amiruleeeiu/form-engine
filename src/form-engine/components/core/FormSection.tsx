@@ -60,6 +60,17 @@ export const FormSection: React.FC<FormSectionProps> = ({
   // Clear all fields in this section when it becomes hidden (if clearOnHide is true)
   useEffect(() => {
     if (!isVisible && section.clearOnHide) {
+      // For repeatable sections, clear the array instead of deleting individual fields
+      if (section.repeatable) {
+        const sectionName =
+          section.fieldGroup ||
+          section.title?.toLowerCase().replace(/\s+/g, "_") ||
+          `section_${sectionIndex}`;
+        console.log("Clearing repeatable section:", sectionName);
+        setValue(sectionName, [], { shouldValidate: false });
+        return;
+      }
+
       const currentValues = getValues();
 
       // Helper function to clear nested values
@@ -113,8 +124,9 @@ export const FormSection: React.FC<FormSectionProps> = ({
 
   // Check if this is a repeatable section
   if (section.repeatable) {
-    // Generate a unique name for this repeatable section
+    // Use fieldGroup if provided, otherwise generate from title
     const sectionName =
+      section.fieldGroup ||
       section.title?.toLowerCase().replace(/\s+/g, "_") ||
       `section_${sectionIndex}`;
 

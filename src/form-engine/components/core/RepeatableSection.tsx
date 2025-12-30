@@ -45,7 +45,9 @@ export const RepeatableSection: React.FC<RepeatableSectionProps> = ({
       });
       // Merge with config's defaultItem if provided
       const itemToAdd = { ...defaultItem, ...config.defaultItem };
+      console.log("Adding item to", sectionName, ":", itemToAdd);
       append(itemToAdd);
+      console.log("Fields after append:", fields.length + 1);
     }
   };
 

@@ -20,7 +20,8 @@ export const CheckboxField: React.FC<CheckboxFieldConfig> = (props) => {
   const { register } = useFormContext();
 
   // Use custom hook for all common field logic
-  const { isVisible, isEnabled, error, colSpan } = useFieldConfig(props);
+  const { isVisible, isEnabled, error, colSpan, shouldShowError } =
+    useFieldConfig(props);
 
   if (!isVisible) return null;
   return (
@@ -47,7 +48,7 @@ export const CheckboxField: React.FC<CheckboxFieldConfig> = (props) => {
           {checkboxLabel || label}
         </span>
       </label>
-      {error && (
+      {shouldShowError && (
         <p
           className={cn(
             "mt-2 text-sm font-medium text-red-600 flex items-center",

@@ -25,8 +25,14 @@ export const FileField: React.FC<FileFieldConfig> = (props) => {
   const { getUploadSource } = useUploadSources();
 
   // Use custom hook for all common field logic
-  const { validationRules, isVisible, isEnabled, error, colSpan } =
-    useFieldConfig(props);
+  const {
+    validationRules,
+    isVisible,
+    isEnabled,
+    error,
+    colSpan,
+    shouldShowError,
+  } = useFieldConfig(props);
 
   if (!isVisible) return null;
 
@@ -186,7 +192,7 @@ export const FileField: React.FC<FileFieldConfig> = (props) => {
           {uploadError}
         </p>
       )}
-      {error && (
+      {shouldShowError && (
         <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>
           {error.message as string}
         </p>

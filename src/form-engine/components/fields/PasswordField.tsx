@@ -20,19 +20,19 @@ export const PasswordField: React.FC<PasswordFieldConfig> = (props) => {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const {
-    register,
-    formState: { touchedFields, isSubmitted },
-  } = useFormContext();
+  const { register } = useFormContext();
 
   // Use custom hook for all common field logic
-  const { validationRules, isVisible, isEnabled, error, colSpan } =
-    useFieldConfig(props);
+  const {
+    validationRules,
+    isVisible,
+    isEnabled,
+    error,
+    colSpan,
+    shouldShowError,
+  } = useFieldConfig(props);
 
   if (!isVisible) return null;
-
-  const isTouched = touchedFields[name];
-  const showError = error && (isTouched || isSubmitted);
 
   return (
     <div className={cn(colSpan, className)}>
@@ -54,7 +54,7 @@ export const PasswordField: React.FC<PasswordFieldConfig> = (props) => {
           disabled={!isEnabled}
           className={cn(
             "w-full px-4 py-[.55rem] text-sm border rounded-md bg-white text-gray-900 placeholder-gray-400 transition-colors duration-200 focus:outline-none",
-            showError
+            shouldShowError
               ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
               : "border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200",
             !isEnabled && "bg-gray-50 text-gray-500 cursor-not-allowed",
@@ -73,7 +73,7 @@ export const PasswordField: React.FC<PasswordFieldConfig> = (props) => {
           </button>
         )}
       </div>
-      {showError && (
+      {shouldShowError && (
         <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>
           {error.message as string}
         </p>

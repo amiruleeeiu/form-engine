@@ -60,6 +60,10 @@ export const securityClearanceSchema: FormSchema = {
               type: "text",
               placeholder: "Enter account holder name",
               cols: 1,
+              validation: {
+                required: true,
+                maxLength: 100,
+              },
             },
             {
               name: "bank_name",
@@ -380,7 +384,6 @@ export const securityClearanceSchema: FormSchema = {
               cols: 1,
               validation: {
                 required: false,
-                pattern: "^[0-9]{10}$",
               },
             },
             {
@@ -391,6 +394,7 @@ export const securityClearanceSchema: FormSchema = {
               cols: 12,
               validation: {
                 required: false,
+                email: "Please enter a valid email address",
                 maxLength: 100,
               },
             },
@@ -541,7 +545,6 @@ export const securityClearanceSchema: FormSchema = {
               cols: 1,
               validation: {
                 required: false,
-                pattern: "^[0-9]{10}$",
               },
             },
             {
@@ -552,6 +555,7 @@ export const securityClearanceSchema: FormSchema = {
               cols: 1,
               validation: {
                 required: false,
+                email: "Please enter a valid email address",
                 maxLength: 100,
               },
             },
@@ -589,7 +593,7 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Select One",
               cols: 1,
               validation: {
-                required: false,
+                required: true,
               },
               dynamicOptions: {
                 url: "http://localhost:3000/division",
@@ -607,7 +611,7 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Select Division First",
               cols: 1,
               validation: {
-                required: false,
+                required: true,
               },
               dynamicOptions: {
                 dependsOn: "division",
@@ -715,7 +719,7 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Mobile No.",
               cols: 1,
               validation: {
-                required: false,
+                required: true,
                 maxLength: 20,
               },
             },
@@ -726,7 +730,8 @@ export const securityClearanceSchema: FormSchema = {
               placeholder: "Email",
               cols: 12,
               validation: {
-                required: false,
+                required: true,
+                email: "Please enter a valid email address",
                 maxLength: 100,
               },
             },
@@ -878,7 +883,6 @@ export const securityClearanceSchema: FormSchema = {
               cols: 1,
               validation: {
                 required: false,
-                pattern: "^[0-9]{10}$",
               },
             },
             {
@@ -889,6 +893,7 @@ export const securityClearanceSchema: FormSchema = {
               cols: 1,
               validation: {
                 required: false,
+                email: "Please enter a valid email address",
                 maxLength: 100,
               },
             },
@@ -1053,7 +1058,6 @@ export const securityClearanceSchema: FormSchema = {
               cols: 1,
               validation: {
                 required: false,
-                pattern: "^[0-9]{10}$",
               },
             },
             {
@@ -1064,6 +1068,7 @@ export const securityClearanceSchema: FormSchema = {
               cols: 1,
               validation: {
                 required: false,
+                email: "Please enter a valid email address",
                 maxLength: 100,
               },
             },
@@ -1405,7 +1410,6 @@ export const securityClearanceSchema: FormSchema = {
               cols: 1,
               validation: {
                 required: false,
-                pattern: "^[0-9]{10}$",
               },
             },
             {
@@ -1416,6 +1420,7 @@ export const securityClearanceSchema: FormSchema = {
               cols: 1,
               validation: {
                 required: false,
+                email: "Please enter a valid email address",
                 maxLength: 100,
               },
             },
