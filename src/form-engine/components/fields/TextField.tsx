@@ -3,6 +3,7 @@ import { useFormContext } from "react-hook-form";
 import { useFieldConfig } from "../../hooks/useFieldConfig.js";
 import type { TextFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
+import { FieldLabel } from "../core/FieldLabel.js";
 
 export const TextField: React.FC<TextFieldConfig> = (props) => {
   const {
@@ -13,6 +14,7 @@ export const TextField: React.FC<TextFieldConfig> = (props) => {
     labelClassName,
     inputClassName,
     errorClassName,
+    validation,
   } = props;
 
   const { register } = useFormContext();
@@ -26,6 +28,8 @@ export const TextField: React.FC<TextFieldConfig> = (props) => {
     colSpan,
     shouldShowError,
   } = useFieldConfig(props);
+
+  console.log(error);
 
   // Debug log
   if (error) {
@@ -41,15 +45,12 @@ export const TextField: React.FC<TextFieldConfig> = (props) => {
 
   return (
     <div className={cn(colSpan, className)}>
-      <label
+      <FieldLabel
         htmlFor={name}
-        className={cn(
-          "block text-sm font-medium text-gray-700 mb-1.5",
-          labelClassName
-        )}
-      >
-        {label}
-      </label>
+        label={label}
+        required={!!validation?.required}
+        className={labelClassName}
+      />
       <input
         id={name}
         type="text"
@@ -67,7 +68,7 @@ export const TextField: React.FC<TextFieldConfig> = (props) => {
       />
       {shouldShowError && (
         <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>
-          {error.message as string}
+          {error?.message as string}
         </p>
       )}
     </div>

@@ -4,6 +4,7 @@ import { useFieldConfig } from "../../hooks/useFieldConfig.js";
 import { useUploadSources } from "../../hooks/useUploadSources.js";
 import type { FileFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
+import { FieldLabel } from "../core/FieldLabel.js";
 
 export const FileField: React.FC<FileFieldConfig> = (props) => {
   const {
@@ -16,6 +17,7 @@ export const FileField: React.FC<FileFieldConfig> = (props) => {
     accept,
     multiple = false,
     uploadSourceId,
+    validation,
   } = props;
 
   const [uploading, setUploading] = useState(false);
@@ -143,15 +145,12 @@ export const FileField: React.FC<FileFieldConfig> = (props) => {
 
   return (
     <div className={cn(colSpan, className)}>
-      <label
+      <FieldLabel
         htmlFor={name}
-        className={cn(
-          "block text-sm font-medium text-gray-700 mb-1.5",
-          labelClassName
-        )}
-      >
-        {label}
-      </label>
+        label={label}
+        required={!!validation?.required}
+        className={labelClassName}
+      />
       <Controller
         name={name}
         control={control}

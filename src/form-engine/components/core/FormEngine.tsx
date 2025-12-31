@@ -64,11 +64,11 @@ export const FormEngine: React.FC<FormEngineProps> = ({
       ? zodResolver(schema.validationSchema as any)
       : undefined,
     defaultValues,
-    mode: "onBlur",
+    mode: "onChange",
     reValidateMode: "onChange",
   });
 
-  const { handleSubmit, watch, setValue } = methods;
+  const { handleSubmit, watch, setValue, trigger } = methods;
 
   // Build a map of field dependencies (which fields depend on which)
   const fieldDependencies = useMemo(() => {
@@ -196,10 +196,51 @@ export const FormEngine: React.FC<FormEngineProps> = ({
   const isLastStep = currentStep === visibleSteps.length - 1;
   const isFirstStep = currentStep === 0;
 
-  const handleNext = () => {
-    if (!isLastStep) {
-      setCurrentStep((prev) => prev + 1);
+  // Get all field names in the current step
+  const getCurrentStepFields = (): string[] => {
+    if (!currentStepData) return [];
+
+    const fields: string[] = [];
+
+    // Fields in sections
+    if (currentStepData.sections) {
+      currentStepData.sections.forEach((section) => {
+        section.fields.forEach((field) => {
+          const fieldPath = section.fieldGroup
+            ? `${section.fieldGroup}.${field.name}`
+            : field.name;
+          fields.push(fieldPath);
+        });
+      });
     }
+
+    // Direct fields
+    if (currentStepData.fields) {
+      currentStepData.fields.forEach((field) => {
+        fields.push(field.name);
+      });
+    }
+
+    return fields;
+  };
+
+  const handleNext = async () => {
+    if (isLastStep) return;
+
+    // Trigger validation for current step fields
+    const currentFields = getCurrentStepFields();
+
+    if (currentFields.length > 0) {
+      const isValid = await trigger(currentFields, { shouldFocus: true });
+      if (!isValid) {
+        // Validation failed, don't proceed
+        console.log("Validation failed for fields:", currentFields);
+        return;
+      }
+    }
+
+    // Validation passed, move to next step
+    setCurrentStep((prev) => prev + 1);
   };
 
   const handlePrevious = () => {
@@ -210,7 +251,7 @@ export const FormEngine: React.FC<FormEngineProps> = ({
 
   const onFormSubmit = async (data: any) => {
     if (hasSteps && !isLastStep) {
-      handleNext();
+      await handleNext();
     } else {
       await onSubmit(data);
     }

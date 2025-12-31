@@ -5,6 +5,7 @@ import { useFieldConfig } from "../../hooks/useFieldConfig.js";
 import { useUploadSources } from "../../hooks/useUploadSources.js";
 import type { DropzoneFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
+import { FieldLabel } from "../core/FieldLabel.js";
 
 export const DropzoneField: React.FC<DropzoneFieldConfig> = (props) => {
   const {
@@ -19,6 +20,7 @@ export const DropzoneField: React.FC<DropzoneFieldConfig> = (props) => {
     uploadSourceId,
     maxSize,
     maxFiles,
+    validation,
   } = props;
 
   const [uploading, setUploading] = useState(false);
@@ -249,14 +251,12 @@ export const DropzoneField: React.FC<DropzoneFieldConfig> = (props) => {
 
   return (
     <div className={cn(colSpan, className)}>
-      <label
-        className={cn(
-          "block text-sm font-medium text-gray-700 mb-1.5",
-          labelClassName
-        )}
-      >
-        {label}
-      </label>
+      <FieldLabel
+        htmlFor={name}
+        label={label}
+        required={!!validation?.required}
+        className={labelClassName}
+      />
       <Controller
         name={name}
         control={control}

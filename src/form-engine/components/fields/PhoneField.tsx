@@ -6,6 +6,7 @@ import { AlertCircle } from "../../assets/icons/AlertCircle.js";
 import { useFieldConfig } from "../../hooks/useFieldConfig.js";
 import type { PhoneFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
+import { FieldLabel } from "../core/FieldLabel.js";
 
 export const PhoneField: React.FC<PhoneFieldConfig> = (props) => {
   const {
@@ -17,6 +18,7 @@ export const PhoneField: React.FC<PhoneFieldConfig> = (props) => {
     inputClassName,
     errorClassName,
     defaultCountry = "bd",
+    validation,
   } = props;
 
   const { control } = useFormContext();
@@ -35,15 +37,12 @@ export const PhoneField: React.FC<PhoneFieldConfig> = (props) => {
 
   return (
     <div className={cn(colSpan, className)}>
-      <label
+      <FieldLabel
         htmlFor={name}
-        className={cn(
-          "block text-sm font-medium text-gray-700 mb-1.5",
-          labelClassName
-        )}
-      >
-        {label}
-      </label>
+        label={label}
+        required={!!validation?.required}
+        className={labelClassName}
+      />
 
       <Controller
         name={name}

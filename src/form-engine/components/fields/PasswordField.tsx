@@ -5,6 +5,7 @@ import { EyeOff } from "../../assets/icons/EyeOff.js";
 import { useFieldConfig } from "../../hooks/useFieldConfig.js";
 import type { PasswordFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
+import { FieldLabel } from "../core/FieldLabel.js";
 
 export const PasswordField: React.FC<PasswordFieldConfig> = (props) => {
   const {
@@ -16,6 +17,7 @@ export const PasswordField: React.FC<PasswordFieldConfig> = (props) => {
     inputClassName,
     errorClassName,
     showToggle = true,
+    validation,
   } = props;
 
   const [showPassword, setShowPassword] = useState(false);
@@ -36,15 +38,12 @@ export const PasswordField: React.FC<PasswordFieldConfig> = (props) => {
 
   return (
     <div className={cn(colSpan, className)}>
-      <label
+      <FieldLabel
         htmlFor={name}
-        className={cn(
-          "block text-sm font-medium text-gray-700 mb-1.5",
-          labelClassName
-        )}
-      >
-        {label}
-      </label>
+        label={label}
+        required={!!validation?.required}
+        className={labelClassName}
+      />
       <div className="relative">
         <input
           {...register(name, validationRules)}

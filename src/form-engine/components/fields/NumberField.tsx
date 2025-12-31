@@ -3,6 +3,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import { useFieldConfig } from "../../hooks/useFieldConfig.js";
 import type { NumberFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
+import { FieldLabel } from "../core/FieldLabel.js";
 
 export const NumberField: React.FC<NumberFieldConfig> = (props) => {
   const {
@@ -14,6 +15,7 @@ export const NumberField: React.FC<NumberFieldConfig> = (props) => {
     inputClassName,
     errorClassName,
     maxLength,
+    validation,
   } = props;
 
   const { register, control } = useFormContext();
@@ -56,15 +58,12 @@ export const NumberField: React.FC<NumberFieldConfig> = (props) => {
 
   return (
     <div className={cn(colSpan, className)}>
-      <label
+      <FieldLabel
         htmlFor={name}
-        className={cn(
-          "block text-sm font-medium text-gray-700 mb-1.5",
-          labelClassName
-        )}
-      >
-        {label}
-      </label>
+        label={label}
+        required={!!validation?.required}
+        className={labelClassName}
+      />
       <Controller
         name={name}
         control={control}

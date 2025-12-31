@@ -3,6 +3,7 @@ import { useFormContext } from "react-hook-form";
 import { useFieldConfig } from "../../hooks/useFieldConfig.js";
 import type { TextareaFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
+import { FieldLabel } from "../core/FieldLabel.js";
 
 export const TextareaField: React.FC<TextareaFieldConfig> = (props) => {
   const {
@@ -33,16 +34,12 @@ export const TextareaField: React.FC<TextareaFieldConfig> = (props) => {
 
   return (
     <div className={cn("space-y-2", className)}>
-      <label
+      <FieldLabel
         htmlFor={name}
-        className={cn(
-          "block text-sm font-semibold text-gray-700",
-          labelClassName
-        )}
-      >
-        {label}
-        {validation?.required && <span className="text-red-500 ml-1">*</span>}
-      </label>
+        label={label}
+        required={!!validation?.required}
+        className={labelClassName}
+      />
       <textarea
         id={name}
         rows={rows}

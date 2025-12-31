@@ -104,6 +104,18 @@ export function getValidationRules(validation?: FieldValidation) {
     };
   }
 
+  // Phone validation
+  if (validation.phone !== undefined) {
+    const phonePattern = /^(?:\+?88)?01[3-9]\d{8}$/; // Bangladesh phone number
+    rules.pattern = {
+      value: phonePattern,
+      message:
+        typeof validation.phone === "string"
+          ? validation.phone
+          : "Invalid phone number (e.g., 01712345678 or +8801712345678)",
+    };
+  }
+
   // Custom validation
   if (validation.custom) {
     rules.validate = (value: any) => {

@@ -26,7 +26,8 @@ export const useFieldConfig = (config: BaseFieldConfig) => {
   const {
     watch,
     setValue,
-    formState: { errors, touchedFields, isSubmitted },
+    getFieldState,
+    formState: { touchedFields },
   } = useFormContext();
 
   // Track previous visibility state
@@ -88,26 +89,6 @@ export const useFieldConfig = (config: BaseFieldConfig) => {
     );
   }, [enableWhen, disableWhen, valueMap]);
 
-  // Get field error - handle nested paths for array fields
-  const error = useMemo(() => {
-    // For nested paths like "fieldGroup.0.fieldName", we need to traverse the errors object
-    const pathParts = name.split(".");
-    let currentError: any = errors;
-
-    for (const part of pathParts) {
-      if (currentError === undefined || currentError === null) {
-        return undefined;
-      }
-      currentError = currentError[part];
-    }
-
-    return currentError;
-  }, [errors, name]);
-
-  // Calculate grid column span class
-  const colSpan = `col-span-${cols}`;
-
-  // Check if field is touched
   const isTouched = useMemo(() => {
     const pathParts = name.split(".");
     let current: any = touchedFields;
@@ -122,8 +103,32 @@ export const useFieldConfig = (config: BaseFieldConfig) => {
     return !!current;
   }, [touchedFields, name]);
 
+  // Get field error - use getFieldState which properly handles nested paths
+  const { error } = getFieldState(name);
+
+  // Calculate grid column span class
+  const colSpan = `col-span-${cols}`;
+
+  // Check if field is touched
+
   // Show error only if field has been touched or form has been submitted
-  const shouldShowError = !!error && (isTouched || isSubmitted);
+  // Hide error if field currently has a value (user is actively fixing it)
+  const hasValue = useMemo(() => {
+    if (fieldValue === undefined || fieldValue === null || fieldValue === "") {
+      return false;
+    }
+    // For arrays (multi-select, file uploads), check if array has items
+    if (Array.isArray(fieldValue)) {
+      return fieldValue.length > 0;
+    }
+    return true;
+  }, [fieldValue]);
+
+  // Show error if:
+  // 1. There is an error
+  // 2. Field has been touched OR form has been submitted
+  // Changed: Always show error if error exists (validation was triggered)
+  const shouldShowError = !!error && !hasValue;
 
   // Clear field value when it becomes hidden
   useEffect(() => {

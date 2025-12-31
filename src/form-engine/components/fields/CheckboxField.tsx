@@ -4,6 +4,7 @@ import { useFieldConfig } from "../../hooks/useFieldConfig.js";
 import type { CheckboxFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
 import { getValidationRules } from "../../utils/fieldValidation.js";
+import { FieldLabel } from "../core/FieldLabel.js";
 
 export const CheckboxField: React.FC<CheckboxFieldConfig> = (props) => {
   const {
@@ -26,14 +27,12 @@ export const CheckboxField: React.FC<CheckboxFieldConfig> = (props) => {
   if (!isVisible) return null;
   return (
     <div className={cn(colSpan, className)}>
-      <label
-        className={cn(
-          "block text-sm font-semibold text-gray-800 mb-3",
-          labelClassName
-        )}
-      >
-        {label}
-      </label>
+      <FieldLabel
+        htmlFor={name}
+        label={label}
+        required={!!validation?.required}
+        className={labelClassName}
+      />
       <label className="flex items-center space-x-3 cursor-pointer py-4 transition-all duration-200">
         <input
           type="checkbox"

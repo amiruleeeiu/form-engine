@@ -77,6 +77,10 @@ export const securityClearanceSchema: FormSchema = {
                 { value: "2", label: "Option 2" },
                 { value: "3", label: "Option 3" },
               ],
+              validation: {
+                required: true,
+                maxLength: 100,
+              },
             },
             {
               name: "branch_name",
@@ -84,6 +88,10 @@ export const securityClearanceSchema: FormSchema = {
               type: "text",
               placeholder: "Enter branch name",
               cols: 1,
+              validation: {
+                required: true,
+                maxLength: 100,
+              },
             },
             {
               name: "bank_acc_number",
@@ -122,6 +130,10 @@ export const securityClearanceSchema: FormSchema = {
               type: "text",
               placeholder: "Enter TIN number",
               cols: 12,
+              validation: {
+                required: true,
+                maxLength: 100,
+              },
             },
             {
               name: "tin_certificate",
