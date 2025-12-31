@@ -64,11 +64,16 @@ export const FormEngine: React.FC<FormEngineProps> = ({
       ? zodResolver(schema.validationSchema as any)
       : undefined,
     defaultValues,
-    mode: "onChange",
-    reValidateMode: "onChange",
+    mode: "onSubmit",
   });
 
-  const { handleSubmit, watch, setValue, trigger } = methods;
+  const {
+    handleSubmit,
+    watch,
+    setValue,
+    trigger,
+    formState: { errors },
+  } = methods;
 
   // Build a map of field dependencies (which fields depend on which)
   const fieldDependencies = useMemo(() => {
@@ -251,7 +256,11 @@ export const FormEngine: React.FC<FormEngineProps> = ({
 
   const onFormSubmit = async (data: any) => {
     if (hasSteps && !isLastStep) {
-      await handleNext();
+      const currentFields = getCurrentStepFields();
+      const isValid = await trigger(currentFields);
+      if (isValid) {
+        setCurrentStep((prev) => prev + 1);
+      }
     } else {
       await onSubmit(data);
     }
