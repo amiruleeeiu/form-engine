@@ -55,7 +55,7 @@ export const CheckboxField: React.FC<CheckboxFieldConfig> = (props) => {
           )}
         >
           <span className="mr-1">⚠</span>
-          {error.message as string}
+          {error?.message as string}
         </p>
       )}
     </div>

@@ -18,17 +18,11 @@ export const NumberField: React.FC<NumberFieldConfig> = (props) => {
     validation,
   } = props;
 
-  const { register, control } = useFormContext();
+  const { control } = useFormContext();
 
   // Use custom hook for all common field logic
-  const {
-    validationRules,
-    isVisible,
-    isEnabled,
-    error,
-    colSpan,
-    shouldShowError,
-  } = useFieldConfig(props);
+  const { validationRules, isVisible, isEnabled, error, shouldShowError } =
+    useFieldConfig(props);
 
   if (!isVisible) return null;
 
@@ -57,7 +51,7 @@ export const NumberField: React.FC<NumberFieldConfig> = (props) => {
   };
 
   return (
-    <div className={cn(colSpan, className)}>
+    <div className={className}>
       <FieldLabel
         htmlFor={name}
         label={label}
@@ -97,7 +91,7 @@ export const NumberField: React.FC<NumberFieldConfig> = (props) => {
       />
       {shouldShowError && (
         <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>
-          {error.message as string}
+          {error?.message as string}
         </p>
       )}
     </div>

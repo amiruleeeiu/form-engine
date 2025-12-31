@@ -5,6 +5,8 @@ import type { RadioFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
 
 export const RadioField: React.FC<RadioFieldConfig> = (props) => {
+  const { setValue } = useFormContext();
+
   const {
     name,
     label,
@@ -75,7 +77,7 @@ export const RadioField: React.FC<RadioFieldConfig> = (props) => {
       </div>
       {shouldShowError && (
         <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>
-          {error.message as string}
+          {error?.message as string}
         </p>
       )}
     </div>

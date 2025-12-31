@@ -98,7 +98,7 @@ export const PhoneField: React.FC<PhoneFieldConfig> = (props) => {
           )}
         >
           <AlertCircle />
-          {error.message as string}
+          {error?.message as string}
         </p>
       )}
     </div>

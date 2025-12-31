@@ -14,9 +14,6 @@ import type { FormSchema } from "../form-engine/types/index.js";
  */
 
 export const dropzoneExampleSchema: FormSchema = {
-  title: "File Upload Examples",
-  description: "Compare simple file upload vs drag & drop dropzone",
-
   // Upload sources configuration
   uploadSources: [
     {

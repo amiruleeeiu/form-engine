@@ -218,8 +218,8 @@ function App() {
                       onClick={() => setSelectedForm("userProfile")}
                       className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
                         selectedForm === "userProfile"
-                          ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg"
-                          : "bg-gradient-to-r from-indigo-50 to-purple-50 text-gray-700 hover:from-indigo-100 hover:to-purple-100 border-2 border-indigo-200"
+                          ? "bg-linear-to-r from-indigo-600 to-purple-600 text-white shadow-lg"
+                          : "bg-linear-to-r from-indigo-50 to-purple-50 text-gray-700 hover:from-indigo-100 hover:to-purple-100 border-2 border-indigo-200"
                       }`}
                     >
                       👤 User Profile (Password + Profile Picture +
@@ -238,8 +238,8 @@ function App() {
                       onClick={() => setSelectedForm("businessRegistration")}
                       className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
                         selectedForm === "businessRegistration"
-                          ? "bg-gradient-to-r from-green-600 to-blue-600 text-white shadow-lg"
-                          : "bg-gradient-to-r from-green-50 to-blue-50 text-gray-700 hover:from-green-100 hover:to-blue-100 border-2 border-green-200"
+                          ? "bg-linear-to-r from-green-600 to-blue-600 text-white shadow-lg"
+                          : "bg-linear-to-r from-green-50 to-blue-50 text-gray-700 hover:from-green-100 hover:to-blue-100 border-2 border-green-200"
                       }`}
                     >
                       🏢 Business Registration Form (6 Steps + Repeatable)
@@ -248,8 +248,8 @@ function App() {
                       onClick={() => setSelectedForm("businessStarterPackage")}
                       className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
                         selectedForm === "businessStarterPackage"
-                          ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg"
-                          : "bg-gradient-to-r from-purple-50 to-pink-50 text-gray-700 hover:from-purple-100 hover:to-pink-100 border-2 border-purple-200"
+                          ? "bg-linear-to-r from-purple-600 to-pink-600 text-white shadow-lg"
+                          : "bg-linear-to-r from-purple-50 to-pink-50 text-gray-700 hover:from-purple-100 hover:to-pink-100 border-2 border-purple-200"
                       }`}
                     >
                       📦 Business Starter Package (6 Steps)
@@ -258,8 +258,8 @@ function App() {
                       onClick={() => setSelectedForm("securityClearance")}
                       className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
                         selectedForm === "securityClearance"
-                          ? "bg-gradient-to-r from-orange-600 to-red-600 text-white shadow-lg"
-                          : "bg-gradient-to-r from-orange-50 to-red-50 text-gray-700 hover:from-orange-100 hover:to-red-100 border-2 border-orange-200"
+                          ? "bg-linear-to-r from-orange-600 to-red-600 text-white shadow-lg"
+                          : "bg-linear-to-r from-orange-50 to-red-50 text-gray-700 hover:from-orange-100 hover:to-red-100 border-2 border-orange-200"
                       }`}
                     >
                       🔐 Security Clearance (8 Steps + Complex)
@@ -376,7 +376,7 @@ function App() {
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
                   ✓ Form Submitted Successfully!
                 </h3>
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-4 rounded-r-lg">
+                <div className="bg-linear-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-4 rounded-r-lg">
                   <p className="text-sm font-medium text-green-800 mb-3">
                     Submitted Data:
                   </p>

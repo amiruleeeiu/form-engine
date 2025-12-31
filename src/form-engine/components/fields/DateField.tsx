@@ -158,7 +158,7 @@ export const DateField: React.FC<DateFieldConfig> = (props) => {
       />
       {shouldShowError && (
         <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>
-          {error.message as string}
+          {error?.message as string}
         </p>
       )}
     </div>

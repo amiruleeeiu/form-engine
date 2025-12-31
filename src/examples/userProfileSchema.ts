@@ -137,7 +137,7 @@ export const userProfileSchema: FormSchema = {
           },
         },
         {
-          type: "autocomplete",
+          type: "select",
           name: "country",
           label: "Country",
           placeholder: "Select or type your country",

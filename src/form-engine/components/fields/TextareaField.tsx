@@ -21,14 +21,8 @@ export const TextareaField: React.FC<TextareaFieldConfig> = (props) => {
   const { register } = useFormContext();
 
   // Use custom hook for all common field logic
-  const {
-    validationRules,
-    isVisible,
-    isEnabled,
-    error,
-    colSpan,
-    shouldShowError,
-  } = useFieldConfig(props);
+  const { validationRules, isVisible, isEnabled, error, shouldShowError } =
+    useFieldConfig(props);
 
   if (!isVisible) return null;
 
@@ -59,7 +53,7 @@ export const TextareaField: React.FC<TextareaFieldConfig> = (props) => {
       />
       {shouldShowError && (
         <p className={cn("text-sm text-red-600 font-medium", errorClassName)}>
-          {error.message as string}
+          {error?.message as string}
         </p>
       )}
     </div>

@@ -27,7 +27,7 @@ export const useFieldConfig = (config: BaseFieldConfig) => {
     watch,
     setValue,
     getFieldState,
-    formState: { errors, isSubmitted },
+    formState: { isSubmitted },
   } = useFormContext();
 
   // Track previous visibility state

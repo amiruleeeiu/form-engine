@@ -92,7 +92,7 @@ export const SelectField: React.FC<SelectFieldConfig> = (props) => {
       </select>
       {shouldShowError && (
         <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>
-          {error.message as string}
+          {error?.message as string}
         </p>
       )}
     </div>

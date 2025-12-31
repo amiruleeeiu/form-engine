@@ -21,7 +21,6 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = (props) => {
     options: staticOptions = [],
     dynamicOptions,
     isMulti = false,
-    clearFields,
     validation,
   } = props;
 
@@ -346,7 +345,7 @@ export const CustomSelectField: React.FC<SelectFieldConfig> = (props) => {
             errorClassName
           )}
         >
-          {error.message as string}
+          {error?.message as string}
         </p>
       )}
     </div>

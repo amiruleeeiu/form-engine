@@ -14,9 +14,6 @@ import type { FormSchema } from "../form-engine/types/index.js";
  */
 
 export const businessStarterPackageSchema: FormSchema = {
-  title: "Business Starter Package Application",
-  description: "Complete application form for Business Starter Package",
-
   // Centralized upload configuration
   uploadSources: [
     {

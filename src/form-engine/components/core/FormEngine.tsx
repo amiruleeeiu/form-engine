@@ -1,21 +1,11 @@
 /* eslint-disable react-hooks/incompatible-library */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, {
-  createContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Check, ChevronLeft, ChevronRight } from "../../assets/icons/index.js";
 import { useDataSources } from "../../hooks/useDataSources.js";
-import type {
-  FieldConfig,
-  FileUploadSource,
-  FormEngineProps,
-} from "../../types/index.js";
+import type { FieldConfig, FormEngineProps } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
 import {
   getWatchedFields,
@@ -23,18 +13,8 @@ import {
 } from "../../utils/conditionalLogic.js";
 import { mergeDefaultValues } from "../../utils/defaultValues.js";
 import { FieldRenderer } from "./FieldRenderer.js";
+import { DataSourceContext, FormContext } from "./FormContexts.js";
 import { FormSection } from "./FormSection.js";
-
-// Context to share data source state with child components
-export const DataSourceContext = createContext<ReturnType<
-  typeof useDataSources
-> | null>(null);
-
-// Context to share upload sources and data sources with child components
-export const FormContext = createContext<{
-  uploadSources?: FileUploadSource[];
-  dataSourceState: ReturnType<typeof useDataSources>;
-} | null>(null);
 
 export const FormEngine: React.FC<FormEngineProps> = ({
   schema,
@@ -67,13 +47,7 @@ export const FormEngine: React.FC<FormEngineProps> = ({
     mode: "onSubmit",
   });
 
-  const {
-    handleSubmit,
-    watch,
-    setValue,
-    trigger,
-    formState: { errors },
-  } = methods;
+  const { handleSubmit, watch, setValue, trigger } = methods;
 
   // Build a map of field dependencies (which fields depend on which)
   const fieldDependencies = useMemo(() => {
@@ -227,25 +201,6 @@ export const FormEngine: React.FC<FormEngineProps> = ({
     }
 
     return fields;
-  };
-
-  const handleNext = async () => {
-    if (isLastStep) return;
-
-    // Trigger validation for current step fields
-    const currentFields = getCurrentStepFields();
-
-    if (currentFields.length > 0) {
-      const isValid = await trigger(currentFields, { shouldFocus: true });
-      if (!isValid) {
-        // Validation failed, don't proceed
-        console.log("Validation failed for fields:", currentFields);
-        return;
-      }
-    }
-
-    // Validation passed, move to next step
-    setCurrentStep((prev) => prev + 1);
   };
 
   const handlePrevious = () => {

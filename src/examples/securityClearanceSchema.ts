@@ -14,9 +14,6 @@ import type { FormSchema } from "../form-engine/types/index.js";
  */
 
 export const securityClearanceSchema: FormSchema = {
-  title: "Application for Security Clearance",
-  description: "Application for security clearance (SC)",
-
   // Centralized file upload configuration
   uploadSources: [
     {

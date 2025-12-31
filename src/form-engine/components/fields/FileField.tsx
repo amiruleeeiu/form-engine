@@ -95,7 +95,7 @@ export const FileField: React.FC<FileFieldConfig> = (props) => {
           });
 
           const results = await Promise.all(uploadPromises);
-          onChange(results);
+          onChange(results as any);
         } else {
           // Upload single file
           const file = files[0];
@@ -193,7 +193,7 @@ export const FileField: React.FC<FileFieldConfig> = (props) => {
       )}
       {shouldShowError && (
         <p className={cn("mt-1.5 text-xs text-red-600", errorClassName)}>
-          {error.message as string}
+          {error?.message as string}
         </p>
       )}
     </div>

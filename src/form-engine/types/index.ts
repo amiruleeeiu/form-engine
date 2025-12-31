@@ -147,6 +147,8 @@ export interface TextareaFieldConfig extends BaseFieldConfig {
 
 export interface NumberFieldConfig extends BaseFieldConfig {
   type: "number";
+  min?: number;
+  max?: number;
   minLength?: number;
   maxLength?: number;
 }
