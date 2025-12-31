@@ -93,7 +93,7 @@ export const securityClearanceSchema: FormSchema = {
             {
               name: "bank_acc_number",
               label: "Bank Account Number",
-              type: "text",
+              type: "number",
               placeholder: "Enter bank account number",
               cols: 1,
             },

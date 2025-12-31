@@ -2,7 +2,6 @@ import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { AlertCircle } from "../../assets/icons/AlertCircle.js";
 import { useFieldConfig } from "../../hooks/useFieldConfig.js";
 import type { PhoneFieldConfig } from "../../types/index.js";
 import { cn } from "../../utils/cn.js";
@@ -97,7 +96,6 @@ export const PhoneField: React.FC<PhoneFieldConfig> = (props) => {
             errorClassName
           )}
         >
-          <AlertCircle />
           {error?.message as string}
         </p>
       )}

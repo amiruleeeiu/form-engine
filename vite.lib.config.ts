@@ -25,8 +25,19 @@ export default defineConfig({
       formats: ["es", "cjs"],
     },
     rollupOptions: {
-      // Externalize peer dependencies
-      external: ["react", "react-dom", "react/jsx-runtime"],
+      // Externalize peer dependencies and heavy libraries
+      external: [
+        "react",
+        "react-dom",
+        "react/jsx-runtime",
+        "react-hook-form",
+        "react-phone-input-2",
+        "@hookform/resolvers",
+        "zod",
+        "react-day-picker",
+        "lucide-react",
+        "tailwind-merge",
+      ],
       output: {
         globals: {
           react: "React",
@@ -42,8 +53,10 @@ export default defineConfig({
         },
       },
     },
-    // Generate sourcemaps for debugging
-    sourcemap: true,
+    // Generate sourcemaps only in development
+    sourcemap: false,
+    // Minify for smaller size
+    minify: "esbuild",
     // Clean output directory before build
     emptyOutDir: true,
     // Output directory
