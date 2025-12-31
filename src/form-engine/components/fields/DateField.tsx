@@ -33,6 +33,7 @@ export const DateField: React.FC<DateFieldConfig> = (props) => {
     isVisible,
     isEnabled,
     error,
+
     colSpan,
     shouldShowError,
   } = useFieldConfig(props);
@@ -99,22 +100,25 @@ export const DateField: React.FC<DateFieldConfig> = (props) => {
                 id={name}
                 type="text"
                 readOnly
-                placeholder={placeholder}
+                placeholder={placeholder || "Pick a date"}
                 disabled={!isEnabled}
                 value={formatDateForDisplay(field.value)}
                 onClick={() => isEnabled && setIsOpen(!isOpen)}
                 className={cn(
-                  "w-full px-4 py-2.5 pr-10 text-sm border rounded-md bg-white text-gray-900 transition-colors duration-200 focus:outline-none cursor-pointer disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed",
+                  "flex h-10 w-full items-center justify-between rounded-sm border bg-white px-3 py-2 text-sm shadow-sm outline-blue-500 transition-all",
+                  "placeholder:text-blue-500",
+                  "disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer",
                   error
-                    ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
-                    : "border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200",
+                    ? "border-red-500 text-red-900 "
+                    : "border-slate-200 hover:border-slate-300 ",
+                  !isEnabled && "bg-slate-50 hover:border-slate-200",
                   inputClassName
                 )}
               />
               <Calendar
                 className={cn(
-                  "absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none",
-                  !isEnabled ? "text-gray-400" : "text-gray-500"
+                  "absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none transition-colors",
+                  !isEnabled ? "text-slate-400" : "text-slate-500"
                 )}
               />
             </div>
@@ -122,10 +126,11 @@ export const DateField: React.FC<DateFieldConfig> = (props) => {
             {isOpen && isEnabled && (
               <div
                 className={cn(
-                  "absolute z-50 bg-white border border-gray-300 rounded-lg shadow-lg p-3",
+                  "absolute z-50 rounded-xl border border-slate-200 bg-white p-4 shadow-xl",
+                  "animate-in fade-in-0 zoom-in-95 slide-in-from-top-2",
                   dropdownPosition === "top"
-                    ? "bottom-full mb-1"
-                    : "top-full mt-1"
+                    ? "bottom-full mb-2"
+                    : "top-full mt-2"
                 )}
               >
                 {/* Month and Year Selectors */}
@@ -140,8 +145,8 @@ export const DateField: React.FC<DateFieldConfig> = (props) => {
                   onSelect={(date) => {
                     if (date) {
                       field.onChange(formatDateForValue(date));
-                      setIsOpen(false);
                     }
+                    setIsOpen(false);
                   }}
                   month={currentMonth}
                   onMonthChange={setCurrentMonth}

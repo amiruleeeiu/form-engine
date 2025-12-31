@@ -1,5 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ChevronDown } from "../../assets/icons/index.js";
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+} from "../../assets/icons/index.js";
 import { cn } from "../../utils/cn.js";
 
 interface MonthYearSelectorProps {
@@ -50,6 +54,18 @@ export const MonthYearSelector: React.FC<MonthYearSelectorProps> = ({
     setIsYearOpen(false);
   };
 
+  const handlePrevMonth = () => {
+    const newDate = new Date(currentMonth);
+    newDate.setMonth(currentMonth.getMonth() - 1);
+    onMonthChange(newDate);
+  };
+
+  const handleNextMonth = () => {
+    const newDate = new Date(currentMonth);
+    newDate.setMonth(currentMonth.getMonth() + 1);
+    onMonthChange(newDate);
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -68,36 +84,45 @@ export const MonthYearSelector: React.FC<MonthYearSelectorProps> = ({
   }, []);
 
   return (
-    <div className={cn("flex gap-2", className)}>
+    <div className={cn("flex items-center gap-2", className)}>
+      {/* Previous Month Button */}
+      <button
+        type="button"
+        onClick={handlePrevMonth}
+        className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-white hover:bg-slate-50 transition-colors"
+      >
+        <ChevronLeft className="h-4 w-4 text-slate-600" />
+      </button>
+
       {/* Month Selector */}
       <div className="relative flex-1" ref={monthRef}>
         <button
           type="button"
           onClick={() => setIsMonthOpen(!isMonthOpen)}
-          className="w-full flex items-center justify-between px-3 py-2 text-sm border border-gray-300 rounded-md bg-white hover:border-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 transition-colors"
+          className="w-full flex items-center justify-between px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white hover:bg-slate-50 transition-colors"
         >
-          <span className="text-gray-900">
+          <span className="text-slate-900 font-medium">
             {MONTHS[currentMonth.getMonth()]}
           </span>
           <ChevronDown
             className={cn(
-              "w-4 h-4 text-gray-400 transition-transform",
+              "w-4 h-4 text-slate-400 transition-transform",
               isMonthOpen && "transform rotate-180"
             )}
           />
         </button>
 
         {isMonthOpen && (
-          <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto py-1">
+          <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-y-auto py-1">
             {MONTHS.map((month, index) => (
               <div
                 key={month}
                 onClick={() => handleMonthChange(index)}
                 className={cn(
-                  "px-3 py-2 text-sm cursor-pointer hover:bg-gray-100",
+                  "px-3 py-2 text-sm cursor-pointer hover:bg-slate-50 transition-colors rounded-md mx-1",
                   currentMonth.getMonth() === index
-                    ? "bg-blue-50 text-blue-600"
-                    : "text-gray-700"
+                    ? "bg-slate-900 text-white"
+                    : "text-slate-700"
                 )}
               >
                 {month}
@@ -108,32 +133,34 @@ export const MonthYearSelector: React.FC<MonthYearSelectorProps> = ({
       </div>
 
       {/* Year Selector */}
-      <div className="relative w-24" ref={yearRef}>
+      <div className="relative w-28" ref={yearRef}>
         <button
           type="button"
           onClick={() => setIsYearOpen(!isYearOpen)}
-          className="w-full flex items-center justify-between px-3 py-2 text-sm border border-gray-300 rounded-md bg-white hover:border-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 transition-colors"
+          className="w-full flex items-center justify-between px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white hover:bg-slate-50 ransition-colors"
         >
-          <span className="text-gray-900">{currentMonth.getFullYear()}</span>
+          <span className="text-slate-900 font-medium">
+            {currentMonth.getFullYear()}
+          </span>
           <ChevronDown
             className={cn(
-              "w-4 h-4 text-gray-400 transition-transform",
+              "w-4 h-4 text-slate-400 transition-transform",
               isYearOpen && "transform rotate-180"
             )}
           />
         </button>
 
         {isYearOpen && (
-          <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto py-1">
+          <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-y-auto py-1">
             {years.map((year) => (
               <div
                 key={year}
                 onClick={() => handleYearChange(year)}
                 className={cn(
-                  "px-3 py-2 text-sm cursor-pointer hover:bg-gray-100",
+                  "px-3 py-2 text-sm cursor-pointer hover:bg-slate-50 transition-colors rounded-md mx-1",
                   currentMonth.getFullYear() === year
-                    ? "bg-blue-50 text-blue-600"
-                    : "text-gray-700"
+                    ? "bg-slate-900 text-white"
+                    : "text-slate-700"
                 )}
               >
                 {year}
@@ -142,6 +169,15 @@ export const MonthYearSelector: React.FC<MonthYearSelectorProps> = ({
           </div>
         )}
       </div>
+
+      {/* Next Month Button */}
+      <button
+        type="button"
+        onClick={handleNextMonth}
+        className="inline-flex h-8 w-8 items-center justify-center rounded-lg  bg-white hover:bg-slate-50 transition-colors"
+      >
+        <ChevronRight className="h-4 w-4 text-slate-600" />
+      </button>
     </div>
   );
 };
